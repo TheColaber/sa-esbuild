@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "types": ["node", "chrome"],
+    "resolveJsonModule": true,
+    "esModuleInterop": true
+  }
+}
