@@ -3,7 +3,8 @@ export default function loadClasses() {
 
   const isStyleSheetValid = (styleSheet) => {
     const { ownerNode } = styleSheet;
-    const textContent = ownerNode && ownerNode.textContent ? ownerNode.textContent : "";
+    const textContent =
+      ownerNode && ownerNode.textContent ? ownerNode.textContent : "";
     const todoComment =
       "/* DO NOT EDIT\n@todo This file is copied from GUI and should be pulled out into a shared library.";
 
@@ -17,8 +18,9 @@ export default function loadClasses() {
     [...styleSheet.cssRules]
       .filter((cssRule) => cssRule instanceof CSSStyleRule)
       .map((styleRule) => styleRule.selectorText)
-      .flatMap((selectorTest) =>
-        selectorTest.match(/(([\w-]+?)_([\w-]+)_([\w\d-]+))/g) || []
+      .flatMap(
+        (selectorTest) =>
+          selectorTest.match(/(([\w-]+?)_([\w-]+)_([\w\d-]+))/g) || []
       );
 
   const uniqueClasses = new Set(

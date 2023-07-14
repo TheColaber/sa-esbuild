@@ -1,0 +1,59 @@
+{
+  "name": {
+    "message": "Scratch Addons"
+  },
+  "description": {
+    "message": "Customizable features, themes, and more for the Scratch website."
+  },
+  "open_settings_page_description": {
+    "message": "Open settings page"
+  },
+
+  "15min": {
+    "message": "For 15 minutes"
+  },
+  "1hour": {
+    "message": "For 1 hour"
+  },
+  "8hours": {
+    "message": "For 8 hours"
+  },
+  "24hours": {
+    "message": "For 24 hours"
+  },
+  "untilEnabled": {
+    "message": "Until I turn it back on"
+  },
+  "mute": {
+    "message": "Mute"
+  },
+  "unmute": {
+    "message": "Unmute"
+  },
+
+  "changelog": {
+    "message": "View changelog"
+  },
+  "open_new_tab": {
+    "message": "Open in a new tab"
+  },
+
+  "settings": {
+    "message": "Settings"
+  },
+  "settingsTitle": {
+    "message": "Settings - Scratch Addons"
+  },
+  "editor": {
+    "message": "Editor"
+  },
+  "general": {
+    "message": "General"
+  },
+  "code": {
+    "message": "Code"
+  },
+  "popup": {
+    "message": "Popup"
+  }
+}

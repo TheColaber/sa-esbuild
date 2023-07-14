@@ -22,7 +22,7 @@ chrome.management.getSelf().then(async ({ installType, homepageUrl }) => {
     chrome.runtime.setUninstallURL(url);
   }
 
-  const { addonsStates } = await syncStorage.get("addonsStates");
+  const { addonsStates = {} } = await syncStorage.get("addonsStates");
   for (const id in addons) {
     const manifest = addons[id];
     if (

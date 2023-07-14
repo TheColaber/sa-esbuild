@@ -21,7 +21,7 @@ globalThis.scratchAddons = {
   events: new EventTarget(),
   cache: {
     BlocklyInstance: null,
-    vm: null
+    vm: null,
   },
   redux: { target: new EventTarget(), state: null, dispatch: null },
   sharedObserver,
@@ -49,7 +49,7 @@ scratchAddons.events.addEventListener(
     }: {
       addonsStates: SyncStorage["addonsStates"];
       addonEnabledStates: string[];
-      messages: { [addon: string]: { [message: string]: string }};
+      messages: { [addon: string]: { [message: string]: string } };
     } = detail;
     console.log("Scratch Addons: Addon data received from storage");
 

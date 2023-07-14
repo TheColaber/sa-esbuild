@@ -6,7 +6,7 @@ import { version, homepage } from "../package.json";
 
 const isPrerelease = version.split("-")[1] === "prerelease";
 // Show blue icons when we are on a prerelease, normal if not.
-const iconPath = "images/icon" + isPrerelease ? "-blue" : "";
+const iconPath = "images/icon" +( isPrerelease ? "-blue" : "");
 
 const manifest: chrome.runtime.ManifestV3 = {
   name: "__MSG_name__",
@@ -36,6 +36,7 @@ const manifest: chrome.runtime.ManifestV3 = {
     {
       js: ["content-script/index.ts"],
       matches: ["https://scratch.mit.edu/*"],
+      /* @ts-ignore - this prop exists, but they dont think it does. */
       world: "MAIN",
       run_at: "document_start",
       all_frames: true,
