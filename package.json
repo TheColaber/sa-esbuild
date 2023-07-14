@@ -4,17 +4,24 @@
   "main": "index.js",
   "author": "TheColaber <thecolaber@gmail.com>",
   "license": "MIT",
+  "homepage": "https://scratchaddons.com",
+  "type": "module",
   "scripts": {
-    "build": "node build"
+    "build": "node esbuild/build"
   },
   "devDependencies": {
+    "@extend-chrome/storage": "^1.5.0",
     "@types/chrome": "^0.0.240",
     "@types/node": "^20.4.0",
     "cheerio": "^1.0.0-rc.12",
     "esbuild": "^0.18.11",
     "esbuild-plugin-vue3": "^0.3.2",
     "esbuild-runner": "^2.2.2",
+    "esm": "^3.2.25",
+    "globby": "^13.2.2",
     "vue": "^3.3.4"
   },
-  "dependencies": {}
+  "dependencies": {
+    "esbuild-plugin-virtual": "^0.1.0"
+  }
 }

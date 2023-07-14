@@ -1,7 +1,12 @@
 {
   "compilerOptions": {
+    "target": "ES2022",
     "types": ["node", "chrome"],
+    "moduleResolution": "node",
     "resolveJsonModule": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "paths": {
+      "#addons": ["./esbuild/virtuals/addons.d.ts"]
+    }
   }
 }
