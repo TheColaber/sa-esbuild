@@ -10,7 +10,6 @@ function getDataFromEl(elem: Element): {
   }
   const internalKey = getInternalKey(elem);
 
-  // TODO: we shouldn't need to use any here.
   const internal: any | { child: any; stateNode: any } = elem[internalKey];
   let childable = internal;
   while (
@@ -21,12 +20,9 @@ function getDataFromEl(elem: Element): {
   return childable.stateNode;
 }
 
-export async function getBlocklyInstance() {
-  if (scratchAddons.cache.BlocklyInstance)
-    return {
-      Blockly: scratchAddons.cache.BlocklyInstance,
-      vm: scratchAddons.cache.vm,
-    };
+export async function getCache() {
+  if (scratchAddons.cache.BlocklyInstance && scratchAddons.cache.vm)
+    return scratchAddons.cache;
 
   const elem = await scratchAddons.sharedObserver.watch({
     query: '[class^="gui_blocks-wrapper"]',
@@ -40,10 +36,7 @@ export async function getBlocklyInstance() {
         .BlocklyInstance} on page (${location.pathname})`
     );
   }
-  return {
-    Blockly: scratchAddons.cache.BlocklyInstance,
-    vm: scratchAddons.cache.vm,
-  };
+  return scratchAddons.cache;
 }
 
 export function getMainWorkspace() {

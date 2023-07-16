@@ -1,7 +1,7 @@
 // Type definitions for scratch-blocks
 // Project: https://github.com/scratchfoundation/scratch-blocks
 
-// import FindBar from "../../src/addons/editor/find-bar/classes/find-bar";
+import FindBar from "../../src/addons/editor/general/find-bar/classes/find-bar";
 
 export namespace ScratchBlocks {
   class Block {
@@ -208,7 +208,7 @@ export namespace ScratchBlocks {
     allInputsFilled(shadowBlocksAreFilled?: boolean): boolean;
     toolbox_?: any;
     // TODO: Remove this
-    // findBar?: FindBar;
+    findBar?: FindBar;
   }
 
   interface Xml {

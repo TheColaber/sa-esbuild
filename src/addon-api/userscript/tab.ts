@@ -50,9 +50,9 @@ export default class Tab {
     let satisfied = false;
     let combinedCondition = () => {
       if (condition && !condition()) return false;
-      // if (this.redux.state) {
-      //   if (reduxCondition && !reduxCondition(this.redux.state)) return false;
-      // }
+      if (this.redux.state) {
+        if (reduxCondition && !reduxCondition(this.redux.state)) return false;
+      }
       // NOTE: this may reach sooner than expected, if redux state is not available
       // because of timing issues. However this is just an optimization! It's fine
       // if it runs a little earlier. Just don't error out.
@@ -64,19 +64,19 @@ export default class Tab {
       condition: combinedCondition,
       elementCondition,
     });
-    // if (reduxEvents) {
-    //   let listener = (({ detail }: CustomEvent) => {
-    //     if (reduxEvents.includes(detail.action.type)) {
-    //       satisfied = true;
-    //     }
-    //   }) as EventListener;
-    //   this.redux.initialize();
-    //   this.redux.addEventListener("statechanged", listener);
-    //   promise.then((match) => {
-    //     this.redux.removeEventListener("statechanged", listener);
-    //     return match;
-    //   });
-    // }
+    if (reduxEvents) {
+      let listener = (({ detail }: CustomEvent) => {
+        if (reduxEvents.includes(detail.action.type)) {
+          satisfied = true;
+        }
+      }) as EventListener;
+      this.redux.initialize();
+      this.redux.addEventListener("statechanged", listener);
+      promise.then((match) => {
+        this.redux.removeEventListener("statechanged", listener);
+        return match;
+      });
+    }
 
     return promise;
   }
@@ -92,11 +92,11 @@ export default class Tab {
   }
 
   async getBlockly() {
-    return (await scratchAddons.getBlocklyInstance()).Blockly;
+    return (await scratchAddons.getCache()).BlocklyInstance;
   }
 
   async getVM() {
-    return (await scratchAddons.getBlocklyInstance()).vm;
+    return (await scratchAddons.getCache()).vm;
   }
 
   getWorkspace() {

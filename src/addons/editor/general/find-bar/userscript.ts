@@ -1,11 +1,12 @@
-// import FindBar from "./classes/find-bar";
+import { ScratchBlocks } from "../../../../../esbuild/types/blockly";
+import FindBar from "./classes/find-bar";
 
-export default defineScript(async ({ addon, msg }) => {
+export default async () => {
   const Blockly = await addon.tab.getBlockly();
-  // await addon.tab.scratchClassesReady();
+  await addon.tab.scratchClassesReady();
 
-  // const mainWorkspace = addon.tab.getWorkspace();
-  // mainWorkspace.findBar = new FindBar(mainWorkspace, addon, msg);
+  const mainWorkspace: ScratchBlocks.Workspace = addon.tab.getWorkspace();
+  mainWorkspace.findBar = new FindBar(mainWorkspace);
 
   // const oldInit = Blockly.init_;
   // Blockly.init_ = function (newWorkspace) {
@@ -13,20 +14,31 @@ export default defineScript(async ({ addon, msg }) => {
   //     ? newWorkspace
   //     : addon.tab.getWorkspace();
   //   if (!mainWorkspace.findBar) {
-  //     mainWorkspace.findBar = new FindBar(mainWorkspace, addon, msg);
+  //     mainWorkspace.findBar = new FindBar(mainWorkspace);
   //   }
 
   //   return oldInit.call(this, newWorkspace);
   // };
   const createWorkspaceDom = Blockly.WorkspaceSvg.prototype.createDom;
   Blockly.WorkspaceSvg.prototype.createDom = function (opt_backgroundClass) {
-    console.log("test");
+    console.log("create");
     // This is the same check scratch uses to create the toolbox/flyout.
     // If there is no flyout, there shouldn't be a find bar.
     if (this.options.hasCategories) {
-      console.log("himm");
+      console.log("add findbar");
+      this.findBar = new FindBar(mainWorkspace);
     }
 
-    createWorkspaceDom.call(this, opt_backgroundClass);
+    return createWorkspaceDom.call(this, opt_backgroundClass);
   };
-});
+
+  const disposeWorkspaceDom = Blockly.WorkspaceSvg.prototype.dispose;
+  Blockly.WorkspaceSvg.prototype.dispose = function() {
+    console.log("dispose");
+    
+    if (this.findBar) {
+      this.findBar.dispose()
+    }
+    disposeWorkspaceDom.call(this)
+  }
+};

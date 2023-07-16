@@ -5,7 +5,7 @@ import MATCH_PATTERNS from "../src/content-script/matches";
 
 declare global {
   const defineAddon: typeof import("./addon-helpers")["defineAddon"];
-  const defineScript: typeof import("./addon-helpers")["defineScript"];
+  const addon: UserscriptAddon
 }
 
 export function defineAddon(manifest: AddonManifest) {
@@ -15,7 +15,7 @@ export function defineAddon(manifest: AddonManifest) {
 export function defineScript(
   script: (apis: {
     addon: UserscriptAddon;
-    msg: (msg: string, parameters: { [param: string]: string }) => string;
+    msg: (msg: string, parameters?: { [param: string]: string }) => string;
   }) => any | Promise<any>
 ) {
   return script;

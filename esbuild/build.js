@@ -4,6 +4,7 @@ import vue from "esbuild-plugin-vue3";
 import chromeExtension from "./plugins/chrome-extension.js";
 import globalVars from "./plugins/global-vars.js";
 import virtuals from "./plugins/virtuals.js";
+import postcss from "@chialab/esbuild-plugin-postcss";
 
 build();
 
@@ -19,7 +20,7 @@ async function build() {
     bundle: true,
     format: "esm",
     // minify: true,
-    plugins: [chromeExtension(), globalVars(), virtuals(), vue()],
+    plugins: [chromeExtension(), postcss(), globalVars(), virtuals(), vue()],
   });
   console.time("build");
   await ctx.rebuild();
