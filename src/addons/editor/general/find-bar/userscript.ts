@@ -33,12 +33,12 @@ export default async () => {
   };
 
   const disposeWorkspaceDom = Blockly.WorkspaceSvg.prototype.dispose;
-  Blockly.WorkspaceSvg.prototype.dispose = function() {
+  Blockly.WorkspaceSvg.prototype.dispose = function () {
     console.log("dispose");
-    
+
     if (this.findBar) {
-      this.findBar.dispose()
+      this.findBar.dispose();
     }
-    disposeWorkspaceDom.call(this)
-  }
+    disposeWorkspaceDom.call(this);
+  };
 };

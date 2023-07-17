@@ -1,4 +1,5 @@
 import * as addons from "#addons";
+
 import { localStorage, syncStorage } from "./storage";
 
 chrome.runtime.onInstalled.addListener(async (details) => {

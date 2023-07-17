@@ -2,11 +2,15 @@ import Tab from "./tab";
 
 export default class UserscriptAddon extends EventTarget {
   id: string;
-  messages: { [id: string]: string};
+  messages: { [id: string]: string };
   enabledLate: boolean;
   tab: Tab;
 
-  constructor(id: string, messages: { [id: string]: string}, enabledLate: boolean) {
+  constructor(
+    id: string,
+    messages: { [id: string]: string },
+    enabledLate: boolean
+  ) {
     super();
     this.id = id;
     this.tab = new Tab(id);
@@ -16,9 +20,6 @@ export default class UserscriptAddon extends EventTarget {
 
   msg(msg: string, parameters?: { [param: string]: string }) {
     let message = this.messages[msg];
-    return message.replace(
-      /\{(.*)\}/g,
-      (full, param) => parameters[param]
-    );
+    return message.replace(/\{(.*)\}/g, (full, param) => parameters[param]);
   }
 }

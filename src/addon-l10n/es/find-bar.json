@@ -1,0 +1,11 @@
+{
+  "find-placeholder": "Buscar (Ctrl+F)",
+  "complex-broadcast": "(expresión)",
+  "list-local": "lista {name}",
+  "list-global": "LISTA {name}",
+  "event": "evento {name}",
+
+  "@name": "Barra de búsqueda en editor",
+  "@description": "Agrega una barra de búsqueda al lado de la pestaña de sonidos para encontrar y saltar a scripts, disfraces y sonidos. Use Ctrl+Izquierda y Ctrl+Derecha en el área de código para navegar a la posición visitada anterior o siguiente luego de usar la barra de búsqueda.",
+  "@info-developer-tools": "Este addon era parte de \"herramientas de desarrollador\", pero se ha mudado aquí."
+}

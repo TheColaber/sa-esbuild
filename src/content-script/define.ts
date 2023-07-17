@@ -1,6 +1,6 @@
 import loadClasses from "./scratch-classes";
 import SharedObserver from "./shared-observer";
-import injectStyle from "./inject-style"
+import injectStyle from "./inject-style";
 import {
   getCache,
   getMainWorkspace,
@@ -26,7 +26,7 @@ globalThis.scratchAddons = {
   sharedObserver,
   classNames:
     isProject() && sharedObserver.watch({ query: "title" }).then(loadClasses),
-    getCache,
+  getCache,
   getMainWorkspace,
   getInternalKey,
   injectStyle,

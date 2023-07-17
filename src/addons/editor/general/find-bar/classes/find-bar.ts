@@ -9,9 +9,7 @@ export default class FindBar {
   dropdownOut: HTMLDivElement;
   findInput: HTMLInputElement;
   prevValue: string;
-  constructor(
-    workspace: ScratchBlocks.Workspace,
-  ) {
+  constructor(workspace: ScratchBlocks.Workspace) {
     this.workspace = workspace;
     this.dropdown = new Dropdown(workspace);
 

@@ -5,6 +5,7 @@ import chromeExtension from "./plugins/chrome-extension.js";
 import globalVars from "./plugins/global-vars.js";
 import virtuals from "./plugins/virtuals.js";
 import postcss from "@chialab/esbuild-plugin-postcss";
+import path from "path";
 
 build();
 
@@ -19,8 +20,10 @@ async function build() {
     chunkNames: "[dir]/[name]",
     bundle: true,
     format: "esm",
+    inject: [path.resolve("esbuild/addon-helpers.ts").replace(/\\/g, "/")],
     // minify: true,
     plugins: [chromeExtension(), postcss(), globalVars(), virtuals(), vue()],
+    treeShaking: true,
   });
   console.time("build");
   await ctx.rebuild();

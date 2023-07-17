@@ -13,7 +13,21 @@ export default () => ({
           const parts = addon.split("/");
           const id = parts.at(-2);
           exports.push(
-            `export { default as "${id}" } from "${path
+            `export { manifest as "${id}" } from "${path
+              .resolve(addon)
+              .replace(/\\/g, "/")}";`
+          );
+        }
+        // console.log(exports);
+        return exports.join("\n");
+      })(),
+      "#addon-scripts": (function () {
+        const exports = [];
+        for (const addon of addonManifests) {
+          const parts = addon.split("/");
+          const id = parts.at(-2);
+          exports.push(
+            `export { scripts as "${id}" } from "${path
               .resolve(addon)
               .replace(/\\/g, "/")}";`
           );

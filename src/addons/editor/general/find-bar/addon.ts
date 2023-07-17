@@ -1,6 +1,6 @@
 import script from "./userscript";
 
-export default defineAddon({
+export const manifest = defineAddon({
   name: "Find bar",
   description:
     "Creates a search bar next to the sounds tab to find and jump to scripts, costumes and sounds.",
@@ -11,13 +11,6 @@ export default defineAddon({
     },
     {
       name: "griffpatch",
-    },
-  ],
-  scripts: [
-    {
-      script,
-      matches: ["projects"],
-      runAtComplete: false,
     },
   ],
   hotkeys: [
@@ -37,3 +30,11 @@ export default defineAddon({
   tags: ["codeEditor", "costumeEditor", "recommended"],
   enabledByDefault: true,
 });
+
+export const scripts = defineScripts([
+  {
+    script,
+    matches: ["projects"],
+    runAtComplete: false,
+  },
+]);

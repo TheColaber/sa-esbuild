@@ -6,7 +6,8 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "paths": {
-      "#addons": ["./esbuild/virtuals/addons.d.ts"]
+      "#addons": ["./esbuild/virtuals/addons.d.ts"],
+      "#addon-scripts": ["./esbuild/virtuals/addon-scripts.d.ts"]
     }
   }
 }

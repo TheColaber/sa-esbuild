@@ -1,6 +1,6 @@
 import "./define";
 import "./redux";
-import * as addons from "#addons";
+import * as addons from "#addon-scripts";
 import MATCH_PATTERNS from "./matches";
 import UserscriptAddon from "../addon-api/userscript";
 import { SyncStorage } from "../background/storage";
@@ -55,17 +55,22 @@ globalThis.scratchAddons.events.addEventListener(
     function runAddon(id, enabledLate = false) {
       const addon = addons[id];
 
-      if (!addon || !addon.scripts) return;
-      for (const { matches, script } of addon.scripts) {
+      if (!addon) return;
+      for (const { script, matches } of addon) {
         let urlMatches = false;
         for (const match of matches) {
           urlMatches = MATCH_PATTERNS[match].test(window.location.pathname);
           if (urlMatches) break;
         }
-        if (!urlMatches || !script) continue;        
+        if (!urlMatches || !script) continue;
         scratchAddons.console.log("Scratch Addons:", id, "is running");
-        const addonInstance = new UserscriptAddon(id, messages[id], enabledLate);
+        const addonInstance = new UserscriptAddon(
+          id,
+          messages[id],
+          enabledLate
+        );
         scratchAddons.addons.push(addonInstance);
+        script();
       }
       // TODO: loop around addon.styles, which are styles that may be controlled by setting values.
     }

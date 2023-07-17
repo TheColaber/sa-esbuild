@@ -1,7 +1,7 @@
 import { load } from "cheerio";
 import esm from "esm";
 import { Module } from "module";
-import { readFile, mkdir, writeFile , cp} from "fs/promises";
+import { readFile, mkdir, writeFile, cp } from "fs/promises";
 import path from "path";
 import "esbuild-runner/register.js";
 
@@ -20,7 +20,7 @@ export default () => ({
       ...manifest.content_scripts.flatMap((cs) => cs.js),
     ];
     const entryPoints = [...manifestEntries].map((f) => dir + "/" + f);
-    const assets = [...Object.values(manifest.icons)]
+    const assets = [...Object.values(manifest.icons)];
     const html = [manifest.action.default_popup, manifest.options_page].map(
       (f) => dir + "/" + f
     );
@@ -39,6 +39,7 @@ export default () => ({
       }
 
       build.onEnd(async (buildRes) => {
+        if (!buildRes.metafile) return;
         for (const distFile in buildRes.metafile.outputs) {
           for (const script of scripts) {
             const scriptEntry = path.join(
@@ -65,24 +66,30 @@ export default () => ({
 
     build.onStart(async () => {
       if (manifest.default_locale) {
-        cp(build.initialOptions.outbase + "/_locales", build.initialOptions.outdir +
-        "/_locales", { force: true, recursive: true})
+        cp(
+          build.initialOptions.outbase + "/_locales",
+          build.initialOptions.outdir + "/_locales",
+          { force: true, recursive: true }
+        );
       }
 
       for (const asset of assets) {
-        const buffer = await readFile(build.initialOptions.outbase + "/" + asset);
+        const buffer = await readFile(
+          build.initialOptions.outbase + "/" + asset
+        );
         const outputFile =
-        build.initialOptions.outdir +
-        "/" +
-        asset.replace(build.initialOptions.outbase + "/", "");
+          build.initialOptions.outdir +
+          "/" +
+          asset.replace(build.initialOptions.outbase + "/", "");
         await mkdir(path.dirname(outputFile), {
           recursive: true,
         });
         await writeFile(outputFile, buffer);
       }
-    })
+    });
 
     build.onEnd(async (buildRes) => {
+      if (!buildRes.metafile) return;
       for (const distFile in buildRes.metafile.outputs) {
         for (const entry of manifestEntries) {
           if (

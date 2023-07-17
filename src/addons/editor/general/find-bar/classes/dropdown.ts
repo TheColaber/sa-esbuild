@@ -8,9 +8,7 @@ export default class Dropdown {
   items: DropdownItem[];
   carousel: Carousel;
   colors: any;
-  constructor(
-    workspace: ScratchBlocks.Workspace,
-  ) {
+  constructor(workspace: ScratchBlocks.Workspace) {
     this.workspace = workspace;
     this.items = [];
     this.carousel = new Carousel();

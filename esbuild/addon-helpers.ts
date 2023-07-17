@@ -5,20 +5,16 @@ import MATCH_PATTERNS from "../src/content-script/matches";
 
 declare global {
   const defineAddon: typeof import("./addon-helpers")["defineAddon"];
-  const addon: UserscriptAddon
+  const defineScripts: typeof import("./addon-helpers")["defineScripts"];
+  const addon: UserscriptAddon;
 }
 
 export function defineAddon(manifest: AddonManifest) {
   return manifest;
 }
 
-export function defineScript(
-  script: (apis: {
-    addon: UserscriptAddon;
-    msg: (msg: string, parameters?: { [param: string]: string }) => string;
-  }) => any | Promise<any>
-) {
-  return script;
+export function defineScripts(scripts: AddonScript[]) {
+  return scripts;
 }
 
 export interface AddonManifest {
@@ -26,11 +22,7 @@ export interface AddonManifest {
   description: string;
   versionAdded: string;
   credits?: { name: string }[];
-  scripts?: {
-    script?: ReturnType<typeof defineScript>;
-    matches: (keyof typeof MATCH_PATTERNS)[];
-    runAtComplete?: boolean;
-  }[];
+
   styles?: {
     style: string;
     matches: (keyof typeof MATCH_PATTERNS)[];
@@ -51,4 +43,10 @@ export interface AddonManifest {
   category?: ("editor" | "popup" | "code" | "general")[];
   mode?: "dev";
   enabledByDefault?: boolean;
+}
+
+export interface AddonScript {
+  script: () => any;
+  matches: (keyof typeof MATCH_PATTERNS)[];
+  runAtComplete?: boolean;
 }
