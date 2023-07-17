@@ -1,6 +1,7 @@
 import "./define";
 import "./redux";
 import * as addons from "#addon-scripts";
+import locales from "#addon-l10n";
 import MATCH_PATTERNS from "./matches";
 import UserscriptAddon from "../addon-api/userscript";
 import { SyncStorage } from "../background/storage";
@@ -13,12 +14,13 @@ globalThis.scratchAddons.events.addEventListener(
     const {
       addonsStates,
       addonEnabledStates,
-      messages,
+      userLangs,
     }: {
       addonsStates: SyncStorage["addonsStates"];
       addonEnabledStates: string[];
-      messages: { [addon: string]: { [message: string]: string } };
+      userLangs: string[];
     } = detail;
+
     console.log("Scratch Addons: Addon data received from storage");
 
     for (const id in addonsStates) {
@@ -31,7 +33,7 @@ globalThis.scratchAddons.events.addEventListener(
     scratchAddons.events.addEventListener(
       "dynamicDisable",
       ({ detail: { id } }: CustomEvent) => {
-        const addon = scratchAddons.addons.find((addon) => addon.id === id);
+        const addon = scratchAddons.addons[id];
         addon.dispatchEvent(new CustomEvent("dynamicDisable"));
         const style = document.createElement("style");
         style.setAttribute("data-addon-disabled-style-" + id, "");
@@ -42,7 +44,7 @@ globalThis.scratchAddons.events.addEventListener(
     scratchAddons.events.addEventListener(
       "dynamicEnable",
       ({ detail: { id } }: CustomEvent) => {
-        const addon = scratchAddons.addons.find((addon) => addon.id === id);
+        const addon = scratchAddons.addons[id];
         if (addon) {
           addon.dispatchEvent(new CustomEvent("dynamicEnable"));
           document.querySelector(`[data-addon-disabled-style-${id}]`).remove();
@@ -64,12 +66,21 @@ globalThis.scratchAddons.events.addEventListener(
         }
         if (!urlMatches || !script) continue;
         scratchAddons.console.log("Scratch Addons:", id, "is running");
+
+        const addonLocales = {};
+        for (const lang of userLangs) {
+          for (const key in locales[lang][id]) {
+            addonLocales[key] = addonLocales[key] || locales[lang][id][key];
+          }
+        }
+        console.log(addonLocales);
+
         const addonInstance = new UserscriptAddon(
           id,
-          messages[id],
+          addonLocales,
           enabledLate
         );
-        scratchAddons.addons.push(addonInstance);
+        scratchAddons.addons[id] = addonInstance;
         script();
       }
       // TODO: loop around addon.styles, which are styles that may be controlled by setting values.

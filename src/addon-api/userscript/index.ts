@@ -20,6 +20,12 @@ export default class UserscriptAddon extends EventTarget {
 
   msg(msg: string, parameters?: { [param: string]: string }) {
     let message = this.messages[msg];
+    if (!message) {
+      console.warn(
+        `Scratch Addons: Message "${msg}" on addon "${this.id}" does not exist.`
+      );
+      return msg;
+    }
     return message.replace(/\{(.*)\}/g, (full, param) => parameters[param]);
   }
 }

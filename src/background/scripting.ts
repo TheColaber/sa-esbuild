@@ -4,9 +4,9 @@ chrome.tabs.onUpdated.addListener(async (tabId, { status }, tab) => {
   if (!tab.url || status !== "loading") return;
 
   let { addonsStates } = await syncStorage.get("addonsStates");
-  const l10nUrls = await getL10NURLs(tab.url);
+  const userLangs = await getuserLangs(tab.url);
 
-  dispatch("addonData", { addonsStates, addonEnabledStates, l10nUrls });
+  dispatch("addonData", { addonsStates, addonEnabledStates, userLangs });
 
   syncStorage.valueStream.subscribe(({ addonsStates: newAddonsStates }) => {
     for (const id in addonsStates) {
@@ -34,7 +34,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, { status }, tab) => {
   }
 });
 
-async function getL10NURLs(url: string) {
+async function getUserLangs(url: string) {
   const cookie = await chrome.cookies.get({ url, name: "scratchlanguage" });
   const langCode = cookie ? cookie.value || "en" : "en";
 

@@ -24,11 +24,13 @@ export default () => ({
             // })).code
             const contents = (
               await build.esbuild.transform(
-                `const addon = globalThis.scratchAddons && globalThis.scratchAddons.addons["${id}"];\n` +
-                  code,
+                code.replaceAll(
+                  "addon",
+                  `globalThis.scratchAddons.addons["${id}"]`
+                ),
                 {
                   loader: "ts",
-                  pure: ["defineScripts"],
+                  pure: ["defineScripts", "defineAddon"],
                   define: {
                     console: "globalThis.scratchAddons.console",
                   },
