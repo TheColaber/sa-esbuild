@@ -2,7 +2,7 @@ import { getBucket } from "@extend-chrome/storage";
 
 export interface SyncStorage {
   addonsStates: {
-    [id: string]:
+    [addonId: string]:
       | "defaultEnabled"
       | "dev"
       | "defaultDisabled"
@@ -12,6 +12,14 @@ export interface SyncStorage {
   lightTheme: boolean;
 }
 export const syncStorage = getBucket<SyncStorage>("syncstorage", "sync");
+
+export interface AddonStorage {
+  [addonId: string]: {
+    [settingId: string]: boolean | string
+  }
+}
+export const addonStorage = getBucket<SyncStorage>("addonstorage", "sync");
+
 export const addonEnabledStates: SyncStorage["addonsStates"][string][] = [
   "defaultEnabled",
   "dev",

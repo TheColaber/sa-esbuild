@@ -46,7 +46,7 @@ export interface AddonManifest {
 }
 
 export interface AddonScript {
-  script: () => any;
+  script: () => Promise<{ default: () => any }>;
   matches: (keyof typeof MATCH_PATTERNS)[];
   runAtComplete?: boolean;
 }

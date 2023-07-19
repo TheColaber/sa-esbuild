@@ -1,8 +1,22 @@
 <template>
-  <div class="p-6">test</div>
+  <div :class="$style.container">
+    <!-- <Header></Header>
+    <Suspense>
+      <Popups></Popups>
+    </Suspense> -->
+  </div>
 </template>
 
-<script lang="ts" setup>
-let test: string = "a";
-console.log(test);
+<script setup lang="ts">
+// import Header from "./header.vue";
+// import Popups from "./popups.vue";
 </script>
+
+<style module>
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  height: 600px;
+}
+</style>

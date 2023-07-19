@@ -81,7 +81,7 @@ globalThis.scratchAddons.events.addEventListener(
           enabledLate
         );
         scratchAddons.addons[id] = addonInstance;
-        script();
+        script().then((imported) => imported.default());
       }
       // TODO: loop around addon.styles, which are styles that may be controlled by setting values.
     }

@@ -27,12 +27,11 @@ export default () => ({
           const parts = addon.split("/");
           const id = parts.at(-2);
           exports.push(
-            `export { manifest as "${id}" } from "${path
+            `export { default as "${id}" } from "${path
               .resolve(addon)
               .replace(/\\/g, "/")}";`
           );
         }
-        // console.log(exports);
         return exports.join("\n");
       })(),
       "#addon-scripts": (() => {
@@ -46,7 +45,6 @@ export default () => ({
               .replace(/\\/g, "/")}";`
           );
         }
-        // console.log(exports);
         return exports.join("\n");
       })(),
       "#addon-l10n": `export default ${JSON.stringify(addonLocales)}`,

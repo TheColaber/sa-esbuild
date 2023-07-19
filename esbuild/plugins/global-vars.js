@@ -17,15 +17,10 @@ export default () => ({
         for (const file of addons[id]) {
           if (args.path === path.resolve(file)) {
             const code = await readFile(args.path, "utf-8");
-            // const contents = (await build.esbuild.transform(`
-            // const addon = globalThis.scratchAddons && globalThis.scratchAddons.addons["${id}"];\n` + code, {
-            //   loader: "ts",
-            //   pure: ["defineScripts", "addon"]
-            // })).code
             const contents = (
               await build.esbuild.transform(
-                code.replaceAll(
-                  "addon",
+                code.replace(
+                  /\b(addon)\b/g,
                   `globalThis.scratchAddons.addons["${id}"]`
                 ),
                 {

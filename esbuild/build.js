@@ -1,10 +1,10 @@
 import esbuild from "esbuild";
 import chokidar from "chokidar";
-import vue from "esbuild-plugin-vue3";
 import chromeExtension from "./plugins/chrome-extension.js";
 import globalVars from "./plugins/global-vars.js";
 import virtuals from "./plugins/virtuals.js";
-import postcss from "@chialab/esbuild-plugin-postcss";
+import vue from "./plugins/vue.js";
+import postcss from "./plugins/postcss.js";
 import path from "path";
 
 build();
@@ -22,7 +22,7 @@ async function build() {
     format: "esm",
     inject: [path.resolve("esbuild/addon-helpers.ts").replace(/\\/g, "/")],
     // minify: true,
-    plugins: [chromeExtension(), postcss(), globalVars(), virtuals(), vue()],
+    plugins: [chromeExtension(), globalVars(), virtuals(), vue({ cssInline: true }), postcss()],
     treeShaking: true,
   });
   console.time("build");

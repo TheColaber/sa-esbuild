@@ -1,6 +1,4 @@
-import script from "./userscript";
-
-export const manifest = defineAddon({
+export default defineAddon({
   name: "Find bar",
   description:
     "Creates a search bar next to the sounds tab to find and jump to scripts, costumes and sounds.",
@@ -33,7 +31,7 @@ export const manifest = defineAddon({
 
 export const scripts = defineScripts([
   {
-    script,
+    script: () => import("./userscript.js"),
     matches: ["projects"],
     runAtComplete: false,
   },
