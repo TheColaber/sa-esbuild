@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
-import SAIcon from "../../images/icon.svg"
+import SAIcon from "../../images/icon.svg";
 import settingsIcon from "@iconify-icons/tabler/settings";
 
 const msg = chrome.i18n.getMessage;
@@ -35,7 +35,8 @@ const version = chrome.runtime
 .header {
   font-family: "Sora", sans-serif;
   --theme: #ff7b26;
-  --gradient: linear-gradient(to right, var(--theme), hsl(24deg 100% 67%));  background-image: var(--gradient);
+  --gradient: linear-gradient(to right, var(--theme), hsl(24deg 100% 67%));
+  background-image: var(--gradient);
   display: flex;
   align-items: center;
   color: #fff;

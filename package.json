@@ -24,9 +24,11 @@
     "esbuild-runner": "^2.2.2",
     "esm": "^3.2.25",
     "globby": "^13.2.2",
+    "local-storage": "^2.0.0",
     "postcss": "^8.4.26",
     "postcss-modules": "^6.0.0",
     "postcss-sass": "^0.5.0",
+    "typed-local-store": "^2.0.2",
     "vue": "^3.3.4"
   }
 }

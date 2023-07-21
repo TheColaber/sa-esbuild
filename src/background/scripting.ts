@@ -1,4 +1,4 @@
-import { syncStorage, addonEnabledStates } from "./storage";
+import { syncStorage, addonEnabledStates } from "../storage/extension";
 
 chrome.tabs.onUpdated.addListener(async (tabId, { status }, tab) => {
   if (!tab.url || status !== "loading") return;

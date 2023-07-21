@@ -4,7 +4,7 @@ import * as addons from "#addon-scripts";
 import locales from "#addon-l10n";
 import MATCH_PATTERNS from "./matches";
 import UserscriptAddon from "../addon-api/userscript";
-import { SyncStorage } from "../background/storage";
+import { SyncStorage } from "../storage/extension";
 
 globalThis.scratchAddons.events.addEventListener(
   "addonData",

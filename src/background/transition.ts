@@ -1,5 +1,5 @@
 import * as addons from "#addons";
-import { localStorage, syncStorage } from "./storage";
+import { localStorage, syncStorage } from "../storage/extension";
 
 chrome.runtime.onInstalled.addListener(async (details) => {
   const { version } = chrome.runtime.getManifest();
