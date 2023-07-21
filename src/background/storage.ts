@@ -15,8 +15,8 @@ export const syncStorage = getBucket<SyncStorage>("syncstorage", "sync");
 
 export interface AddonStorage {
   [addonId: string]: {
-    [settingId: string]: boolean | string
-  }
+    [settingId: string]: boolean | string;
+  };
 }
 export const addonStorage = getBucket<SyncStorage>("addonstorage", "sync");
 

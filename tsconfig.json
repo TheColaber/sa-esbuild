@@ -9,7 +9,7 @@
     "paths": {
       "#addons": ["./esbuild/virtuals/addons.d.ts"],
       "#addon-scripts": ["./esbuild/virtuals/addon-scripts.d.ts"],
-      "#addon-l10n": ["./esbuild/virtuals/addon-l10n.d.ts"],
+      "#addon-l10n": ["./esbuild/virtuals/addon-l10n.d.ts"]
     }
   }
 }

@@ -39,6 +39,15 @@ export default () => ({
       }
 
       build.onEnd(async (buildRes) => {
+        const buffer = await readFile(file);
+        const outputFile =
+          build.initialOptions.outdir +
+          "/" +
+          file.replace(build.initialOptions.outbase + "/", "");
+
+        const root = load(buffer).root();
+        const scripts = root.find("script");
+
         if (!buildRes.metafile) return;
         for (const distFile in buildRes.metafile.outputs) {
           for (const script of scripts) {

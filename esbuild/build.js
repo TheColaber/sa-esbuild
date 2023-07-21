@@ -22,7 +22,13 @@ async function build() {
     format: "esm",
     inject: [path.resolve("esbuild/addon-helpers.ts").replace(/\\/g, "/")],
     // minify: true,
-    plugins: [chromeExtension(), globalVars(), virtuals(), vue({ cssInline: true }), postcss()],
+    plugins: [
+      chromeExtension(),
+      globalVars(),
+      virtuals(),
+      vue({ cssInline: true }),
+      postcss(),
+    ],
     treeShaking: true,
   });
   console.time("build");
