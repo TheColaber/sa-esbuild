@@ -9,15 +9,16 @@ import {
 } from "./blockly";
 import UserscriptAddon from "../addon-api/userscript";
 
-console.log("Scratch Addons: Running on page");
-
 const sharedObserver = new SharedObserver();
-const realConsole = { ...console };
 globalThis.scratchAddons = {
   addonsLoaded: false,
-  console: realConsole,
+  realConsole: { ...realConsole },
+  console: {
+    ...realConsole,
+    log: { ...realConsole }.log.bind(realConsole, "%csa", "color: #ff7b26;"),
+  },
   events: new EventTarget(),
-  addons: [],
+  addons: {},
   cache: {
     BlocklyInstance: null,
     vm: null,
@@ -31,11 +32,13 @@ globalThis.scratchAddons = {
   getInternalKey,
   injectStyle,
 };
+console.log("Running on page");
 
 declare global {
   var scratchAddons: {
     addonsLoaded: boolean;
     console: Console;
+    realConsole: Console;
     events: EventTarget;
     redux: { target: EventTarget; state: any; dispatch: any };
     sharedObserver: import("./shared-observer").default;

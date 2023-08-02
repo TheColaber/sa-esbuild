@@ -1,8 +1,6 @@
 import FindBar from "./classes/find-bar";
 
 export default async () => {
-  console.log("cry :(");
-
   const Blockly = await addon.tab.getBlockly();
   await addon.tab.scratchClassesReady();
 

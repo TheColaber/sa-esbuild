@@ -1,5 +1,3 @@
-import { ScratchBlocks } from "../../esbuild/types/blockly";
-
 function getDataFromEl(elem: Element): {
   ScratchBlocks: ScratchBlocks.RealBlockly;
   workspace: ScratchBlocks.Workspace;
@@ -33,7 +31,7 @@ export async function getCache() {
   if (!scratchAddons.cache.BlocklyInstance) {
     throw new Error(
       `Blockly was type ${typeof scratchAddons.cache
-        .BlocklyInstance} on page (${location.pathname})`
+        .BlocklyInstance} on page (${location.pathname})`,
     );
   }
   return scratchAddons.cache;
@@ -44,7 +42,9 @@ export function getMainWorkspace() {
   const data = getDataFromEl(elem);
   if (!data.workspace) {
     throw new Error(
-      `Blockly was type ${typeof data.workspace} on page (${location.pathname})`
+      `Blockly was type ${typeof data.workspace} on page (${
+        location.pathname
+      })`,
     );
   }
   return data.workspace;
@@ -54,7 +54,7 @@ let reactInternalKey: keyof Element | null = null;
 export function getInternalKey(elem) {
   if (!reactInternalKey) {
     const key = Object.keys(elem).find((key) =>
-      key.startsWith("__reactInternalInstance$")
+      key.startsWith("__reactInternalInstance$"),
     );
     if (!key) throw "Element is not a react element.";
     reactInternalKey = key as keyof Element;

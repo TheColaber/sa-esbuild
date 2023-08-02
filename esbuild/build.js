@@ -30,6 +30,10 @@ async function build() {
       postcss(),
     ],
     treeShaking: true,
+    define: {
+      realConsole: "console",
+      console: "globalThis.scratchAddons.console",
+    },
   });
   console.time("build");
   await ctx.rebuild();

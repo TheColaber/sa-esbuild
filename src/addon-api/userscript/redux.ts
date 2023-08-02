@@ -59,7 +59,7 @@ export default class ReduxHandler extends EventTarget {
    */
   waitForState(
     condition: (state: any) => boolean,
-    { actions }: { actions?: string | string[] } = {}
+    { actions }: { actions?: string | string[] } = {},
   ) {
     return new Promise((resolve, reject) => {
       this.initialize();

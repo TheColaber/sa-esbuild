@@ -6,6 +6,8 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "esModuleInterop": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
     "paths": {
       "#addons": ["./esbuild/virtuals/addons.d.ts"],
       "#addon-scripts": ["./esbuild/virtuals/addon-scripts.d.ts"],

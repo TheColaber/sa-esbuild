@@ -5,7 +5,7 @@ import { globby } from "globby";
 const addonScriptFiles = await globby("src/addons/**/addon.ts");
 const addons = await addonScriptFiles.reduce(async (addons, file) => {
   addons[file.split("/").at(-2)] = await globby(
-    path.dirname(file) + "/**/**.ts"
+    path.dirname(file) + "/**/**.ts",
   );
   return addons;
 }, {});
@@ -18,20 +18,17 @@ export default () => ({
           if (args.path === path.resolve(file)) {
             const code = await readFile(args.path, "utf-8");
             const contents = (
-              await build.esbuild.transform(
-                code.replace(
-                  /\b(addon)\b/g,
-                  `globalThis.scratchAddons.addons["${id}"]`
-                ),
-                {
-                  loader: "ts",
-                  pure: ["defineScripts", "defineAddon"],
-                  define: {
-                    console: "globalThis.scratchAddons.console",
-                  },
-                }
-              )
-            ).code;
+              await build.esbuild.transform(code, {
+                loader: "ts",
+                pure: ["defineScripts", "defineAddon"],
+                define: {
+                  console: `addon.console`,
+                },
+              })
+            ).code.replace(
+              /\b(addon)\b/g,
+              `globalThis.scratchAddons.addons["${id}"]`,
+            );
             return { contents };
           }
         }

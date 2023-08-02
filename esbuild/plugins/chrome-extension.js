@@ -22,7 +22,7 @@ export default () => ({
     const entryPoints = [...manifestEntries].map((f) => dir + "/" + f);
     const assets = [...Object.values(manifest.icons)];
     const html = [manifest.action.default_popup, manifest.options_page].map(
-      (f) => dir + "/" + f
+      (f) => dir + "/" + f,
     );
 
     for (const file of html) {
@@ -53,7 +53,7 @@ export default () => ({
           for (const script of scripts) {
             const scriptEntry = path.join(
               path.dirname(file),
-              script.attribs.src
+              script.attribs.src,
             );
             if (
               buildRes.metafile.outputs[distFile].entryPoint ===
@@ -61,7 +61,7 @@ export default () => ({
             ) {
               script.attribs.src = path.relative(
                 path.dirname(outputFile),
-                distFile
+                distFile,
               );
             }
           }
@@ -78,13 +78,13 @@ export default () => ({
         cp(
           build.initialOptions.outbase + "/_locales",
           build.initialOptions.outdir + "/_locales",
-          { force: true, recursive: true }
+          { force: true, recursive: true },
         );
       }
 
       for (const asset of assets) {
         const buffer = await readFile(
-          build.initialOptions.outbase + "/" + asset
+          build.initialOptions.outbase + "/" + asset,
         );
         const outputFile =
           build.initialOptions.outdir +
@@ -109,14 +109,14 @@ export default () => ({
               entry,
               path
                 .relative(build.initialOptions.outdir, distFile)
-                .replaceAll("\\", "/")
+                .replaceAll("\\", "/"),
             );
           }
         }
       }
       await writeFile(
         build.initialOptions.outdir + "/manifest.json",
-        manifestJSON
+        manifestJSON,
       );
     });
 

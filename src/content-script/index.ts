@@ -21,7 +21,7 @@ globalThis.scratchAddons.events.addEventListener(
       userLangs: string[];
     } = detail;
 
-    console.log("Scratch Addons: Addon data received from storage");
+    console.log("Addon data received from storage");
 
     for (const id in addonsStates) {
       if (addonEnabledStates.includes(addonsStates[id])) {
@@ -39,7 +39,7 @@ globalThis.scratchAddons.events.addEventListener(
         style.setAttribute("data-addon-disabled-style-" + id, "");
         style.textContent = `[data-addon-${id}] { display: none !important; }`;
         document.body.appendChild(style);
-      }
+      },
     );
     scratchAddons.events.addEventListener(
       "dynamicEnable",
@@ -51,7 +51,7 @@ globalThis.scratchAddons.events.addEventListener(
         } else {
           runAddon(id, true);
         }
-      }
+      },
     );
 
     function runAddon(id, enabledLate = false) {
@@ -65,7 +65,7 @@ globalThis.scratchAddons.events.addEventListener(
           if (urlMatches) break;
         }
         if (!urlMatches || !script) continue;
-        scratchAddons.console.log("Scratch Addons:", id, "is running");
+        console.log(id, "is running");
 
         const addonLocales = {};
         for (const lang of userLangs) {
@@ -78,12 +78,12 @@ globalThis.scratchAddons.events.addEventListener(
         const addonInstance = new UserscriptAddon(
           id,
           addonLocales,
-          enabledLate
+          enabledLate,
         );
         scratchAddons.addons[id] = addonInstance;
         script().then((imported) => imported.default());
       }
       // TODO: loop around addon.styles, which are styles that may be controlled by setting values.
     }
-  }
+  },
 );

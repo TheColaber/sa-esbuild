@@ -34,7 +34,7 @@ export default class Tab {
       reduxCondition?: (state: any) => boolean;
       elementCondition?: (element: Element) => boolean;
       reduxEvents?: string[];
-    }
+    },
   ) {
     if (!condition || condition()) {
       const firstQuery = document.querySelectorAll(selector);
@@ -117,7 +117,7 @@ export default class Tab {
       const scratchClass = this._classes.find(
         (className) =>
           className.startsWith(classNameToFind + "_") &&
-          className.length === classNameToFind.length + 6
+          className.length === classNameToFind.length + 6,
       );
       if (!scratchClass) {
         console.error("Could not find scratch class", classNameToFind);

@@ -184,7 +184,7 @@ export default (opts = {}) => ({
 
         if (initialOptions.sourcemap && script.map) {
           const sourceMap = Buffer.from(JSON.stringify(script.map)).toString(
-            "base64"
+            "base64",
           );
 
           code +=
@@ -239,7 +239,7 @@ export default (opts = {}) => ({
                       o.loc.start.line + descriptor.template.loc.start.line + 1,
                     lineText: o.loc.source,
                   },
-                }
+                },
           ),
         };
       }
@@ -273,7 +273,7 @@ export default (opts = {}) => ({
                 const modulePath = path.join(
                   process.cwd(),
                   "node_modules",
-                  url
+                  url,
                 );
 
                 if (fs.existsSync(modulePath)) {
@@ -285,7 +285,7 @@ export default (opts = {}) => ({
               (url) => ({ file: replaceRules(url) }),
             ],
           },
-          opts.preprocessorOptions
+          opts.preprocessorOptions,
         ),
         scoped: style.scoped,
         modules: style.module,

@@ -4,7 +4,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, { status }, tab) => {
   if (!tab.url || status !== "loading") return;
 
   let { addonsStates } = await syncStorage.get("addonsStates");
-  const userLangs = await getuserLangs(tab.url);
+  const userLangs = await getUserLangs(tab.url);
 
   dispatch("addonData", { addonsStates, addonEnabledStates, userLangs });
 

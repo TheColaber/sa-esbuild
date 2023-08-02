@@ -1,33 +1,20 @@
 import Dropdown from "./dropdown";
 import styles from "../styles.module.css";
-import { ScratchBlocks } from "../../../../../../esbuild/types/blockly";
 
 export default class FindBar {
-  workspace: ScratchBlocks.Workspace;
-  dropdown: Dropdown;
-  wrapper: HTMLDivElement;
-  dropdownOut: HTMLDivElement;
-  findInput: HTMLInputElement;
-  prevValue: string;
+  readonly workspace: ScratchBlocks.Workspace;
+  readonly dropdown: Dropdown;
+  readonly wrapper: HTMLDivElement;
+  readonly dropdownOut: HTMLDivElement;
+  readonly findInput: HTMLInputElement;
+  private prevValue: string;
   constructor(workspace: ScratchBlocks.Workspace) {
     this.workspace = workspace;
     this.dropdown = new Dropdown(workspace);
 
     this.prevValue = "";
 
-    this.mount();
-
-    const workspaceDispose = workspace.dispose;
-    workspace.dispose = () => {
-      this.dispose();
-      workspaceDispose.call(workspace);
-    };
-  }
-
-  mount() {
     const guiTabList = document.querySelector("ul[class*=gui_tab-list_]");
-
-    // addon.tab.injectStyle(stylesheet);
 
     this.wrapper = guiTabList.appendChild(document.createElement("div"));
 
@@ -38,7 +25,7 @@ export default class FindBar {
     this.dropdownOut.className = styles["dropdown-out"];
 
     this.findInput = this.dropdownOut.appendChild(
-      document.createElement("input")
+      document.createElement("input"),
     );
     this.findInput.className = addon.tab.scratchClass("input_input-form", {
       others: styles.input,

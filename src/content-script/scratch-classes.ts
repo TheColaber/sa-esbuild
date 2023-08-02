@@ -20,14 +20,14 @@ export default function loadClasses() {
       .map((styleRule) => styleRule.selectorText)
       .flatMap(
         (selectorTest) =>
-          selectorTest.match(/(([\w-]+?)_([\w-]+)_([\w\d-]+))/g) || []
+          selectorTest.match(/(([\w-]+?)_([\w-]+)_([\w\d-]+))/g) || [],
       );
 
   const uniqueClasses = new Set(
     Array.from(document.styleSheets)
       .filter(isStyleSheetValid)
       .flatMap(extractSelectors)
-      .filter(Boolean)
+      .filter(Boolean),
   );
 
   return Array.from(uniqueClasses);

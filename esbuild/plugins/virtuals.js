@@ -10,7 +10,7 @@ const addonLocales = await (
   const dir = await readdir("src/addon-l10n/" + lang);
   for (const id of dir) {
     locales[lang][id.split(".")[0]] = JSON.parse(
-      await readFile("src/addon-l10n/" + lang + "/" + id, "utf-8")
+      await readFile("src/addon-l10n/" + lang + "/" + id, "utf-8"),
     );
   }
   return locales;
@@ -29,7 +29,7 @@ export default () => ({
           exports.push(
             `export { default as "${id}" } from "${path
               .resolve(addon)
-              .replace(/\\/g, "/")}";`
+              .replace(/\\/g, "/")}";`,
           );
         }
         return exports.join("\n");
@@ -42,7 +42,7 @@ export default () => ({
           exports.push(
             `export { scripts as "${id}" } from "${path
               .resolve(addon)
-              .replace(/\\/g, "/")}";`
+              .replace(/\\/g, "/")}";`,
           );
         }
         return exports.join("\n");
@@ -52,7 +52,7 @@ export default () => ({
     const filter = new RegExp(
       Object.keys(options)
         .map((name) => `^${name}$`)
-        .join("|")
+        .join("|"),
     );
     build.onResolve({ filter }, (args) => ({ path: args.path, namespace }));
     build.onLoad({ filter: /.*/, namespace }, (args) => ({

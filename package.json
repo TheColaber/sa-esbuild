@@ -7,7 +7,8 @@
   "homepage": "https://scratchaddons.com",
   "type": "module",
   "scripts": {
-    "build": "node esbuild/build"
+    "build": "node esbuild/build",
+    "format": "prettier . -w"
   },
   "devDependencies": {
     "@extend-chrome/storage": "^1.5.0",
@@ -24,6 +25,7 @@
     "globby": "^13.2.2",
     "postcss": "^8.4.26",
     "postcss-modules": "^6.0.0",
+    "prettier": "^3.0.0",
     "sass": "^1.64.0",
     "typed-local-store": "^2.0.2",
     "vue": "^3.3.4"

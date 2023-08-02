@@ -7,6 +7,7 @@ declare global {
   const defineAddon: typeof import("./addon-helpers")["defineAddon"];
   const defineScripts: typeof import("./addon-helpers")["defineScripts"];
   const addon: UserscriptAddon;
+  const realConsole: Console;
 }
 
 export function defineAddon(manifest: AddonManifest) {

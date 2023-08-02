@@ -58,7 +58,7 @@ export default class SharedObserver {
       this.pending.add({
         resolve,
         ...opts,
-      })
+      }),
     );
   }
 }

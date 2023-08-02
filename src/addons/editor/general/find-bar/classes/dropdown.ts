@@ -70,7 +70,7 @@ export default class Dropdown {
       category: string,
       name: string,
       id: string,
-      y: number
+      y: number,
     ) => {
       if (myBlocks[name]) {
         myBlocks[name].clones.push(id);
@@ -104,7 +104,7 @@ export default class Dropdown {
           if (category === "costume" || category === "sound") {
             // Viewing costumes/sounds - jump to selected costume/sound
             const assetPanel = document.querySelector(
-              "[class^=asset-panel_wrapper]"
+              "[class^=asset-panel_wrapper]",
             );
             if (assetPanel) {
               const reactInstance: any =
@@ -255,7 +255,7 @@ export default class Dropdown {
           continue;
         }
         const indexOfLabel = block.inputList.findIndex(
-          (i) => i.fieldRow.length > 0
+          (i) => i.fieldRow.length > 0,
         );
         if (indexOfLabel === -1) {
           continue;
@@ -284,7 +284,7 @@ export default class Dropdown {
           "receive",
           addon.msg("event", { name: eventName }),
           id,
-          y
+          y,
         ).eventName = eventName;
 
         continue;
@@ -311,7 +311,7 @@ export default class Dropdown {
           ? addon.msg("var-local", { name: row.name })
           : addon.msg("var-global", { name: row.name }),
         row.getId(),
-        null
+        null,
       );
     }
 
@@ -323,7 +323,7 @@ export default class Dropdown {
           ? addon.msg("list-local", { name: row.name })
           : addon.msg("list-global", { name: row.name }),
         row.getId(),
-        null
+        null,
       );
     }
 
@@ -334,7 +334,7 @@ export default class Dropdown {
         "receive",
         addon.msg("event", { name: event }),
         block.id,
-        block.getRelativeToSurfaceXY().y
+        block.getRelativeToSurfaceXY().y,
       ).eventName = event;
     }
 
