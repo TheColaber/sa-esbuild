@@ -11,8 +11,14 @@ declare global {
       getChildren(): Block[];
       getProcCode(): string;
       getRelativeToSurfaceXY(): { x: number; y: number };
-      getDescendants(ordered?: boolean, opt_ignoreShadows?: boolean): Block[];
+      getDescendants(
+        ordered?: boolean,
+        opt_ignoreShadows?: boolean,
+      ): BlockSvg[];
       getVarModels(): VariableModel[];
+      getRootBlock(): Block;
+      getOutputShape(): number;
+      getSurroundParent(): BlockSvg;
     }
 
     class Input {
@@ -24,7 +30,10 @@ declare global {
       getText(): string;
     }
 
-    class BlockSvg extends Block {}
+    class BlockSvg extends Block {
+      width: number;
+      height: number;
+    }
 
     interface EventsAbstract {}
 
@@ -137,7 +146,7 @@ declare global {
       dispose(): void;
       addTopBlock(block: Block): void;
       removeTopBlock(block: Block): void;
-      getTopBlocks(): Block[];
+      getTopBlocks(): BlockSvg[];
       addTopComment(comment: WorkspaceComment): void;
       removeTopComment(comment: WorkspaceComment): void;
       getTopComments(): WorkspaceComment[];
@@ -202,7 +211,7 @@ declare global {
       addChangeListener(listener: Function): void;
       removeChangeListener(listener: Function): void;
       fireChangeListener(event: EventsAbstract): void;
-      getBlockById(id: string): Block | null;
+      getBlockById(id: string): BlockSvg | null;
       getCommentById(id: string): WorkspaceComment | null;
       getFlyout(): Flyout | null;
       allInputsFilled(shadowBlocksAreFilled?: boolean): boolean;
@@ -225,6 +234,24 @@ declare global {
     class WorkspaceSvg extends Workspace {
       svgGroup_?: SVGElement;
       createDom(opt_backgroundClass: string): SVGElement;
+      scale: number;
+      getMetrics(): {
+        contentHeight: number;
+        contentWidth: number;
+        contentTop: number;
+        contentLeft: number;
+        viewHeight: number;
+        viewWidth: number;
+        viewTop: number;
+        viewLeft: number;
+        absoluteTop: number;
+        absoluteLeft: number;
+        toolboxWidth: number;
+        toolboxHeight: number;
+        flyoutWidth: number;
+        flyoutHeight: number;
+        toolboxPosition: number;
+      };
     }
 
     interface RealBlockly {

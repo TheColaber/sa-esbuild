@@ -1,14 +1,14 @@
 import { DropdownItem } from "./dropdown-item";
 import styles from "../styles.module.css";
 import Carousel from "./carousel";
-import { ScratchBlocks } from "../../../../../../esbuild/types/blockly";
+
 export default class Dropdown {
-  workspace: ScratchBlocks.Workspace;
+  workspace: ScratchBlocks.WorkspaceSvg;
   el: HTMLUListElement;
   items: DropdownItem[];
   carousel: Carousel;
   colors: any;
-  constructor(workspace: ScratchBlocks.Workspace) {
+  constructor(workspace: ScratchBlocks.WorkspaceSvg) {
     this.workspace = workspace;
     this.items = [];
     this.carousel = new Carousel();
@@ -94,12 +94,18 @@ export default class Dropdown {
         } else {
           color = this.colors[colorIds[category]].primary;
         }
-        myBlocks[name] = new DropdownItem(category, name, id, y, color);
+        myBlocks[name] = new DropdownItem(
+          this.workspace,
+          category,
+          name,
+          id,
+          y,
+          color,
+        );
         myBlocks[name].el.addEventListener("mousedown", (e) => {
           for (const name in myBlocks) {
             myBlocks[name].unselect();
           }
-          this.carousel.remove();
           myBlocks[name].select();
           if (category === "costume" || category === "sound") {
             // Viewing costumes/sounds - jump to selected costume/sound
@@ -128,42 +134,36 @@ export default class Dropdown {
             category === "list" ||
             category === "LIST"
           ) {
-            // Search now for all instances
-            let uses: ScratchBlocks.Block[] = [];
+            const uses = this.workspace
+              .getTopBlocks()
+              .flatMap((topBlock) =>
+                topBlock
+                  .getDescendants()
+                  .filter((block) =>
+                    block
+                      .getVarModels()
+                      .some((blockVar) => blockVar.getId() === id),
+                  ),
+              );
 
-            let topBlocks = this.workspace.getTopBlocks();
-            for (const topBlock of topBlocks) {
-              let kids = topBlock.getDescendants();
-              for (const block of kids) {
-                let blockVariables = block.getVarModels();
-                if (blockVariables) {
-                  for (const blockVar of blockVariables) {
-                    if (blockVar.getId() === id) {
-                      uses.push(block);
-                    }
-                  }
-                }
-              }
-            }
             this.carousel.build(myBlocks[name], uses);
           } else if (category === "define") {
             let procBlock = this.workspace.getBlockById(id);
-            let label = procBlock.getChildren()[0];
-            let procCode = label.getProcCode();
+            let procCode = procBlock.getChildren()[0].getProcCode();
 
-            let uses: ScratchBlocks.Block[] = [procBlock]; // Definition First, then calls to it
-            let topBlocks = this.workspace.getTopBlocks();
-            for (const topBlock of topBlocks) {
-              /** @type {!Array<!Blockly.Block>} */
-              let kids = topBlock.getDescendants();
-              for (const block of kids) {
-                if (block.type === "procedures_call") {
-                  if (block.getProcCode() === procCode) {
-                    uses.push(block);
-                  }
-                }
-              }
-            }
+            const uses = this.workspace
+              .getTopBlocks()
+              .flatMap((topBlock) =>
+                topBlock
+                  .getDescendants()
+                  .filter(
+                    (block) =>
+                      block.type === "procedures_call" &&
+                      block.getProcCode() === procCode,
+                  ),
+              );
+            uses.unshift(procBlock);
+
             this.carousel.build(myBlocks[name], uses);
           } else if (category === "receive") {
             // /*
@@ -219,14 +219,14 @@ export default class Dropdown {
             //   }
             // }
             // this.carousel.build(myBlocks[name], blocks, instanceBlock);
-          } else if (myBlocks[name].clones) {
+          } else if (myBlocks[name].clones.length > 0) {
             let blocks = [this.workspace.getBlockById(myBlocks[name].id)];
             for (const cloneID of myBlocks[name].clones) {
               blocks.push(this.workspace.getBlockById(cloneID));
             }
             this.carousel.build(myBlocks[name], blocks);
           } else {
-            // this.utils.scrollBlockIntoView(myBlocks[name].id);
+            myBlocks[name].scrollBlockIntoView();
             this.carousel.remove();
           }
           e.preventDefault();

@@ -1,6 +1,6 @@
 function getDataFromEl(elem: Element): {
   ScratchBlocks: ScratchBlocks.RealBlockly;
-  workspace: ScratchBlocks.Workspace;
+  workspace: ScratchBlocks.WorkspaceSvg;
   props: { vm: any };
 } {
   if (!isProject()) {

@@ -1,3 +1,8 @@
+/* GUI Tab List - Take up full space so we can put the find bar on the right. */
+[class*="gui_tab-list"] {
+  width: 100%;
+}
+
 /* Wrapper */
 .wrapper {
   height: 2rem;
@@ -9,11 +14,12 @@
 
 /* Dropdown Out */
 .dropdown-out {
-  max-width: 16em;
+  width: 16em;
   display: flex;
   flex-direction: column;
   padding: 4px;
   border-radius: 4px;
+  float: right;
 }
 .dropdown-out.visible {
   box-shadow: 0px 0px 8px 1px rgba(0, 0, 0, 0.3);
@@ -51,16 +57,18 @@
 
 /* Dropdown Items */
 .item {
-  display: block;
+  display: flex;
   padding: 0.5em 0.3em;
   white-space: nowrap;
   margin: 0;
   font-weight: bold;
-  text-overflow: ellipsis;
-  overflow: hidden;
   cursor: pointer;
   /* variable set in dropdown-item.ts */
   color: var(--color-primary);
+}
+
+.item-text {
+  overflow: hidden;
 }
 
 .item::before {
@@ -72,4 +80,23 @@
   /* variables set in dropdown-item.ts */
   color: var(--text-color);
   background-color: var(--color-primary);
+}
+
+/* Carousel */
+.carousel {
+  font-weight: normal;
+  white-space: nowrap;
+  background-color: inherit;
+  padding: 0;
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.carousel-control {
+  padding: 0 6px;
+}
+
+.carousel-control:hover {
+  color: #ffff80;
 }

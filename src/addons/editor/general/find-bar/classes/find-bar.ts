@@ -2,13 +2,13 @@ import Dropdown from "./dropdown";
 import styles from "../styles.module.css";
 
 export default class FindBar {
-  readonly workspace: ScratchBlocks.Workspace;
+  readonly workspace: ScratchBlocks.WorkspaceSvg;
   readonly dropdown: Dropdown;
   readonly wrapper: HTMLDivElement;
   readonly dropdownOut: HTMLDivElement;
   readonly findInput: HTMLInputElement;
   private prevValue: string;
-  constructor(workspace: ScratchBlocks.Workspace) {
+  constructor(workspace: ScratchBlocks.WorkspaceSvg) {
     this.workspace = workspace;
     this.dropdown = new Dropdown(workspace);
 
@@ -36,7 +36,7 @@ export default class FindBar {
     this.findInput.addEventListener("focus", () => this.inputChange());
     this.findInput.addEventListener("keydown", (e) => this.inputKeyDown(e));
     this.findInput.addEventListener("keyup", () => this.inputChange());
-    this.findInput.addEventListener("focusout", () => this.hideDropDown());
+    // this.findInput.addEventListener("focusout", () => this.hideDropDown());
 
     this.dropdownOut.appendChild(this.dropdown.createDom());
 
