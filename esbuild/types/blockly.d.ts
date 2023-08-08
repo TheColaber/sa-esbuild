@@ -1,7 +1,7 @@
 // Type definitions for scratch-blocks
 // Project: https://github.com/scratchfoundation/scratch-blocks
 
-import FindBar from "../../src/addons/editor/general/find-bar/classes/find-bar";
+import FindBar from "../../src/addons/editor/general/find-bar/find-bar";
 declare global {
   export namespace ScratchBlocks {
     class Block {
@@ -19,6 +19,8 @@ declare global {
       getRootBlock(): Block;
       getOutputShape(): number;
       getSurroundParent(): BlockSvg;
+      getColourQuaternary(): string;
+      setShadowColour(color: string);
     }
 
     class Input {
@@ -216,6 +218,8 @@ declare global {
       getFlyout(): Flyout | null;
       allInputsFilled(shadowBlocksAreFilled?: boolean): boolean;
       toolbox_?: any;
+      glowBlock(id, val): void; // TODO: update types
+      scrollbar: any;
       // TODO: Remove this
       findBar?: FindBar;
     }
@@ -233,7 +237,7 @@ declare global {
 
     class WorkspaceSvg extends Workspace {
       svgGroup_?: SVGElement;
-      createDom(opt_backgroundClass: string): SVGElement;
+      createDom(opt_backgroundClass?: string): SVGElement;
       scale: number;
       getMetrics(): {
         contentHeight: number;
@@ -254,6 +258,62 @@ declare global {
       };
     }
 
+    class Options {
+      hasCategories;
+      languageTree;
+    }
+
+    type ColorShades = {
+      primary: string;
+      secondary: string;
+      tertiary: string;
+      quaternary: string;
+    };
+
+    type Colours = {
+      motion: ColorShades;
+      looks: ColorShades;
+      sounds: ColorShades;
+      control: ColorShades;
+      event: ColorShades;
+      sensing: ColorShades;
+      pen: ColorShades;
+      operators: ColorShades;
+      data: ColorShades;
+      data_lists: ColorShades;
+      more: ColorShades;
+      text: string;
+      workspace: string;
+      toolboxHover: string;
+      toolboxSelected: string;
+      toolboxText: string;
+      toolbox: string;
+      flyout: string;
+      scrollbar: string;
+      scrollbarHover: string;
+      textField: string;
+      textFieldText: string;
+      insertionMarker: string;
+      insertionMarkerOpacity: number;
+      dragShadowOpacity: number;
+      stackGlow: string;
+      stackGlowSize: number;
+      stackGlowOpacity: number;
+      replacementGlow: string;
+      replacementGlowSize: number;
+      replacementGlowOpacity: number;
+      colourPickerStroke: string;
+      fieldShadow: string;
+      dropDownShadow: string;
+      numPadBackground: string;
+      numPadBorder: string;
+      numPadActiveBackground: string;
+      numPadText: string;
+      valueReportBackground: string;
+      valueReportBorder: string;
+      menuHover: string;
+    };
+
     interface RealBlockly {
       Workspace: WorkspaceConstructor;
       WorkspaceSvg: typeof WorkspaceSvg;
@@ -261,6 +321,13 @@ declare global {
       Xml: Xml;
       getMainWorkspace(): Workspace | null;
       init_(mainWorkspace: Workspace): void;
+      createMainWorkspace_(
+        svg: SVGElement,
+        options: Options,
+        blockDragSurface,
+        workspaceDragSurface,
+      ): Workspace;
+      Colours: Colours;
     }
   }
 }

@@ -6,6 +6,7 @@ import virtuals from "./plugins/virtuals.js";
 import vue from "./plugins/vue.js";
 import postcss from "./plugins/postcss.js";
 import path from "path";
+import typedCss from "./plugins/typed-css.js";
 
 build();
 
@@ -28,6 +29,7 @@ async function build() {
       virtuals(),
       vue({ cssInline: true }),
       postcss(),
+      typedCss(),
     ],
     treeShaking: true,
     define: {
@@ -38,9 +40,12 @@ async function build() {
   console.time("build");
   await ctx.rebuild();
   console.timeEnd("build");
+  let buildCount = 1;
   chokidar.watch(base).on("change", async () => {
-    console.time("build");
+    let currentCount = buildCount;
+    buildCount++;
+    console.time("build" + currentCount);
     await ctx.rebuild();
-    console.timeEnd("build");
+    console.timeEnd("build" + currentCount);
   });
 }

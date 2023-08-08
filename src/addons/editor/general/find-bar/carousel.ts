@@ -1,5 +1,5 @@
 import { DropdownItem } from "./dropdown-item";
-import styles from "../styles.module.css";
+import styles from "./styles.module.css";
 
 export default class Carousel {
   el: HTMLSpanElement;
@@ -7,7 +7,6 @@ export default class Carousel {
   blocks: ScratchBlocks.BlockSvg[];
   idx: number;
   item: DropdownItem;
-  constructor() {}
 
   build(item: DropdownItem, blocks: ScratchBlocks.BlockSvg[]) {
     this.item = item;
@@ -73,6 +72,22 @@ export default class Carousel {
       this.el.remove();
       this.blocks = [];
       this.idx = 0;
+    }
+  }
+
+  inputKeyDown(e: KeyboardEvent) {
+    // Left Arrow
+    if (e.key === "ArrowLeft") {
+      if (this.el && this.blocks) {
+        this.navigate(-1);
+      }
+    }
+
+    // Right Arrow
+    if (e.key === "ArrowRight") {
+      if (this.el && this.blocks) {
+        this.navigate(1);
+      }
     }
   }
 }

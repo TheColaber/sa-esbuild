@@ -1,4 +1,4 @@
-import FindBar from "./classes/find-bar";
+import FindBar from "./find-bar";
 
 export default async () => {
   const Blockly = await addon.tab.getBlockly();
@@ -8,7 +8,6 @@ export default async () => {
   const mainWorkspace = addon.tab.getWorkspace();
   mainWorkspace.findBar = new FindBar(mainWorkspace);
 
-  // Add find bar to all future workspaces
   const createWorkspaceDom = Blockly.WorkspaceSvg.prototype.createDom;
   Blockly.WorkspaceSvg.prototype.createDom = function (opt_backgroundClass) {
     // This is the same check scratch uses to create the toolbox/flyout.

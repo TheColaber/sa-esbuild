@@ -27,6 +27,7 @@
     "postcss-modules": "^6.0.0",
     "prettier": "^3.0.0",
     "sass": "^1.64.2",
+    "typed-css-modules": "^0.7.2",
     "typed-local-store": "^2.0.2",
     "vue": "^3.3.4"
   }

@@ -1,6 +1,8 @@
 import { DropdownItem } from "./dropdown-item";
-import styles from "../styles.module.css";
+import styles from "./styles.module.css";
 import Carousel from "./carousel";
+
+const Blockly = await addon.tab.getBlockly();
 
 export default class Dropdown {
   workspace: ScratchBlocks.WorkspaceSvg;
@@ -12,11 +14,7 @@ export default class Dropdown {
     this.workspace = workspace;
     this.items = [];
     this.carousel = new Carousel();
-
-    // TODO: I don't think I really like this that much
-    addon.tab.getBlockly().then((Blockly) => {
-      this.colors = Blockly.Colours;
-    });
+    this.colors = Blockly.Colours;
   }
 
   createDom() {
@@ -56,9 +54,6 @@ export default class Dropdown {
     //     }
     //   }
     // }
-
-    // this.utils.offsetX = this.dropdownOut.getBoundingClientRect().width + 32;
-    // this.utils.offsetY = 32;
   }
   getScratchBlocks() {
     let myBlocks: { [id: string]: DropdownItem } = {};
@@ -103,134 +98,9 @@ export default class Dropdown {
           color,
         );
         myBlocks[name].el.addEventListener("mousedown", (e) => {
-          for (const name in myBlocks) {
-            myBlocks[name].unselect();
-          }
-          myBlocks[name].select();
-          if (category === "costume" || category === "sound") {
-            // Viewing costumes/sounds - jump to selected costume/sound
-            const assetPanel = document.querySelector(
-              "[class^=asset-panel_wrapper]",
-            );
-            if (assetPanel) {
-              const reactInstance: any =
-                assetPanel[addon.tab.getInternalKey(assetPanel)];
-              const reactProps = reactInstance.pendingProps.children[0].props;
-              reactProps.onItemClick(y);
-              const selectorList =
-                assetPanel.firstElementChild.firstElementChild;
-              selectorList.children[y].scrollIntoView({
-                behavior: "auto",
-                block: "center",
-                inline: "start",
-              });
-              // The wrapper seems to scroll when we use the function above.
-              let wrapper = assetPanel.closest("div[class*=gui_flex-wrapper]");
-              wrapper.scrollTop = 0;
-            }
-          } else if (
-            category === "var" ||
-            category === "VAR" ||
-            category === "list" ||
-            category === "LIST"
-          ) {
-            const uses = this.workspace
-              .getTopBlocks()
-              .flatMap((topBlock) =>
-                topBlock
-                  .getDescendants()
-                  .filter((block) =>
-                    block
-                      .getVarModels()
-                      .some((blockVar) => blockVar.getId() === id),
-                  ),
-              );
-
-            this.carousel.build(myBlocks[name], uses);
-          } else if (category === "define") {
-            let procBlock = this.workspace.getBlockById(id);
-            let procCode = procBlock.getChildren()[0].getProcCode();
-
-            const uses = this.workspace
-              .getTopBlocks()
-              .flatMap((topBlock) =>
-                topBlock
-                  .getDescendants()
-                  .filter(
-                    (block) =>
-                      block.type === "procedures_call" &&
-                      block.getProcCode() === procCode,
-                  ),
-              );
-            uses.unshift(procBlock);
-
-            this.carousel.build(myBlocks[name], uses);
-          } else if (category === "receive") {
-            // /*
-            //   let blocks = [this.workspace.getBlockById(li.data.labelID)];
-            //   if (li.data.clones) {
-            //       for (const cloneID of li.data.clones) {
-            //           blocks.push(this.workspace.getBlockById(cloneID))
-            //       }
-            //   }
-            //   blocks = blocks.concat(getCallsToEventsByName(li.data.eventName));
-            // */
-            // // Now, fetch the events from the scratch runtime instead of blockly
-            // let uses = []; // Definition First, then calls to it
-            // const runtime = addon.tab.traps.vm.runtime;
-            // const targets = runtime.targets; // The sprites / stage
-            // for (const target of targets) {
-            //   if (!target.isOriginal) {
-            //     continue; // Skip clones
-            //   }
-            //   const blocks = target.blocks;
-            //   if (!blocks._blocks) {
-            //     continue;
-            //   }
-            //   for (const id of Object.keys(blocks._blocks)) {
-            //     const block = blocks._blocks[id];
-            //     if (block.opcode === "event_whenbroadcastreceived" && block.fields.BROADCAST_OPTION.value === name) {
-            //       uses.push(new BlockInstance(target, block));
-            //     } else if (block.opcode === "event_broadcast" || block.opcode === "event_broadcastandwait") {
-            //       const broadcastInputBlockId = block.inputs.BROADCAST_INPUT.block;
-            //       const broadcastInputBlock = blocks._blocks[broadcastInputBlockId];
-            //       if (broadcastInputBlock) {
-            //         let eventName;
-            //         if (broadcastInputBlock.opcode === "event_broadcast_menu") {
-            //           eventName = broadcastInputBlock.fields.BROADCAST_OPTION.value;
-            //         } else {
-            //           eventName = msg("complex-broadcast");
-            //         }
-            //         if (eventName === name) {
-            //           uses.push(new BlockInstance(target, block));
-            //         }
-            //       }
-            //     }
-            //   }
-            // }
-            // if (!instanceBlock) {
-            //   // Can we start by selecting the first block on 'this' sprite
-            //   const currentTargetID = this.utils.getEditingTarget().id;
-            //   for (const block of blocks) {
-            //     if (block.targetId === currentTargetID) {
-            //       instanceBlock = block;
-            //       break;
-            //     }
-            //   }
-            // }
-            // this.carousel.build(myBlocks[name], blocks, instanceBlock);
-          } else if (myBlocks[name].clones.length > 0) {
-            let blocks = [this.workspace.getBlockById(myBlocks[name].id)];
-            for (const cloneID of myBlocks[name].clones) {
-              blocks.push(this.workspace.getBlockById(cloneID));
-            }
-            this.carousel.build(myBlocks[name], blocks);
-          } else {
-            myBlocks[name].scrollBlockIntoView();
-            this.carousel.remove();
-          }
-          e.preventDefault();
-          return false;
+          this.selectItem(myBlocks[name])
+          // Prevent the dropdown from closing.
+          e.preventDefault()
         });
       }
       return myBlocks[name];
@@ -250,7 +120,10 @@ export default class Dropdown {
       const { y } = block.getRelativeToSurfaceXY();
       if (block.type === "procedures_definition") {
         const label = block.getChildren()[0];
-        const procCode = label.getProcCode();
+        const procCode = label
+          .getProcCode()
+          .replace(/%s/g, "()")
+          .replace(/%b/g, "<>");
         if (!procCode) {
           continue;
         }
@@ -366,6 +239,135 @@ export default class Dropdown {
     });
   }
 
+  selectItem(item: DropdownItem) {
+      for (const name in this.items) {
+        this.items[name].unselect();
+      }
+      item.select();
+      if (item.category === "costume" || item.category === "sound") {
+        // Viewing costumes/sounds - jump to selected costume/sound
+        const assetPanel = document.querySelector(
+          "[class^=asset-panel_wrapper]",
+        );
+        if (assetPanel) {
+          const reactInstance: any =
+            assetPanel[addon.tab.getInternalKey(assetPanel)];
+          const reactProps = reactInstance.pendingProps.children[0].props;
+          reactProps.onItemClick(item.y);
+          const selectorList =
+            assetPanel.firstElementChild.firstElementChild;
+          selectorList.children[item.y].scrollIntoView({
+            behavior: "auto",
+            block: "center",
+            inline: "start",
+          });
+          // The wrapper seems to scroll when we use the function above.
+          let wrapper = assetPanel.closest("div[class*=gui_flex-wrapper]");
+          wrapper.scrollTop = 0;
+        }
+      } else if (
+        item.category === "var" ||
+        item.category === "VAR" ||
+        item.category === "list" ||
+        item.category === "LIST"
+      ) {
+        const uses = this.workspace
+          .getTopBlocks()
+          .flatMap((topBlock) =>
+            topBlock
+              .getDescendants()
+              .filter((block) =>
+                block
+                  .getVarModels()
+                  .some((blockVar) => blockVar.getId() === item.id),
+              ),
+          );
+
+        this.carousel.build(item, uses);
+      } else if (item.category === "define") {
+        let procBlock = this.workspace.getBlockById(item.id);
+        let procCode = procBlock.getChildren()[0].getProcCode();
+
+        const uses = this.workspace
+          .getTopBlocks()
+          .flatMap((topBlock) =>
+            topBlock
+              .getDescendants()
+              .filter(
+                (block) =>
+                  block.type === "procedures_call" &&
+                  block.getProcCode() === procCode,
+              ),
+          );
+        uses.unshift(procBlock);
+
+        this.carousel.build(item, uses);
+      } else if (item.category === "receive") {
+        // /*
+        //   let blocks = [this.workspace.getBlockById(li.data.labelID)];
+        //   if (li.data.clones) {
+        //       for (const cloneID of li.data.clones) {
+        //           blocks.push(this.workspace.getBlockById(cloneID))
+        //       }
+        //   }
+        //   blocks = blocks.concat(getCallsToEventsByName(li.data.eventName));
+        // */
+        // // Now, fetch the events from the scratch runtime instead of blockly
+        // let uses = []; // Definition First, then calls to it
+        // const runtime = addon.tab.traps.vm.runtime;
+        // const targets = runtime.targets; // The sprites / stage
+        // for (const target of targets) {
+        //   if (!target.isOriginal) {
+        //     continue; // Skip clones
+        //   }
+        //   const blocks = target.blocks;
+        //   if (!blocks._blocks) {
+        //     continue;
+        //   }
+        //   for (const id of Object.keys(blocks._blocks)) {
+        //     const block = blocks._blocks[id];
+        //     if (block.opcode === "event_whenbroadcastreceived" && block.fields.BROADCAST_OPTION.value === name) {
+        //       uses.push(new BlockInstance(target, block));
+        //     } else if (block.opcode === "event_broadcast" || block.opcode === "event_broadcastandwait") {
+        //       const broadcastInputBlockId = block.inputs.BROADCAST_INPUT.block;
+        //       const broadcastInputBlock = blocks._blocks[broadcastInputBlockId];
+        //       if (broadcastInputBlock) {
+        //         let eventName;
+        //         if (broadcastInputBlock.opcode === "event_broadcast_menu") {
+        //           eventName = broadcastInputBlock.fields.BROADCAST_OPTION.value;
+        //         } else {
+        //           eventName = msg("complex-broadcast");
+        //         }
+        //         if (eventName === name) {
+        //           uses.push(new BlockInstance(target, block));
+        //         }
+        //       }
+        //     }
+        //   }
+        // }
+        // if (!instanceBlock) {
+        //   // Can we start by selecting the first block on 'this' sprite
+        //   const currentTargetID = this.utils.getEditingTarget().id;
+        //   for (const block of blocks) {
+        //     if (block.targetId === currentTargetID) {
+        //       instanceBlock = block;
+        //       break;
+        //     }
+        //   }
+        // }
+        // this.carousel.build(myBlocks[name], blocks, instanceBlock);
+      } else if (item.clones.length > 0) {
+        let blocks = [this.workspace.getBlockById(item.id)];
+        for (const cloneID of item.clones) {
+          blocks.push(this.workspace.getBlockById(cloneID));
+        }
+        this.carousel.build(item, blocks);
+      } else {
+        item.scrollBlockIntoView();
+        this.carousel.remove();
+      }
+  }
+
   getCallsToEvents() {
     const events: { [name: string]: ScratchBlocks.Block } = {};
 
@@ -421,5 +423,35 @@ export default class Dropdown {
     //     li.style.display = "none";
     //   }
     // }
+  }
+
+  inputKeyDown(e: KeyboardEvent) {
+    if (e.key === "ArrowUp") {
+      this.navigate(-1);
+      e.preventDefault();
+      return;
+    }
+
+    if (e.key === "ArrowDown") {
+      this.navigate(1);
+      e.preventDefault();
+      return;
+    }
+
+    if (e.key === "Enter") {
+      // Any selected on enter? if not select now
+      if (!this.items.some((item) => item.selected)) {
+        this.navigate(1);
+      }
+      e.preventDefault();
+      return;
+    }
+
+    this.carousel.inputKeyDown(e);
+  }
+
+  navigate(dir: number) {
+    const selectedIndex = this.items.findIndex((item) => item.selected);
+    this.selectItem(this.items[selectedIndex + dir])
   }
 }
