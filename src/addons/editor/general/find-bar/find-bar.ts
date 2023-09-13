@@ -1,6 +1,8 @@
 import Dropdown from "./dropdown";
 import styles from "./styles.module.css";
 
+const Blockly = await addon.tab.getBlockly();
+
 export default class FindBar {
   readonly workspace: ScratchBlocks.WorkspaceSvg;
   readonly dropdown: Dropdown;
@@ -37,6 +39,42 @@ export default class FindBar {
     this.findInput.addEventListener("focusout", () => this.hideDropDown());
 
     this.dropdownOut.appendChild(this.dropdown.createDom());
+
+    const _doBlockClick_ = Blockly.Gesture.prototype.doBlockClick_;
+    Blockly.Gesture.prototype.doBlockClick_ = function () {
+      const findBar = this.creatorWorkspace_.findBar;
+      const searchableBlocks = [
+        "procedures_definition",
+        "procedures_call",
+        "data_variable",
+        "data_changevariableby",
+        "data_setvariableto",
+        "event_whenbroadcastreceived",
+        "event_broadcastandwait",
+        "event_broadcast",
+      ];
+
+      if (
+        addon.enabled &&
+        (this.mostRecentEvent_.button === 1 || this.mostRecentEvent_.shiftKey)
+      ) {
+        // Wheel button or shift-click.
+        for (
+          let block = this.startBlock_;
+          block;
+          block = block.getSurroundParent()
+        ) {
+          if (searchableBlocks.includes(block.type)) {
+            findBar.findInput.focus();
+            findBar.showDropDown(block);
+
+            return;
+          }
+        }
+      }
+
+      _doBlockClick_.call(this);
+    };
   }
 
   dispose() {
@@ -52,7 +90,7 @@ export default class FindBar {
     this.prevValue = null;
 
     this.dropdownOut.classList.add(styles.visible);
-    this.dropdown.show();
+    this.dropdown.show(showBlock);
   }
 
   hideDropDown() {

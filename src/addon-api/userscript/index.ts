@@ -6,6 +6,7 @@ export default class UserscriptAddon extends EventTarget {
   enabledLate: boolean;
   tab: Tab;
   console: Console;
+  enabled: boolean = true;
 
   constructor(
     id: string,
@@ -14,9 +15,9 @@ export default class UserscriptAddon extends EventTarget {
   ) {
     super();
     this.id = id;
-    this.tab = new Tab(id);
     this.messages = messages;
     this.enabledLate = enabledLate;
+    this.tab = new Tab(id);
     this.console = {
       ...scratchAddons.realConsole,
       log: scratchAddons.realConsole.log.bind(

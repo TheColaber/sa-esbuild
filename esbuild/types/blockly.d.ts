@@ -263,6 +263,14 @@ declare global {
       languageTree;
     }
 
+    class Gesture {
+      creatorWorkspace_: Workspace;
+      mostRecentEvent_: any;
+      startBlock_: BlockSvg;
+      jumpToDef: boolean; // TODO: this is fake.
+      doBlockClick_(this: this): void;
+    }
+
     type ColorShades = {
       primary: string;
       secondary: string;
@@ -328,6 +336,7 @@ declare global {
         workspaceDragSurface,
       ): Workspace;
       Colours: Colours;
+      Gesture: typeof Gesture;
     }
   }
 }

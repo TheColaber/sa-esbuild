@@ -27,7 +27,7 @@ export default class Dropdown {
     return addon.tab.redux.state.scratchGui.editorTab.activeTabIndex;
   }
 
-  show() {
+  show(showBlock?: ScratchBlocks.BlockSvg) {
     for (const item of this.items) {
       if (this.el.contains(item.el)) {
         this.el.removeChild(item.el);
@@ -42,18 +42,16 @@ export default class Dropdown {
 
     for (const item of this.items) {
       this.el.appendChild(item.el);
-    }
-    // for (const proc of scratchBlocks) {
-    //   let item = this.dropdown.addItem(proc);
+      console.log(item.clones);
 
-    //   if (focusID) {
-    //     if (proc.matchesID(focusID)) {
-    //       this.dropdown.onItemClick(item, instanceBlock);
-    //     } else {
-    //       item.style.display = "none";
-    //     }
-    //   }
-    // }
+      if (
+        showBlock &&
+        item.id === showBlock.id &&
+        item.clones.find((id) => id === showBlock.id)
+      ) {
+        this.selectItem(item);
+      }
+    }
   }
   getScratchBlocks() {
     let myBlocks: { [id: string]: DropdownItem } = {};
@@ -98,9 +96,9 @@ export default class Dropdown {
           color,
         );
         myBlocks[name].el.addEventListener("mousedown", (e) => {
-          this.selectItem(myBlocks[name])
+          this.selectItem(myBlocks[name]);
           // Prevent the dropdown from closing.
-          e.preventDefault()
+          e.preventDefault();
         });
       }
       return myBlocks[name];
@@ -240,132 +238,129 @@ export default class Dropdown {
   }
 
   selectItem(item: DropdownItem) {
-      for (const name in this.items) {
-        this.items[name].unselect();
+    for (const name in this.items) {
+      this.items[name].unselect();
+    }
+    item.select();
+    if (item.category === "costume" || item.category === "sound") {
+      // Viewing costumes/sounds - jump to selected costume/sound
+      const assetPanel = document.querySelector("[class^=asset-panel_wrapper]");
+      if (assetPanel) {
+        const reactInstance: any =
+          assetPanel[addon.tab.getInternalKey(assetPanel)];
+        const reactProps = reactInstance.pendingProps.children[0].props;
+        reactProps.onItemClick(item.y);
+        const selectorList = assetPanel.firstElementChild.firstElementChild;
+        selectorList.children[item.y].scrollIntoView({
+          behavior: "auto",
+          block: "center",
+          inline: "start",
+        });
+        // The wrapper seems to scroll when we use the function above.
+        let wrapper = assetPanel.closest("div[class*=gui_flex-wrapper]");
+        wrapper.scrollTop = 0;
       }
-      item.select();
-      if (item.category === "costume" || item.category === "sound") {
-        // Viewing costumes/sounds - jump to selected costume/sound
-        const assetPanel = document.querySelector(
-          "[class^=asset-panel_wrapper]",
+    } else if (
+      item.category === "var" ||
+      item.category === "VAR" ||
+      item.category === "list" ||
+      item.category === "LIST"
+    ) {
+      const uses = this.workspace
+        .getTopBlocks()
+        .flatMap((topBlock) =>
+          topBlock
+            .getDescendants()
+            .filter((block) =>
+              block
+                .getVarModels()
+                .some((blockVar) => blockVar.getId() === item.id),
+            ),
         );
-        if (assetPanel) {
-          const reactInstance: any =
-            assetPanel[addon.tab.getInternalKey(assetPanel)];
-          const reactProps = reactInstance.pendingProps.children[0].props;
-          reactProps.onItemClick(item.y);
-          const selectorList =
-            assetPanel.firstElementChild.firstElementChild;
-          selectorList.children[item.y].scrollIntoView({
-            behavior: "auto",
-            block: "center",
-            inline: "start",
-          });
-          // The wrapper seems to scroll when we use the function above.
-          let wrapper = assetPanel.closest("div[class*=gui_flex-wrapper]");
-          wrapper.scrollTop = 0;
-        }
-      } else if (
-        item.category === "var" ||
-        item.category === "VAR" ||
-        item.category === "list" ||
-        item.category === "LIST"
-      ) {
-        const uses = this.workspace
-          .getTopBlocks()
-          .flatMap((topBlock) =>
-            topBlock
-              .getDescendants()
-              .filter((block) =>
-                block
-                  .getVarModels()
-                  .some((blockVar) => blockVar.getId() === item.id),
-              ),
-          );
 
-        this.carousel.build(item, uses);
-      } else if (item.category === "define") {
-        let procBlock = this.workspace.getBlockById(item.id);
-        let procCode = procBlock.getChildren()[0].getProcCode();
+      this.carousel.build(item, uses);
+    } else if (item.category === "define") {
+      let procBlock = this.workspace.getBlockById(item.id);
+      let procCode = procBlock.getChildren()[0].getProcCode();
 
-        const uses = this.workspace
-          .getTopBlocks()
-          .flatMap((topBlock) =>
-            topBlock
-              .getDescendants()
-              .filter(
-                (block) =>
-                  block.type === "procedures_call" &&
-                  block.getProcCode() === procCode,
-              ),
-          );
-        uses.unshift(procBlock);
+      const uses = this.workspace
+        .getTopBlocks()
+        .flatMap((topBlock) =>
+          topBlock
+            .getDescendants()
+            .filter(
+              (block) =>
+                block.type === "procedures_call" &&
+                block.getProcCode() === procCode,
+            ),
+        );
+      uses.unshift(procBlock);
 
-        this.carousel.build(item, uses);
-      } else if (item.category === "receive") {
-        // /*
-        //   let blocks = [this.workspace.getBlockById(li.data.labelID)];
-        //   if (li.data.clones) {
-        //       for (const cloneID of li.data.clones) {
-        //           blocks.push(this.workspace.getBlockById(cloneID))
-        //       }
-        //   }
-        //   blocks = blocks.concat(getCallsToEventsByName(li.data.eventName));
-        // */
-        // // Now, fetch the events from the scratch runtime instead of blockly
-        // let uses = []; // Definition First, then calls to it
-        // const runtime = addon.tab.traps.vm.runtime;
-        // const targets = runtime.targets; // The sprites / stage
-        // for (const target of targets) {
-        //   if (!target.isOriginal) {
-        //     continue; // Skip clones
-        //   }
-        //   const blocks = target.blocks;
-        //   if (!blocks._blocks) {
-        //     continue;
-        //   }
-        //   for (const id of Object.keys(blocks._blocks)) {
-        //     const block = blocks._blocks[id];
-        //     if (block.opcode === "event_whenbroadcastreceived" && block.fields.BROADCAST_OPTION.value === name) {
-        //       uses.push(new BlockInstance(target, block));
-        //     } else if (block.opcode === "event_broadcast" || block.opcode === "event_broadcastandwait") {
-        //       const broadcastInputBlockId = block.inputs.BROADCAST_INPUT.block;
-        //       const broadcastInputBlock = blocks._blocks[broadcastInputBlockId];
-        //       if (broadcastInputBlock) {
-        //         let eventName;
-        //         if (broadcastInputBlock.opcode === "event_broadcast_menu") {
-        //           eventName = broadcastInputBlock.fields.BROADCAST_OPTION.value;
-        //         } else {
-        //           eventName = msg("complex-broadcast");
-        //         }
-        //         if (eventName === name) {
-        //           uses.push(new BlockInstance(target, block));
-        //         }
-        //       }
-        //     }
-        //   }
-        // }
-        // if (!instanceBlock) {
-        //   // Can we start by selecting the first block on 'this' sprite
-        //   const currentTargetID = this.utils.getEditingTarget().id;
-        //   for (const block of blocks) {
-        //     if (block.targetId === currentTargetID) {
-        //       instanceBlock = block;
-        //       break;
-        //     }
-        //   }
-        // }
-        // this.carousel.build(myBlocks[name], blocks, instanceBlock);
-      } else if (item.clones.length > 0) {
-        let blocks = [this.workspace.getBlockById(item.id)];
-        for (const cloneID of item.clones) {
-          blocks.push(this.workspace.getBlockById(cloneID));
-        }
-        this.carousel.build(item, blocks);
-      } else {
-        item.scrollBlockIntoView();
-        this.carousel.remove();
+      this.carousel.build(item, uses);
+    } else if (item.category === "receive") {
+      // /*
+      //   let blocks = [this.workspace.getBlockById(li.data.labelID)];
+      //   if (li.data.clones) {
+      //       for (const cloneID of li.data.clones) {
+      //           blocks.push(this.workspace.getBlockById(cloneID))
+      //       }
+      //   }
+      //   blocks = blocks.concat(getCallsToEventsByName(li.data.eventName));
+      // */
+      // // Now, fetch the events from the scratch runtime instead of blockly
+      // let uses = []; // Definition First, then calls to it
+      // const runtime = addon.tab.traps.vm.runtime;
+      // const targets = runtime.targets; // The sprites / stage
+      // for (const target of targets) {
+      //   if (!target.isOriginal) {
+      //     continue; // Skip clones
+      //   }
+      //   const blocks = target.blocks;
+      //   if (!blocks._blocks) {
+      //     continue;
+      //   }
+      //   for (const id of Object.keys(blocks._blocks)) {
+      //     const block = blocks._blocks[id];
+      //     if (block.opcode === "event_whenbroadcastreceived" && block.fields.BROADCAST_OPTION.value === name) {
+      //       uses.push(new BlockInstance(target, block));
+      //     } else if (block.opcode === "event_broadcast" || block.opcode === "event_broadcastandwait") {
+      //       const broadcastInputBlockId = block.inputs.BROADCAST_INPUT.block;
+      //       const broadcastInputBlock = blocks._blocks[broadcastInputBlockId];
+      //       if (broadcastInputBlock) {
+      //         let eventName;
+      //         if (broadcastInputBlock.opcode === "event_broadcast_menu") {
+      //           eventName = broadcastInputBlock.fields.BROADCAST_OPTION.value;
+      //         } else {
+      //           eventName = msg("complex-broadcast");
+      //         }
+      //         if (eventName === name) {
+      //           uses.push(new BlockInstance(target, block));
+      //         }
+      //       }
+      //     }
+      //   }
+      // }
+      // if (!instanceBlock) {
+      //   // Can we start by selecting the first block on 'this' sprite
+      //   const currentTargetID = this.utils.getEditingTarget().id;
+      //   for (const block of blocks) {
+      //     if (block.targetId === currentTargetID) {
+      //       instanceBlock = block;
+      //       break;
+      //     }
+      //   }
+      // }
+      // this.carousel.build(myBlocks[name], blocks, instanceBlock);
+    } else if (item.clones.length > 0) {
+      let blocks = [this.workspace.getBlockById(item.id)];
+      for (const cloneID of item.clones) {
+        blocks.push(this.workspace.getBlockById(cloneID));
       }
+      this.carousel.build(item, blocks);
+    } else {
+      item.scrollBlockIntoView();
+      this.carousel.remove();
+    }
   }
 
   getCallsToEvents() {
@@ -452,6 +447,6 @@ export default class Dropdown {
 
   navigate(dir: number) {
     const selectedIndex = this.items.findIndex((item) => item.selected);
-    this.selectItem(this.items[selectedIndex + dir])
+    this.selectItem(this.items[selectedIndex + dir]);
   }
 }
