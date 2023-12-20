@@ -1,15 +1,15 @@
 <template>
   <div :class="$style.container">
     <Header></Header>
-    <!--<Suspense>
+    <Suspense>
       <Popups></Popups>
-    </Suspense> -->
+    </Suspense>
   </div>
 </template>
 
 <script setup lang="ts">
 import Header from "./header.vue";
-// import Popups from "./popups.vue";
+import Popups from "./popups.vue";
 </script>
 
 <style module>

@@ -1,6 +1,6 @@
 <template>
   <div :class="$style.header">
-    <SAIcon :class="$style.logo" />
+    <img :src="'../../images/icon.svg'" :class="$style.logo" />
     <span :class="$style.text">
       {{ msg("name") }}
       <a
@@ -20,7 +20,6 @@
 
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
-import SAIcon from "../../images/icon.svg";
 import settingsIcon from "@iconify-icons/tabler/settings";
 
 const msg = chrome.i18n.getMessage;

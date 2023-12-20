@@ -1,0 +1,9 @@
+@font-face {
+  font-family: "Sora";
+  src: url("../css/Sora.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("../css/Roboto.ttf") format("truetype");
+}

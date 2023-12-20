@@ -15,6 +15,7 @@ export default () => ({
     const manifest = resolve("./src/manifest.ts").default;
     let manifestJSON = JSON.stringify(manifest, undefined, "  ");
     const dir = path.dirname(manifestPath);
+
     const manifestEntries = [
       manifest.background.service_worker,
       ...manifest.content_scripts.flatMap((cs) => cs.js),
@@ -25,53 +26,24 @@ export default () => ({
       (f) => dir + "/" + f,
     );
 
+    
     for (const file of html) {
       const buffer = await readFile(file);
-      const outputFile =
-        build.initialOptions.outdir +
-        "/" +
-        file.replace(build.initialOptions.outbase + "/", "");
-
       const root = load(buffer).root();
+
       const scripts = root.find("script");
       for (const script of scripts) {
         entryPoints.push(path.join(path.dirname(file), script.attribs.src));
       }
 
-      build.onEnd(async (buildRes) => {
-        const buffer = await readFile(file);
-        const outputFile =
-          build.initialOptions.outdir +
-          "/" +
-          file.replace(build.initialOptions.outbase + "/", "");
+      const htmlAssets = root.find("link");
+      for (const asset of htmlAssets) {
+        assets.push(path.relative(dir, path.join(path.dirname(file), asset.attribs.href)));
+      }
 
-        const root = load(buffer).root();
-        const scripts = root.find("script");
-
-        if (!buildRes.metafile) return;
-        for (const distFile in buildRes.metafile.outputs) {
-          for (const script of scripts) {
-            const scriptEntry = path.join(
-              path.dirname(file),
-              script.attribs.src,
-            );
-            if (
-              buildRes.metafile.outputs[distFile].entryPoint ===
-              scriptEntry.replaceAll("\\", "/")
-            ) {
-              script.attribs.src = path.relative(
-                path.dirname(outputFile),
-                distFile,
-              );
-            }
-          }
-        }
-        await mkdir(path.dirname(outputFile), {
-          recursive: true,
-        });
-        await writeFile(outputFile, root.html());
-      });
+      build.initialOptions.entryPoints = entryPoints;
     }
+
 
     build.onStart(async () => {
       if (manifest.default_locale) {
@@ -118,8 +90,40 @@ export default () => ({
         build.initialOptions.outdir + "/manifest.json",
         manifestJSON,
       );
-    });
 
-    build.initialOptions.entryPoints = entryPoints;
+      for (const file of html) {
+        const buffer = await readFile(file);
+        const outputFile =
+          build.initialOptions.outdir +
+          "/" +
+          file.replace(build.initialOptions.outbase + "/", "");
+
+        const root = load(buffer).root();
+        const scripts = root.find("script");
+
+        if (!buildRes.metafile) return;
+        for (const distFile in buildRes.metafile.outputs) {
+          for (const script of scripts) {
+            const scriptEntry = path.join(
+              path.dirname(file),
+              script.attribs.src,
+            );
+            if (
+              buildRes.metafile.outputs[distFile].entryPoint ===
+              scriptEntry.replaceAll("\\", "/")
+            ) {
+              script.attribs.src = path.relative(
+                path.dirname(outputFile),
+                distFile,
+              );
+            }
+          }
+        }
+        await mkdir(path.dirname(outputFile), {
+          recursive: true,
+        });
+        await writeFile(outputFile, root.html());
+      };
+    });
   },
 });
