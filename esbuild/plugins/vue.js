@@ -2,6 +2,7 @@ import path from "path";
 import * as fs from "fs";
 import * as crypto from "crypto";
 import * as sfc from "@vue/compiler-sfc";
+import { load } from "cheerio";
 
 // import { replaceRules } from "./paths";
 

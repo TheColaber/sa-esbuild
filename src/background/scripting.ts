@@ -1,4 +1,4 @@
-import { syncStorage, addonEnabledStates } from "../storage/extension";
+import { syncStorage, addonEnabledStates } from "./storage";
 
 chrome.tabs.onUpdated.addListener(async (tabId, { status }, tab) => {
   if (!tab.url || status !== "loading") return;
@@ -8,7 +8,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, { status }, tab) => {
 
   dispatch("addonData", { addonsStates, addonEnabledStates, userLangs });
 
-  syncStorage.valueStream.subscribe(({ addonsStates: newAddonsStates }) => {
+  syncStorage.watch(["addonsStates"],({ addonsStates: newAddonsStates }) => {
     for (const id in addonsStates) {
       if (addonsStates[id] !== newAddonsStates[id]) {
         if (addonEnabledStates.includes(newAddonsStates[id])) {

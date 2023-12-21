@@ -1,6 +1,6 @@
 import UserscriptAddon from "../src/addon-api/userscript";
 import { Component } from "vue";
-// import { IconifyIcon } from "@iconify/vue";
+import { IconifyIcon } from "@iconify/vue";
 import MATCH_PATTERNS from "../src/content-script/matches";
 
 declare global {
@@ -31,7 +31,7 @@ export interface AddonManifest {
   }[];
   popup?: {
     name: string;
-    // icon: IconifyIcon;
+    icon: IconifyIcon;
     component: Component;
     badge?: Component;
   };

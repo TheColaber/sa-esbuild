@@ -1,4 +1,4 @@
-import { localStorage, syncStorage } from "../storage/extension";
+import { localStorage, syncStorage } from "./storage";
 
 const periods = [
   { id: "15min", mins: 15 },

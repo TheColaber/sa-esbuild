@@ -1,8 +1,8 @@
 <template>
-  <div :class="[$style.popups, { theme: true, /*lightTheme*/ }]">
+  <div :class="[$style.popups, { theme: true, lightTheme }]">
     <div :class="$style.sticky">
       <div :class="$style.tabs">
-        <!-- <button
+        <button
           :class="[$style.tab, { [$style.sel]: id === selectedTab }]"
           @click="switchTab(id)"
           v-for="id of ORDER"
@@ -11,10 +11,9 @@
           <template v-if="enabledPopups[id]">
             <Icon :class="$style.icon" :icon="enabledPopups[id].icon" />
             <span :class="$style.name">{{ enabledPopups[id].name }}</span>
-            <Suspense>
+            <Suspense v-if="enabledPopups[id].badge">
               <component
                 :class="$style.badge"
-                v-show="enabledPopups[id].badge"
                 :is="enabledPopups[id].badge"
                 :addon="instances[id]"
               />
@@ -29,10 +28,10 @@
               <Icon :icon="externalLinkIcon" :class="$style.popout" />
             </a>
           </template>
-        </button> -->
+        </button>
       </div>
     </div>
-    <!-- <template v-for="(popup, id) in enabledPopups">
+    <template v-for="(popup, id) in enabledPopups">
       <Suspense>
         <component
           v-if="id === selectedTab"
@@ -40,17 +39,17 @@
           :addon="instances[id]"
         />
       </Suspense>
-    </template> -->
+    </template>
   </div>
 </template>
 
 <script setup lang="ts">
-// import { syncStorage } from "../../background/storage";
-// import pageStorage from "../page-storage";
+import { syncStorage } from "../../background/storage";
+import pageStorage from "../storage";
 import { ref } from "vue";
 // TODO: Support other languages
-// import * as addons from "#addons-en";
-// import settingsComponent from "../settings/content.vue";
+import * as addons from "#addons";
+import settingsComponent from "../settings/content.vue";
 import PopupAddon from "../../addon-api/popup";
 import { Icon } from "@iconify/vue";
 import toolIcon from "@iconify-icons/tabler/tool";
@@ -60,49 +59,47 @@ import externalLinkIcon from "@iconify-icons/tabler/external-link";
 const msg = chrome.i18n.getMessage;
 chrome.action.getUserSettings().then(s => s.isOnToolbar)
 // Get light theme from the page localStorage and then update it to the value in storage after changes
-// const lightTheme = ref(pageStorage.get("lightTheme") === "true");
-// syncStorage.valueStream.subscribe((values) => {
-//   if ("lightTheme" in values) {
-//     lightTheme.value = values.lightTheme;
-//   }
-// });
+const lightTheme = ref(pageStorage.get("lightTheme") === true);
+syncStorage.watch(["lightTheme"], ({ lightTheme: newLightTheme }) => {
+  lightTheme.value = newLightTheme;
+});
+
+const { addonsStates = {} } = await syncStorage.get("addonsStates");
+
+const enabledPopups = Object.keys(addons)
+  .map((id) => ({ [id]: addonsStates[id] && addons[id].popup }))
+  .reduce((all, single) => ({ ...single, ...all }), {});
+
+// Add popup that shows the settings page.
+enabledPopups["settings-page"] = {
+  name: "Addons",
+  icon: toolIcon,
+  component: settingsComponent,
+};
+
+const instances = Object.keys(enabledPopups)
+  .map((id) => ({ [id]: new PopupAddon(id) }))
+  .reduce((single, all) => ({ ...single, ...all }), {});
 
 // Set the selected tab to the first tab in the list, but if the user previously selected another one, select that instead.
-const ORDER = ["scratch-messaging", "settings-page"];
+const ORDER = ["scratch-messaging", "settings-page"].filter((id) => id in enabledPopups);
 let selectedTab = ref(ORDER[0]);
 
-// const lastSelectedPopup = pageStorage.get("lastSelectedPopup");
-// if (lastSelectedPopup) {
-//   const selectedId = ORDER.find((id) => id === lastSelectedPopup);
-//   if (selectedId) {
-//     selectedTab.value = selectedId;
-//   }
-// }
+const lastSelectedPopup = pageStorage.get("lastSelectedPopup");
+if (lastSelectedPopup) {
+  const selectedId = ORDER.find((id) => id === lastSelectedPopup);
+  if (selectedId) {
+    selectedTab.value = selectedId;
+  }
+}
 
-// // When switching tabs, set the lastSelectedPopup in the page localStorage
-// function switchTab(id) {
-//   if (id === selectedTab.value) return;
-//   pageStorage.set("lastSelectedPopup", id);
+// When switching tabs, set the lastSelectedPopup in the page localStorage
+function switchTab(id) {
+  if (id === selectedTab.value) return;
+  pageStorage.set("lastSelectedPopup", id);
 
-//   selectedTab.value = id;
-// }
-
-// const { addonsStates = {} } = await syncStorage.get("addonsStates");
-
-// const enabledPopups = Object.keys(addons)
-//   .map((id) => ({ [id]: addonsStates[id] && addons[id].popup }))
-//   .reduce((all, single) => ({ ...single, ...all }), {});
-
-// // Add popup that shows the settings page.
-// enabledPopups["settings-page"] = {
-//   name: "Addons",
-//   icon: toolIcon,
-//   component: settingsComponent,
-// };
-
-// const instances = Object.keys(enabledPopups)
-//   .map((id) => ({ [id]: new PopupAddon(id) }))
-//   .reduce((single, all) => ({ ...single, ...all }), {});
+  selectedTab.value = id;
+}
 </script>
 
 <style lang="scss" module>

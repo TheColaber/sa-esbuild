@@ -2,6 +2,7 @@ export default defineAddon({
   name: "Find bar",
   description:
     "Creates a search bar next to the sounds tab to find and jump to scripts, costumes and sounds.",
+  tags: ["codeEditor", "costumeEditor", "recommended"],
   versionAdded: "1.0.0",
   credits: [
     {
@@ -11,6 +12,7 @@ export default defineAddon({
       name: "griffpatch",
     },
   ],
+  enabledByDefault: true,
   hotkeys: [
     {
       id: "previousLocation",
@@ -25,8 +27,6 @@ export default defineAddon({
       default: ["Ctrl", "Right"],
     },
   ],
-  tags: ["codeEditor", "costumeEditor", "recommended"],
-  enabledByDefault: true,
 });
 
 export const scripts = defineScripts([

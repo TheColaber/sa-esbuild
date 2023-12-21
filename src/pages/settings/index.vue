@@ -1,25 +1,23 @@
 <template>
-  <!-- <div :class="[$style.container, { theme: true, lightTheme }]">
-    <Header v-model:lightTheme="lightTheme"></Header>
+  <div :class="[$style.container, { theme: true, lightTheme }]">
+    <!-- <Header v-model:lightTheme="lightTheme"></Header> -->
     <Suspense>
       <Content></Content>
     </Suspense>
-  </div> -->
+  </div>
 </template>
 
 <script setup lang="ts">
-// import Content from "./content.vue";
+import Content from "./content.vue";
 // import Header from "./header.vue";
-import { syncStorage } from "../../storage/extension";
-import pageStorage from "../../storage/pages";
+import { syncStorage } from "../../background/storage";
+import pageStorage from "../storage";
 import { ref, watch } from "vue";
 
-const lightTheme = ref(pageStorage.getItem("lightTheme") === true);
-syncStorage.valueStream.subscribe((values) => {
-  if ("lightTheme" in values) {
-    lightTheme.value = values.lightTheme;
-    pageStorage.setItem("lightTheme", lightTheme.value);
-  }
+const lightTheme = ref(pageStorage.get("lightTheme") === true);
+syncStorage.watch(["lightTheme"], ({ lightTheme: newLightTheme }) => {
+  lightTheme.value = newLightTheme;
+  pageStorage.set("lightTheme", lightTheme.value);
 });
 
 watch(lightTheme, (newVal) => {
