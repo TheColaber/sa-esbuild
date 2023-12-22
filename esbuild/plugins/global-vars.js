@@ -18,18 +18,27 @@ export default () => ({
         for (const file of addons[id]) {
           if (args.path === path.resolve(file)) {
             const code = await readFile(args.path, "utf-8");
-            const contents = `import { defineAddon, defineScripts, definePopup, defineStyles } from "${path.resolve("esbuild/addon-helpers.ts").replace(/\\/g, "/")}";` + (
-              await build.esbuild.transform(code, {
-                loader: "ts",
-                pure: ["defineScripts", "defineAddon", "definePopup", "defineStyles"],
-                define: {
-                  console: `addon.console`,
-                },
-              })
-            ).code.replace(
-              /\b(addon)\b/g,
-              `globalThis.scratchAddons.addons["${id}"]`,
-            );
+            const contents =
+              `import { defineAddon, defineScripts, definePopup, defineStyles } from "${path
+                .resolve("esbuild/addon-helpers.ts")
+                .replace(/\\/g, "/")}";` +
+              (
+                await build.esbuild.transform(code, {
+                  loader: "ts",
+                  pure: [
+                    "defineScripts",
+                    "defineAddon",
+                    "definePopup",
+                    "defineStyles",
+                  ],
+                  define: {
+                    console: `addon.console`,
+                  },
+                })
+              ).code.replace(
+                /\b(addon)\b/g,
+                `globalThis.scratchAddons.addons["${id}"]`,
+              );
             return { contents };
           }
         }

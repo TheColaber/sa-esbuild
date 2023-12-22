@@ -5,7 +5,7 @@ import { readFile, mkdir, writeFile, cp } from "fs/promises";
 import path from "path";
 import "esbuild-runner/register.js";
 import * as sfc from "@vue/compiler-sfc";
-import {renderToString} from "@vue/server-renderer";
+import { renderToString } from "@vue/server-renderer";
 import { createApp, createSSRApp, h } from "vue";
 export default () => ({
   name: "chrome-extension",
@@ -28,7 +28,6 @@ export default () => ({
       (f) => dir + "/" + f,
     );
 
-    
     for (const file of html) {
       const buffer = await readFile(file);
       const root = load(buffer).root();
@@ -40,7 +39,9 @@ export default () => ({
 
       const htmlAssets = root.find("link");
       for (const asset of htmlAssets) {
-        assets.push(path.relative(dir, path.join(path.dirname(file), asset.attribs.href)));
+        assets.push(
+          path.relative(dir, path.join(path.dirname(file), asset.attribs.href)),
+        );
       }
 
       // root.find("body").contents().map(async (i, el) => {
@@ -72,7 +73,6 @@ export default () => ({
 
       build.initialOptions.entryPoints = entryPoints;
     }
-
 
     build.onStart(async () => {
       if (manifest.default_locale) {
@@ -152,7 +152,7 @@ export default () => ({
           recursive: true,
         });
         await writeFile(outputFile, root.html());
-      };
+      }
     });
   },
 });

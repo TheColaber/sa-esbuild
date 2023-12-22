@@ -30,4 +30,4 @@ export const scripts = defineScripts([
   },
 ]);
 
-export const popup = definePopup()
+export const popup = definePopup();

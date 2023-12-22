@@ -24,6 +24,6 @@ class Storage<T> {
 type PageStorage = {
   lightTheme: boolean;
   lastSelectedPopup: string;
-}
+};
 const storage = new Storage<PageStorage>();
 export default storage;

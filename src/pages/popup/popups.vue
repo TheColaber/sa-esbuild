@@ -57,7 +57,7 @@ import externalLinkIcon from "@iconify-icons/tabler/external-link";
 
 // msg() is used in the component html above
 const msg = chrome.i18n.getMessage;
-chrome.action.getUserSettings().then(s => s.isOnToolbar)
+chrome.action.getUserSettings().then((s) => s.isOnToolbar);
 // Get light theme from the page localStorage and then update it to the value in storage after changes
 const lightTheme = ref(pageStorage.get("lightTheme") === true);
 syncStorage.watch(["lightTheme"], ({ lightTheme: newLightTheme }) => {
@@ -82,7 +82,9 @@ const instances = Object.keys(enabledPopups)
   .reduce((single, all) => ({ ...single, ...all }), {});
 
 // Set the selected tab to the first tab in the list, but if the user previously selected another one, select that instead.
-const ORDER = ["scratch-messaging", "settings-page"].filter((id) => id in enabledPopups);
+const ORDER = ["scratch-messaging", "settings-page"].filter(
+  (id) => id in enabledPopups,
+);
 let selectedTab = ref(ORDER[0]);
 
 const lastSelectedPopup = pageStorage.get("lastSelectedPopup");

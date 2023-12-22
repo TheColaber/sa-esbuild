@@ -19,4 +19,4 @@ export const popup = definePopup({
   icon: mailIcon,
 });
 
-export const scripts = defineScripts()
+export const scripts = defineScripts();

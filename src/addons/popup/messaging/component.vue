@@ -216,7 +216,7 @@ async function loadMessages() {
           headers: {
             "x-token": session.user.token,
           },
-        }
+        },
       )
     ).json();
     for (const message of page) {
@@ -246,7 +246,7 @@ async function loadMessages() {
           const project = getProject(message.project_id, message.title);
           project.loveCount++;
           const findLover = project.loversAndFavers.find(
-            (obj) => obj.username === message.actor_username
+            (obj) => obj.username === message.actor_username,
           );
           if (findLover) findLover.loved = true;
           else
@@ -261,7 +261,7 @@ async function loadMessages() {
           const project = getProject(message.project_id, message.project_title);
           project.favoriteCount++;
           const findFaver = project.loversAndFavers.find(
-            (obj) => obj.username === message.actor_username
+            (obj) => obj.username === message.actor_username,
           );
           if (findFaver) findFaver.faved = true;
           else

@@ -4,10 +4,10 @@ import { IconifyIcon } from "@iconify/vue";
 import MATCH_PATTERNS from "../src/content-script/matches";
 
 declare global {
-  const defineAddon: typeof import("./addon-helpers").defineAddon
-  const defineScripts: typeof import("./addon-helpers").defineScripts
-  const defineStyles: typeof import("./addon-helpers").defineStyles
-  const definePopup: typeof import("./addon-helpers").definePopup
+  const defineAddon: typeof import("./addon-helpers").defineAddon;
+  const defineScripts: typeof import("./addon-helpers").defineScripts;
+  const defineStyles: typeof import("./addon-helpers").defineStyles;
+  const definePopup: typeof import("./addon-helpers").definePopup;
   const addon: UserscriptAddon;
 }
 
@@ -28,7 +28,7 @@ export function definePopup(popup: AddonPopup) {
 }
 
 export interface AddonManifest {
-  /** 
+  /**
    * The name for the addon:
    * - Keep it to no more than 3 words.
    * - Use sentence case.
@@ -40,9 +40,9 @@ export interface AddonManifest {
    * - Avoid redundant words.
    *    - Correct: Find bar
    *    - Incorrect: Editor find bar
-   * 
+   *
    * The addon's name will appear on the settings page and be shared with translators. Please ensure the addon's name is clear and understandable for developers, translators, and users.
-   * 
+   *
    * Example:
    * ```js
    * {
@@ -51,7 +51,7 @@ export interface AddonManifest {
    * ```
    */
   name: string;
-  /** 
+  /**
    * The description for the addon:
    * - Should describe what the addon should output.
    * - Use proper casing and punctuation.
@@ -59,7 +59,7 @@ export interface AddonManifest {
    *    - What? (what does the addon do)
    *    - Where? (where does it do it)
    *    - Why? (why should the user use this/what will this allow ther user to do)
-   * 
+   *
    * The addon's description will appear on the settings page and be shared with translators. Please ensure the addon's description is clear and understandable for developers, translators, and users.
    *
    * Example:
@@ -72,9 +72,9 @@ export interface AddonManifest {
   description: string;
   /**
    * The version the addon was added:
-   * 
+   *
    * The addon's versionAdded will be compared to the current verion of the extension to check if the addon should be categorized higher.
-   * 
+   *
    * Example:
    * ```js
    * {
@@ -83,11 +83,11 @@ export interface AddonManifest {
    * ```
    */
   versionAdded: string;
-    /**
+  /**
    * The credits for the addon
-   * 
+   *
    * The addon's credits will be displayed in the settings page under the addon name and description.
-   * 
+   *
    * Example:
    * ```js
    * {
@@ -100,9 +100,9 @@ export interface AddonManifest {
    * The tags for the addon
    * - recommended: This addon is recommended to be enabled. This tag should only be added if approved by developers.
    * - TODO: finish this
-   * 
+   *
    * The addon's tags will used to categorize the addons.
-   * 
+   *
    * Example:
    * ```js
    * {
@@ -110,9 +110,9 @@ export interface AddonManifest {
    * }
    * ```
    */
-  tags: ("recommended"|"costumeEditor"|"codeEditor")[];
+  tags: ("recommended" | "costumeEditor" | "codeEditor")[];
   // category?: ("editor" | "popup" | "code" | "general")[];
-  mode?: "dev"|"prod";
+  mode?: "dev" | "prod";
   enabledByDefault?: boolean;
   // hotkeys?: {
   //   id: string;

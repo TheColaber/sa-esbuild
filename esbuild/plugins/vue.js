@@ -33,10 +33,10 @@ export default (opts = {}) => ({
           params.type === "script"
             ? "sfc-script"
             : params.type === "template"
-            ? "sfc-template"
-            : params.type === "style"
-            ? "sfc-style"
-            : "file",
+              ? "sfc-template"
+              : params.type === "style"
+                ? "sfc-style"
+                : "file",
         pluginData: {
           ...args.pluginData,
           index: params.index,
@@ -81,7 +81,7 @@ export default (opts = {}) => ({
         filename,
       });
 
-      const script = 
+      const script =
         descriptor.script || descriptor.scriptSetup
           ? sfc.compileScript(descriptor, { id })
           : undefined;
@@ -101,8 +101,7 @@ export default (opts = {}) => ({
       }
 
       const renderFuncName = opts.renderSSR ? "ssrRender" : "render";
-      code += `import { ${renderFuncName} } from "${encPath}?type=template";`
-
+      code += `import { ${renderFuncName} } from "${encPath}?type=template";`;
 
       for (const style in descriptor.styles) {
         code += `import cssModules from "${encPath}?type=style&index=${style}";`;
@@ -321,7 +320,9 @@ export default (opts = {}) => ({
                           const el = document.createElement("style");
                           el.textContent = ${JSON.stringify(cssText)};
                           document.head.append(el);
-                          return ${result.modules ? JSON.stringify(result.modules) : ""};
+                          return ${
+                            result.modules ? JSON.stringify(result.modules) : ""
+                          };
                         })()
                       };`;
       return {
