@@ -20,33 +20,24 @@ export default () => ({
   name: "virtual",
   setup(build) {
     const namespace = "virtual";
+    function exportAddons(item) {
+      const exports = [];
+      for (const addon of addonManifests) {
+        const parts = addon.split("/");
+        const id = parts.at(-2);
+        exports.push(
+          `export { ${item} as "${id}" } from "${path
+            .resolve(addon)
+            .replace(/\\/g, "/")}";`,
+        );
+      }
+      return exports.join("\n");
+    }
     const options = {
-      "#addons": (() => {
-        const exports = [];
-        for (const addon of addonManifests) {
-          const parts = addon.split("/");
-          const id = parts.at(-2);
-          exports.push(
-            `export { default as "${id}" } from "${path
-              .resolve(addon)
-              .replace(/\\/g, "/")}";`,
-          );
-        }
-        return exports.join("\n");
-      })(),
-      "#addon-scripts": (() => {
-        const exports = [];
-        for (const addon of addonManifests) {
-          const parts = addon.split("/");
-          const id = parts.at(-2);
-          exports.push(
-            `export { scripts as "${id}" } from "${path
-              .resolve(addon)
-              .replace(/\\/g, "/")}";`,
-          );
-        }
-        return exports.join("\n");
-      })(),
+      "#addons": exportAddons("default"),
+      "#addon-scripts": exportAddons("scripts"),
+      "#addon-styles": exportAddons("styles"),
+      "#addon-popups": exportAddons("popup"),
       "#addon-l10n": `export default ${JSON.stringify(addonLocales)}`,
     };
     const filter = new RegExp(

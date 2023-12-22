@@ -48,7 +48,7 @@ import { syncStorage } from "../../background/storage";
 import pageStorage from "../storage";
 import { ref } from "vue";
 // TODO: Support other languages
-import * as addons from "#addons";
+import * as addons from "#addon-popups";
 import settingsComponent from "../settings/content.vue";
 import PopupAddon from "../../addon-api/popup";
 import { Icon } from "@iconify/vue";
@@ -67,7 +67,7 @@ syncStorage.watch(["lightTheme"], ({ lightTheme: newLightTheme }) => {
 const { addonsStates = {} } = await syncStorage.get("addonsStates");
 
 const enabledPopups = Object.keys(addons)
-  .map((id) => ({ [id]: addonsStates[id] && addons[id].popup }))
+  .map((id) => ({ [id]: addonsStates[id] && addons[id] }))
   .reduce((all, single) => ({ ...single, ...all }), {});
 
 // Add popup that shows the settings page.

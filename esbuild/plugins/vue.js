@@ -2,7 +2,7 @@ import path from "path";
 import * as fs from "fs";
 import * as crypto from "crypto";
 import * as sfc from "@vue/compiler-sfc";
-import { load } from "cheerio";
+// import { load } from "cheerio";
 
 // import { replaceRules } from "./paths";
 
@@ -81,7 +81,7 @@ export default (opts = {}) => ({
         filename,
       });
 
-      const script =
+      const script = 
         descriptor.script || descriptor.scriptSetup
           ? sfc.compileScript(descriptor, { id })
           : undefined;
@@ -100,26 +100,31 @@ export default (opts = {}) => ({
         code += "const script = {};";
       }
 
-      for (const style in descriptor.styles) {
-        code += `import cssModules from "${encPath}?type=style&index=${style}";
-                if (cssModules) {
-                  script.__cssModules = cssModules
-                }`;
-      }
-
       const renderFuncName = opts.renderSSR ? "ssrRender" : "render";
+      code += `import { ${renderFuncName} } from "${encPath}?type=template";`
 
-      code += `import { ${renderFuncName} } from "${encPath}?type=template"; script.${renderFuncName} = ${renderFuncName};`;
 
-      code += `script.__file = ${JSON.stringify(filename)};`;
-      if (descriptor.styles.some((o) => o.scoped)) {
-        code += `script.__scopeId = ${JSON.stringify(dataId)};`;
-      }
-      if (opts.renderSSR) {
-        code += "script.__ssrInlineRender = true;";
+      for (const style in descriptor.styles) {
+        code += `import cssModules from "${encPath}?type=style&index=${style}";`;
       }
 
-      code += "export default script;";
+      code += `
+      export default /* @__PURE__ */ (() => {
+        if (${!!descriptor.styles.length} && cssModules) {
+          script.__cssModules = cssModules
+        }
+        script.${renderFuncName} = ${renderFuncName};
+        script.__file = ${JSON.stringify(filename)};
+        return script;
+      })()
+      `;
+
+      // if (descriptor.styles.some((o) => o.scoped)) {
+      //   code += `script.__scopeId = ${JSON.stringify(dataId)};`;
+      // }
+      // if (opts.renderSSR) {
+      //   code += "script.__ssrInlineRender = true;";
+      // }
 
       return {
         contents: code,
@@ -192,7 +197,6 @@ export default (opts = {}) => ({
             "\n\n//@ sourceMappingURL=data:application/json;charset=utf-8;base64," +
             sourceMap;
         }
-
         return {
           contents: code,
           loader: script.lang === "ts" ? "ts" : "js",
@@ -312,15 +316,14 @@ export default (opts = {}) => ({
       }
 
       const cssText = result.code;
-      let contents = `
-            const el = document.createElement("style");
-            el.textContent = ${JSON.stringify(cssText)};
-            document.head.append(el);\n`;
-      if (result.modules) {
-        contents += `export default {
-                "$style": ${JSON.stringify(result.modules)}
-              };`;
-      }
+      let contents = `export default {
+                        "$style": /* @__PURE__ */ (() => {
+                          const el = document.createElement("style");
+                          el.textContent = ${JSON.stringify(cssText)};
+                          document.head.append(el);
+                          return ${result.modules ? JSON.stringify(result.modules) : ""};
+                        })()
+                      };`;
       return {
         contents,
         loader: "js",

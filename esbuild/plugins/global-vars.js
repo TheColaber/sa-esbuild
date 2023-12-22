@@ -3,12 +3,13 @@ import { readFile } from "fs/promises";
 import { globby } from "globby";
 
 const addonScriptFiles = await globby("src/addons/**/addon.ts");
-const addons = await addonScriptFiles.reduce(async (addons, file) => {
+const addons = {};
+for (const file of addonScriptFiles) {
   addons[file.split("/").at(-2)] = await globby(
     path.dirname(file) + "/**/**.ts",
   );
-  return addons;
-}, {});
+}
+
 export default () => ({
   name: "glob-vars",
   setup(build) {
@@ -17,10 +18,10 @@ export default () => ({
         for (const file of addons[id]) {
           if (args.path === path.resolve(file)) {
             const code = await readFile(args.path, "utf-8");
-            const contents = (
+            const contents = `import { defineAddon, defineScripts, definePopup, defineStyles } from "${path.resolve("esbuild/addon-helpers.ts").replace(/\\/g, "/")}";` + (
               await build.esbuild.transform(code, {
                 loader: "ts",
-                pure: ["defineScripts", "defineAddon"],
+                pure: ["defineScripts", "defineAddon", "definePopup", "defineStyles"],
                 define: {
                   console: `addon.console`,
                 },

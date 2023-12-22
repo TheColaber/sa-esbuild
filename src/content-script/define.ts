@@ -12,10 +12,10 @@ import UserscriptAddon from "../addon-api/userscript";
 const sharedObserver = new SharedObserver();
 globalThis.scratchAddons = {
   addonsLoaded: false,
-  realConsole: { ...realConsole },
+  realConsole: { ...console },
   console: {
-    ...realConsole,
-    log: { ...realConsole }.log.bind(realConsole, "%csa", "color: #ff7b26;"),
+    ...console,
+    log: console.log.bind(console, "%csa", "color: #ff7b26;"),
   },
   events: new EventTarget(),
   addons: {},

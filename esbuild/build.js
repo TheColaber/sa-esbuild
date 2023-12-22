@@ -7,7 +7,6 @@ import vue from "./plugins/vue.js";
 import postcss from "./plugins/postcss.js";
 import path from "path";
 import typedCss from "./plugins/typed-css.js";
-
 build();
 
 async function build() {
@@ -21,8 +20,10 @@ async function build() {
     chunkNames: "[dir]/[name]",
     bundle: true,
     format: "esm",
-    inject: [path.resolve("esbuild/addon-helpers.ts").replace(/\\/g, "/")],
     // minify: true,
+    define: {
+      "process.env.NODE_ENV": "'production'"
+    },
     plugins: [
       chromeExtension(),
       globalVars(),
@@ -32,10 +33,6 @@ async function build() {
       typedCss(),
     ],
     treeShaking: true,
-    // define: {
-    //   realConsole: "console",
-    //   console: "globalThis.scratchAddons.console",
-    // },
   });
   console.time("build");
   await ctx.rebuild();
