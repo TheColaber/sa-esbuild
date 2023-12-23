@@ -1,18 +1,16 @@
 <template>
   <div :class="$style['message-type']" v-show="length">
-    <div :class="[$style.title]" @click="extended = !extended">
-      <button :class="$style.dropdown">
-        <Icon
-        :class="$style.icon"
+    <button :class="[$style.title]" @click="extended = !extended">
+      <Icon
+        :class="$style.dropdown"
         :icon="extended ? 'uil:angle-up' : 'uil:angle-down'"
       ></Icon>
-      </button>
       <span :class="$style.text">{{ title }}</span>
       <span :class="$style.right">
         <Icon :class="$style.icon" :icon="'uil:' + icon"></Icon>
         {{ length }}
       </span>
-    </div>
+    </button>
     <div
       v-show="extended"
       :class="[$style.list, { [$style.noRowGap]: noRowGap }]"
@@ -52,6 +50,12 @@ const extended = ref(false);
     display: flex;
     align-items: center;
     user-select: none;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: start;
+    font-family: inherit;
+    outline: none;
 
     .text {
       white-space: nowrap;
@@ -71,19 +75,15 @@ const extended = ref(false);
     }
 
     .dropdown {
-      display: flex;
-      background: none;
-      border: none;
-      color: inherit;
       transition: background 0.2s;
       padding: 4px;
       border-radius: 4px;
       font-size: 24px;
+    }
 
-      &:focus-visible {
-        outline: none;
-        box-shadow: inset 0 0 0 3px var(--content-text);
-      }
+    &:focus-visible .dropdown {
+      outline: none;
+      box-shadow: inset 0 0 0 3px var(--content-text);
     }
 
     &:hover .dropdown {
