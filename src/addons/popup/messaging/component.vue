@@ -153,7 +153,7 @@
 </template>
 
 <script setup lang="ts">
-// import Section from "./section.vue";
+import Section from "./section.vue";
 import PopupAddon from "../../../addon-api/popup";
 import { ref } from "vue";
 
@@ -400,6 +400,12 @@ type favoriteproject = {
 
   &:hover {
     text-decoration: underline;
+  }
+
+  &:focus-visible {
+    border-radius: 4px;
+    outline: none;
+    box-shadow: 0 0 0 3px #fff;
   }
 }
 </style>

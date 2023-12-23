@@ -49,8 +49,8 @@ const version = chrome.runtime
       text-decoration: none;
       opacity: 0.75;
       font-size: 12px;
-      border-radius: 4px;
       &:focus-visible {
+        border-radius: 4px;
         outline: none;
         box-shadow: 0 0 0 3px #fff;
       }

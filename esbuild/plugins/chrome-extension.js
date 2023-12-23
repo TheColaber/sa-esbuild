@@ -14,7 +14,7 @@ export default () => ({
     const manifestPath = build.initialOptions.entryPoints[0];
     if (!manifestPath) return;
     const resolve = esm(new Module("module"));
-    const manifest = resolve("./src/manifest.ts").default;
+    const { default: manifest, extraIcons, extraPages } = resolve("./src/manifest.ts");
     let manifestJSON = JSON.stringify(manifest, undefined, "  ");
     const dir = path.dirname(manifestPath);
 
@@ -23,8 +23,8 @@ export default () => ({
       ...manifest.content_scripts.flatMap((cs) => cs.js),
     ];
     const entryPoints = [...manifestEntries].map((f) => dir + "/" + f);
-    const assets = [...Object.values(manifest.icons)];
-    const html = [manifest.action.default_popup, manifest.options_page].map(
+    const assets = [...Object.values(manifest.icons), ...extraIcons];
+    const html = [manifest.action.default_popup, manifest.options_page, ...extraPages].map(
       (f) => dir + "/" + f,
     );
 

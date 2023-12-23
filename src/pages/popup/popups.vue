@@ -67,6 +67,7 @@ syncStorage.watch(["lightTheme"], ({ lightTheme: newLightTheme }) => {
 const { addonsStates = {} } = await syncStorage.get("addonsStates");
 
 const enabledPopups = Object.keys(addons)
+  .filter((id) => addons[id])
   .map((id) => ({ [id]: addonsStates[id] && addons[id] }))
   .reduce((all, single) => ({ ...single, ...all }), {});
 
@@ -82,9 +83,14 @@ const instances = Object.keys(enabledPopups)
   .reduce((single, all) => ({ ...single, ...all }), {});
 
 // Set the selected tab to the first tab in the list, but if the user previously selected another one, select that instead.
-const ORDER = ["scratch-messaging", "settings-page"].filter(
+const ORDER = ["messaging", "settings-page"].filter(
   (id) => id in enabledPopups,
 );
+for (const id in enabledPopups) {
+  if (!ORDER.includes(id)) {
+    ORDER.push(id);
+  }
+}
 let selectedTab = ref(ORDER[0]);
 
 const lastSelectedPopup = pageStorage.get("lastSelectedPopup");
@@ -148,15 +154,12 @@ function switchTab(id) {
         }
         &:hover {
           background-color: var(--button-hover-background);
-          padding: 0px 8px;
         }
         &:focus-visible {
-          padding: 0px 8px;
           outline: none;
           box-shadow: inset 0 0 0 3px var(--content-text);
         }
         &.sel {
-          padding: 0px 8px;
           background-image: var(--gradient);
           color: #fff;
         }
@@ -177,23 +180,28 @@ function switchTab(id) {
           outline: none;
           color: inherit;
         }
-        &.sel .link,
-        &:focus-visible .link,
-        &:hover .link {
-          display: flex;
-          height: 100%;
-          align-items: center;
-          .popout {
-            margin-left: 1px;
-            padding: 2px;
-            border-radius: 2px;
-            font-size: 10px;
-          }
+        &.sel,
+        &:focus-visible,
+        &:hover,
+        &:focus-within
+        {
+          padding: 0px 8px;
+          .link {
+            display: flex;
+            height: 100%;
+            align-items: center;
+            .popout {
+              margin-left: 1px;
+              padding: 2px;
+              border-radius: 2px;
+              font-size: 10px;
+            }
 
-          &:focus-visible .popout,
-          &:hover .popout {
-            background: #fff;
-            color: var(--theme);
+            &:focus-visible .popout,
+            &:hover .popout {
+              background: #fff;
+              color: var(--theme);
+            }
           }
         }
       }

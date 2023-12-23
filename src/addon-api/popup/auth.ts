@@ -51,7 +51,7 @@ export default class Auth extends EventTarget {
     if (!session.user) return 0;
     this.messageCache.timestamp = date;
     this.messageCache.value = fetch(
-      `https://api.scratch.mit.edu/users/${session.user.username}/messages/count?timestamp=${date}`,
+      `https://api.scratch.mit.edu/users/${session.user.username}/messages/count`,
     )
       .then((res) => res.json())
       .then((val: { count: number }) => val.count);

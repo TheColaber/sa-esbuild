@@ -4,34 +4,54 @@ import { version, homepage } from "../package.json";
 // All text that the user sees in the extension should be localized.
 // English values can be found in src/_locales/en/messages.json.
 
+// Constants
+const ICONS = {
+  PRODUCTION: {
+    16: "images/icon-16.png",
+    32: "images/icon-32.png",
+    1024: "images/icon.png",
+  },
+  DEVELOPMENT: {
+    16: "images/icon-blue-16.png",
+    32: "images/icon-blue-32.png",
+    1024: "images/icon-blue.png",
+  },
+  MUTED: {
+    16: "images/icon-gray-16.png",
+    32: "images/icon-gray-32.png",
+  }
+};
+
+const PAGES = {
+  POPUP: {
+    INDEX: "pages/popup/index.html",
+    FULLSCREEN: "pages/popup/fullscreen/index.html",
+  },
+  SETTINGS: {
+    INDEX: "pages/settings/index.html",
+    // TODO: permissions page, etc.
+  }
+};
+
 const isPrerelease = version.split("-")[1] === "prerelease";
-// Show blue icons when we are on a prerelease, normal if not.
-const iconPath = "images/icon" + (isPrerelease ? "-blue" : "");
+const iconDisplay: keyof typeof ICONS = isPrerelease ? "DEVELOPMENT" : "PRODUCTION"
 
 const manifest: chrome.runtime.ManifestV3 = {
+  manifest_version: 3,
   name: "__MSG_name__",
   description: "__MSG_description__",
   version: version.split("-")[0],
   version_name: version,
-  manifest_version: 3,
   homepage_url: homepage,
   author: "Scratch Addons",
   default_locale: "en",
-  icons: {
-    16: iconPath + "-16.png",
-    32: iconPath + "-32.png",
-    1024: iconPath + ".png",
-    // TODO: gray icons - hacky, but like, i dont really feel like using the copy plugin
-    1: "images/icon-gray-16.png",
-    2: "images/icon-gray-32.png",
-  },
-
+  icons: ICONS[iconDisplay],
   background: {
     service_worker: "background/index.ts",
     type: "module",
   },
-  action: { default_popup: "pages/popup/index.html" },
-  options_page: "pages/settings/index.html",
+  action: { default_popup: PAGES.POPUP.INDEX },
+  options_page: PAGES.SETTINGS.INDEX,
   content_scripts: [
     {
       js: ["content-script/index.ts"],
@@ -61,6 +81,9 @@ if (isFirefox) {
   manifest.browser_specific_settings = {
     gecko: { id: "griffpatch@griffpatch.co.uk" },
   };
-}
+};
+
+export const extraIcons = [ICONS.MUTED[16], ICONS.MUTED[32]];
+export const extraPages = [PAGES.POPUP.FULLSCREEN];
 
 export default manifest;

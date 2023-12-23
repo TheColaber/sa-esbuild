@@ -10,13 +10,24 @@ class Storage<T> {
     return this.name + "-" + key.toString();
   }
 
-  get(...keys: (keyof T)[]) {
+  async get(...keys: (keyof T)[]) {
     let prefixedKeys = keys.flatMap((key) => this.prefixKey(key));
-    return chrome.storage[this.type].get(prefixedKeys) as Promise<Partial<T>>;
+    const storage = await chrome.storage[this.type].get(prefixedKeys) as Partial<T>;
+    const unprefixedStorage = keys
+    .map((key) => ({ [key]: storage[this.prefixKey(key) as keyof T] }))
+    .reduce((all, single) => ({ ...single, ...all }), {});
+  
+    // .reduce((all, key) => ({[key]: storage[this.prefixKey(key)], ...all}), {});
+    console.log(unprefixedStorage);
+    
+    return unprefixedStorage;
   }
 
   set(newStorage: Partial<T>) {
-    return chrome.storage[this.type].set(newStorage);
+    const entries = Object.entries(newStorage).map(([key, val]) => ([this.prefixKey(key as keyof T), val]));
+    const storage = Object.fromEntries(entries);
+    
+    return chrome.storage[this.type].set(storage);
   }
 
   clear() {
