@@ -183,8 +183,7 @@ function switchTab(id) {
         &.sel,
         &:focus-visible,
         &:hover,
-        &:focus-within
-        {
+        &:focus-within {
           padding: 0px 8px;
           .link {
             display: flex;

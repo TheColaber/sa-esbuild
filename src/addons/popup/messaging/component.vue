@@ -149,16 +149,38 @@
         >"
       </span>
     </Section>
+    <Section
+      :length="profile.unreadComments"
+      :title="
+        profile.username === username
+          ? 'Your profile'
+          : '{{ profile.username }}\'s profile'
+      "
+      icon="arrow-random"
+      v-for="profile of profilesOrdered"
+      v-show="profile.unreadComments && profile.loadedComments"
+    >
+      {{ profile.unreadComments }}
+      {{ profile.loadedComments }}
+      <CommentChain
+        :chain="profile.commentChains"
+        :messages="messages"
+        :comments="comments"
+        :msgCount="msgCount"
+        :resource-id="profile.username"
+      />
+    </Section>
   </div>
 </template>
 
 <script setup lang="ts">
 import Section from "./section.vue";
+import CommentChain from "./comment-chain.vue";
 import PopupAddon from "../../../addon-api/popup";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 const { addon } = defineProps<{ addon: PopupAddon }>();
-
+const username = ref<string>();
 let follows = ref<followuser[]>([]);
 let studioInvites = ref<curatorinvite[]>([]);
 let studioPromotions = ref<becomeownerstudio[]>([]);
@@ -166,8 +188,33 @@ let studioHostTransfers = ref<becomehoststudio[]>([]);
 let forumActivity = ref<forumpost[]>([]);
 let studioActivity = ref<studioactivity[]>([]);
 let remixes = ref<remixproject[]>([]);
-const profiles = [];
-const studios = [];
+const comments = ref([]);
+const messages = ref([]);
+const msgCount = ref<number>();
+const profiles = ref<
+  {
+    username: string;
+    unreadComments: number;
+    commentChains: string[];
+    loadedComments: boolean;
+  }[]
+>([]);
+const profilesOrdered = computed(() => {
+  // Own profile first, then others
+  return [
+    ...profiles.value.filter((profile) => profile.username === username.value),
+    ...profiles.value.filter((profile) => profile.username !== username.value),
+  ];
+});
+const studios = ref<
+  {
+    id: number;
+    title: string;
+    unreadComments: number;
+    commentChains: string[];
+    loadedComments: boolean;
+  }[]
+>([]);
 const projects = ref<
   {
     id: number;
@@ -180,13 +227,18 @@ const projects = ref<
     loadedComments: boolean;
   }[]
 >([]);
+const commentLocations = {
+  0: [], // Projects
+  1: [], // Profiles
+  2: [], // Studios
+};
 
 let loading = ref<number>(0);
 let error = ref<"failedfetch" | "notloggedin">(null);
 
 async function loadMessages() {
   const session = await addon.auth.getSession();
-  if (session.error) {
+  if ("error" in session) {
     error.value = "failedfetch";
     return;
   }
@@ -194,8 +246,10 @@ async function loadMessages() {
     error.value = "notloggedin";
     return;
   }
+  username.value = session.user.username;
   const messageCount = await addon.auth.getMessageCount();
-  const maxPages = Math.min(Math.ceil(messageCount / 40) + 1, 25);
+  msgCount.value = messageCount;
+  const maxPages = Math.min(Math.ceil(msgCount.value / 40) + 1, 25);
   for (let i = 0; i < maxPages; i++, loading.value = (100 * i) / maxPages) {
     const page: (
       | followuser
@@ -207,10 +261,11 @@ async function loadMessages() {
       | remixproject
       | loveproject
       | favoriteproject
+      | addcomment
     )[] = await (
       await fetch(
         `https://api.scratch.mit.edu/users/${
-          session.user.username
+          username.value
         }/messages?limit=40&offset=${40 * i}`,
         {
           headers: {
@@ -220,6 +275,7 @@ async function loadMessages() {
       )
     ).json();
     for (const message of page) {
+      messages.value.push(message);
       switch (message.type) {
         case "followuser":
           follows.value.push(message);
@@ -272,13 +328,62 @@ async function loadMessages() {
             });
           break;
         }
-        default:
-          // console.error("UNKNOWN MESSAGE! Please send to SA Devs:", message);
+        case "addcomment":
+          const resourceId =
+            message.comment_type === 1
+              ? message.comment_obj_title
+              : message.comment_obj_id;
+          let location = commentLocations[message.comment_type].find(
+            (obj) => obj.resourceId === resourceId,
+          );
+          if (!location) {
+            location = { resourceId, commentIds: [] };
+            commentLocations[message.comment_type].push(location);
+          }
+          location.commentIds.push(message.comment_id);
+          if (message.comment_type === 1) {
+            console.log({ ...commentLocations[1][0] }, [
+              ...location.commentIds,
+            ]);
+          }
+          let resourceObject;
+          if (message.comment_type === 0)
+            resourceObject = getProject(
+              message.comment_obj_id,
+              message.comment_obj_title,
+            );
+          else if (message.comment_type === 1)
+            resourceObject = getProfile(message.comment_obj_title);
+          else if (message.comment_type === 2)
+            resourceObject = getStudio(resourceId, message.comment_obj_title);
+          resourceObject.unreadComments++;
           break;
+        default:
+          console.error("UNKNOWN MESSAGE! Please send to SA Devs:", message);
+          break;
+      }
+      if (commentLocations?.[1]?.[0]?.commentIds.length === 0) {
+        console.log(commentLocations[1]);
+
+        throw "aBRUHHHHHHHHHHHHHHHHHHHh";
+      }
+    }
+
+    for (const profile of profilesOrdered.value) {
+      const location = commentLocations[1].find(
+        (obj) => obj.resourceId === profile.username,
+      );
+
+      if (location) {
+        await checkCommentLocation(
+          "user",
+          location.resourceId,
+          location.commentIds,
+          profile,
+        );
       }
     }
   }
-  console.log(projects.value);
 }
 loadMessages();
 
@@ -298,22 +403,218 @@ function getProject(projectId: number, title: string) {
   projects.value.push(project);
   return project;
 }
-//   // //         } else if (message.type === "addcomment") {
-//   // //           const resourceId = message.comment_type === 1 ? message.comment_obj_title : message.comment_obj_id;
-//   // //           let location = commentLocations[message.comment_type].find((obj) => obj.resourceId === resourceId);
-//   // //           if (!location) {
-//   // //             location = { resourceId, commentIds: [] };
-//   // //             commentLocations[message.comment_type].push(location);
-//   // //           }
-//   // //           location.commentIds.push(message.comment_id);
-//   // //           let resourceObject;
-//   // //           if (message.comment_type === 0)
-//   // //             resourceObject = this.getProjectObject(resourceId, message.comment_obj_title);
-//   // //           else if (message.comment_type === 1) resourceObject = this.getProfileObject(resourceId);
-//   // //           else if (message.comment_type === 2)
-//   // //             resourceObject = this.getStudioObject(resourceId, message.comment_obj_title);
-//   // //           resourceObject.unreadComments++;
-//   // //         }
+
+function getProfile(username) {
+  const search = profiles.value.find((obj) => obj.username === username);
+  if (search) return search;
+  const obj = {
+    username,
+    unreadComments: 0,
+    commentChains: [],
+    loadedComments: false,
+  };
+  profiles.value.push(obj);
+
+  return obj;
+}
+function getStudio(studioId, title) {
+  const search = studios.value.find((obj) => obj.id === studioId);
+  if (search) return search;
+  const obj = {
+    id: studioId,
+    title,
+    unreadComments: 0,
+    commentChains: [],
+    loadedComments: false,
+  };
+  studios.value.push(obj);
+  return obj;
+}
+
+function checkCommentLocation(
+  resourceType,
+  resourceId,
+  commentIds,
+  elementObject,
+) {
+  return fetchComments(addon, {
+    resourceType,
+    resourceId,
+    commentIds,
+  }).then((fetchedComments) => {
+    if (Object.keys(fetchedComments).length === 0) {
+      elementObject.unreadComments = 0;
+    }
+    for (const commentId of Object.keys(fetchedComments)) {
+      const commentObject = fetchedComments[commentId];
+      let domContent = commentObject.content; // TODO: fixCommentContent(commentObject.content);
+      if (resourceType !== "user") {
+        // Re-wrap elements from <body> to <div>
+        const newElement = document.createElement("div");
+        if (commentObject.replyingTo) {
+          // We need to append the replyee ourselves
+          newElement.append(
+            Object.assign(document.createElement("a"), {
+              href: `https://scratch.mit.edu/users/${commentObject.replyingTo}`,
+              textContent: "@" + commentObject.replyingTo,
+            }),
+          );
+          newElement.append(" ");
+        }
+        newElement.append(...domContent.childNodes);
+        domContent = newElement;
+      }
+      commentObject.content = domContent;
+      comments.value[commentId] = commentObject;
+    }
+
+    // Preserve chronological sort when using JSON API
+    const parentComments = Object.entries(comments).filter(
+      (c) => c[1].childOf === null,
+    );
+    const sortedParentComments = parentComments.sort(
+      (a, b) => new Date(b[1].date).getTime() - new Date(a[1].date).getTime(),
+    );
+    const sortedIds = sortedParentComments.map((arr) => arr[0]);
+    const resourceGetFunction =
+      resourceType === "project"
+        ? getProject
+        : resourceType === "user"
+          ? getProfile
+          : getStudio;
+
+    const resourceObject = resourceGetFunction(resourceId);
+    for (const sortedId of sortedIds)
+      resourceObject.commentChains.push(sortedId);
+
+    elementObject.loadedComments = true;
+  });
+}
+
+function fetchComments(
+  addon,
+  { resourceType, resourceId, commentIds, page = 1, commentsObj = {} },
+) {
+  if (resourceType === "user")
+    return fetchLegacyComments(addon, {
+      resourceType,
+      resourceId,
+      commentIds,
+      page,
+      commentsObj,
+    });
+  // return fetchMigratedComments(addon, { resourceType, resourceId, commentIds, page, commentsObj });
+}
+
+const parser = new DOMParser();
+
+async function fetchLegacyComments(
+  addon,
+  { resourceType, resourceId, commentIds, page = 1, commentsObj = {} },
+) {
+  const res = await fetch(
+    `https://scratch.mit.edu/site-api/comments/${resourceType}/${resourceId}/?page=${page}`,
+    {
+      credentials: "omit",
+    },
+  );
+  if (!res.ok) {
+    console.warn(
+      `Ignoring comments ${resourceType}/${resourceId} page ${page}, status ${res.status}`,
+    );
+    return commentsObj;
+  }
+  const text = await res.text();
+  const dom = parser.parseFromString(text, "text/html");
+  for (const commentChain of dom.querySelectorAll(
+    ".top-level-reply:not(.removed)",
+  )) {
+    if (commentIds.length === 0) {
+      // We found all comments we had to look for
+      return commentsObj;
+    }
+    let foundComment = false;
+    const parentComment = commentChain.querySelector("div");
+    const parentId = Number(parentComment.getAttribute("data-comment-id"));
+
+    const childrenComments = {};
+    const children = commentChain.querySelectorAll("li.reply:not(.removed)");
+    for (const child of children) {
+      const childId = Number(
+        child.querySelector("div").getAttribute("data-comment-id"),
+      );
+      if (commentIds.includes(childId)) {
+        foundComment = true;
+        commentIds.splice(
+          commentIds.findIndex((commentId) => commentId === childId),
+          1,
+        );
+      }
+      const author = child.querySelector(".name").textContent.trim();
+      childrenComments[`${resourceType[0]}_${childId}`] = {
+        author: author.replace(/\*/g, ""),
+        authorId: Number(
+          child.querySelector(".reply").getAttribute("data-commentee-id"),
+        ),
+        content: child.querySelector(".content"),
+        date: child.querySelector(".time").getAttribute("title"),
+        children: null,
+        childOf: `${resourceType[0]}_${parentId}`,
+        scratchTeam: author.includes("*"),
+      };
+    }
+
+    if (commentIds.includes(parentId)) {
+      foundComment = true;
+      commentIds.splice(
+        commentIds.findIndex((commentId) => commentId === parentId),
+        1,
+      );
+    }
+
+    if (foundComment) {
+      const parentAuthor = parentComment
+        .querySelector(".name")
+        .textContent.trim();
+      commentsObj[`${resourceType[0]}_${parentId}`] = {
+        author: parentAuthor.replace(/\*/g, ""),
+        authorId: Number(
+          parentComment
+            .querySelector(".reply")
+            .getAttribute("data-commentee-id"),
+        ),
+        content: parentComment.querySelector(".content"),
+        date: parentComment.querySelector(".time").getAttribute("title"),
+        children: Object.keys(childrenComments),
+        childOf: null,
+        scratchTeam: parentAuthor.includes("*"),
+      };
+      for (const childCommentId of Object.keys(childrenComments)) {
+        commentsObj[childCommentId] = childrenComments[childCommentId];
+      }
+    }
+  }
+  // We haven't found some comments
+  if (page < 3)
+    return await fetchLegacyComments(addon, {
+      resourceType,
+      resourceId,
+      commentIds,
+      page: page + 1,
+      commentsObj,
+    });
+  else {
+    console.log(
+      "Could not find all comments for ",
+      resourceType,
+      " ",
+      resourceId,
+      ", remaining ids: ",
+      JSON.parse(JSON.stringify(commentIds)),
+    );
+    return commentsObj;
+  }
+}
 
 type followuser = {
   type: "followuser";
@@ -366,6 +667,19 @@ type favoriteproject = {
   project_id: number;
   project_title: string;
   actor_username: string;
+};
+type addcomment = {
+  type: "addcomment";
+  comment_type: 0 | 1 | 2;
+  id: number;
+  actor_id: number;
+  actor_username: string;
+  comment_fragment: string;
+  comment_id: number;
+  comment_obj_id: number;
+  comment_obj_title: string;
+  commentee_username: null;
+  datetime_created: Date;
 };
 </script>
 

@@ -1,7 +1,10 @@
 export default class Auth extends EventTarget {
   id: string;
   messageCache: { timestamp: number; value: null | Promise<number> };
-  sessionCache: { timestamp: number; value: null | Promise<any> };
+  sessionCache: {
+    timestamp: number;
+    value: null | Promise<{ user: { username: string; token: string } }>;
+  };
 
   constructor(id: string) {
     super();
@@ -47,8 +50,7 @@ export default class Auth extends EventTarget {
       return await this.messageCache.value;
     }
     const session = await this.getSession();
-
-    if (!session.user) return 0;
+    if ("error" in session || !session.user) return 0;
     this.messageCache.timestamp = date;
     this.messageCache.value = fetch(
       `https://api.scratch.mit.edu/users/${session.user.username}/messages/count`,

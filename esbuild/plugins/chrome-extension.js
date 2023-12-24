@@ -14,7 +14,11 @@ export default () => ({
     const manifestPath = build.initialOptions.entryPoints[0];
     if (!manifestPath) return;
     const resolve = esm(new Module("module"));
-    const { default: manifest, extraIcons, extraPages } = resolve("./src/manifest.ts");
+    const {
+      default: manifest,
+      extraIcons,
+      extraPages,
+    } = resolve("./src/manifest.ts");
     let manifestJSON = JSON.stringify(manifest, undefined, "  ");
     const dir = path.dirname(manifestPath);
 
@@ -24,9 +28,11 @@ export default () => ({
     ];
     const entryPoints = [...manifestEntries].map((f) => dir + "/" + f);
     const assets = [...Object.values(manifest.icons), ...extraIcons];
-    const html = [manifest.action.default_popup, manifest.options_page, ...extraPages].map(
-      (f) => dir + "/" + f,
-    );
+    const html = [
+      manifest.action.default_popup,
+      manifest.options_page,
+      ...extraPages,
+    ].map((f) => dir + "/" + f);
 
     for (const file of html) {
       const buffer = await readFile(file);

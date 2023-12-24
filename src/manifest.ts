@@ -19,7 +19,7 @@ const ICONS = {
   MUTED: {
     16: "images/icon-gray-16.png",
     32: "images/icon-gray-32.png",
-  }
+  },
 };
 
 const PAGES = {
@@ -30,11 +30,13 @@ const PAGES = {
   SETTINGS: {
     INDEX: "pages/settings/index.html",
     // TODO: permissions page, etc.
-  }
+  },
 };
 
 const isPrerelease = version.split("-")[1] === "prerelease";
-const iconDisplay: keyof typeof ICONS = isPrerelease ? "DEVELOPMENT" : "PRODUCTION"
+const iconDisplay: keyof typeof ICONS = isPrerelease
+  ? "DEVELOPMENT"
+  : "PRODUCTION";
 
 const manifest: chrome.runtime.ManifestV3 = {
   manifest_version: 3,
@@ -81,7 +83,7 @@ if (isFirefox) {
   manifest.browser_specific_settings = {
     gecko: { id: "griffpatch@griffpatch.co.uk" },
   };
-};
+}
 
 export const extraIcons = [ICONS.MUTED[16], ICONS.MUTED[32]];
 export const extraPages = [PAGES.POPUP.FULLSCREEN];
