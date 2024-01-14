@@ -58,7 +58,6 @@ const manifest: chrome.runtime.ManifestV3 = {
     {
       js: ["content-script/index.ts"],
       matches: ["https://scratch.mit.edu/*"],
-      /* @ts-ignore - this prop exists, but they dont think it does. */
       world: "MAIN",
       run_at: "document_start",
       all_frames: true,

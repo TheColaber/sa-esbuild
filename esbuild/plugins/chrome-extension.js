@@ -24,7 +24,7 @@ export default () => ({
 
     const manifestEntries = [
       manifest.background.service_worker,
-      ...manifest.content_scripts.flatMap((cs) => cs.js),
+      ...(manifest.content_scripts || []).flatMap((cs) => cs.js),
     ];
     const entryPoints = [...manifestEntries].map((f) => dir + "/" + f);
     const assets = [...Object.values(manifest.icons), ...extraIcons];
@@ -120,6 +120,8 @@ export default () => ({
             );
           }
         }
+        const contents = await readFile(distFile, "utf-8");
+        await writeFile(distFile, `(() => {${contents}})();`)
       }
       await writeFile(
         build.initialOptions.outdir + "/manifest.json",

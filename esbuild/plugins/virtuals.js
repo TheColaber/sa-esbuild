@@ -25,11 +25,27 @@ export default () => ({
       for (const addon of addonManifests) {
         const parts = addon.split("/");
         const id = parts.at(-2);
-        exports.push(
-          `export { ${item} as "${id}" } from "${path
-            .resolve(addon)
-            .replace(/\\/g, "/")}";`,
-        );
+        if (item === "default") {
+          const varName = id.replace(/-/g, "_");
+          parts.shift();
+          parts.shift();
+          parts.pop();
+          parts.pop();
+          exports.push(
+            `import { ${item} as ${varName} } from "${path
+              .resolve(addon)
+              .replace(/\\/g, "/")}";
+              ${varName}.id = ${JSON.stringify(id)}
+              ${varName}.category = ${JSON.stringify(parts)};
+              export { ${varName} as ${JSON.stringify(id)} };`,
+          );
+        } else {
+          exports.push(
+            `export { ${item} as ${JSON.stringify(id)} } from "${path
+              .resolve(addon)
+              .replace(/\\/g, "/")}";`,
+          );
+        }
       }
       return exports.join("\n");
     }

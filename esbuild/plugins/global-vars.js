@@ -23,7 +23,8 @@ export default () => ({
                 .resolve("esbuild/addon-helpers.ts")
                 .replace(/\\/g, "/")}";` +
               (
-                await build.esbuild.transform(code, {
+                await build.esbuild.transform(
+                  `const __addon = /* @__PURE__ */ (() => globalThis.scratchAddons.addons["${id}"])();` + code, {
                   loader: "ts",
                   pure: [
                     "defineScripts",
@@ -32,13 +33,11 @@ export default () => ({
                     "defineStyles",
                   ],
                   define: {
-                    console: `addon.console`,
+                    console: `__addon.console`,
+                    addon: `__addon`
                   },
                 })
-              ).code.replace(
-                /\b(addon)\b/g,
-                `globalThis.scratchAddons.addons["${id}"]`,
-              );
+              ).code;
             return { contents };
           }
         }

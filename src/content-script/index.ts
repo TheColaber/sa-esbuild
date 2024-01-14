@@ -4,9 +4,9 @@ import * as addons from "#addon-scripts";
 import locales from "#addon-l10n";
 import MATCH_PATTERNS from "./matches";
 import UserscriptAddon from "../addon-api/userscript";
-import { SyncStorage } from "../storage/extension";
+import { SyncStorage } from "../background/storage";
 
-globalThis.scratchAddons.events.addEventListener(
+scratchAddons.events.addEventListener(
   "addonData",
   async ({ detail }: CustomEvent) => {
     if (scratchAddons.addonsLoaded) return;

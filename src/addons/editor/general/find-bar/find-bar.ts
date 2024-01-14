@@ -1,14 +1,16 @@
 import Dropdown from "./dropdown";
 import styles from "./styles.module.css";
+import { createApp } from "vue";
+import component from "./find-bar.vue";
 
 const Blockly = await addon.tab.getBlockly();
-
 export default class FindBar {
   readonly workspace: ScratchBlocks.WorkspaceSvg;
   readonly dropdown: Dropdown;
   readonly wrapper: HTMLDivElement;
   readonly dropdownOut: HTMLDivElement;
   readonly findInput: HTMLInputElement;
+  readonly selectedDisplay: HTMLDivElement;
   private prevValue: string = "";
   constructor(workspace: ScratchBlocks.WorkspaceSvg) {
     this.workspace = workspace;
@@ -16,29 +18,27 @@ export default class FindBar {
 
     const guiTabList = document.querySelector("ul[class*=gui_tab-list_]");
 
-    this.wrapper = guiTabList.appendChild(document.createElement("div"));
+    const fragment = document.createElement("div");
 
-    this.wrapper.className = styles.wrapper;
-    addon.tab.displayNoneWhileDisabled(this.wrapper);
+    createApp(component, { addon }).mount(fragment);
+  
+    guiTabList.append(fragment);
+    // TODO: kinda hacky but will have to do for now.
+    guiTabList.replaceChild(fragment.firstChild, fragment);
 
-    this.dropdownOut = this.wrapper.appendChild(document.createElement("div"));
-    this.dropdownOut.className = styles["dropdown-out"];
+    // this.findInput.type = "search";
+    // this.findInput.placeholder = addon.msg("find-placeholder");
+    // this.findInput.autocomplete = "off";
+    // this.findInput.addEventListener("focus", () => this.inputChange());
+    // this.findInput.addEventListener("keydown", (e) => this.inputKeyDown(e));
+    // this.findInput.addEventListener("keyup", () => this.inputChange());
+    // this.findInput.addEventListener("focusout", () => this.hideDropDown());
 
-    this.findInput = this.dropdownOut.appendChild(
-      document.createElement("input"),
-    );
-    this.findInput.className = addon.tab.scratchClass("input_input-form", {
-      others: styles.input,
-    });
-    this.findInput.type = "search";
-    this.findInput.placeholder = addon.msg("find-placeholder");
-    this.findInput.autocomplete = "off";
-    this.findInput.addEventListener("focus", () => this.inputChange());
-    this.findInput.addEventListener("keydown", (e) => this.inputKeyDown(e));
-    this.findInput.addEventListener("keyup", () => this.inputChange());
-    this.findInput.addEventListener("focusout", () => this.hideDropDown());
 
-    this.dropdownOut.appendChild(this.dropdown.createDom());
+    // this.selectedDisplay = this.dropdownOut.appendChild(
+    //   document.createElement("div"),
+    // );
+    // this.selectedDisplay.className = styles["selected-display"];
 
     const _doBlockClick_ = Blockly.Gesture.prototype.doBlockClick_;
     Blockly.Gesture.prototype.doBlockClick_ = function () {

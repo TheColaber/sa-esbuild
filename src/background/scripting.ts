@@ -2,6 +2,14 @@ import { syncStorage, addonEnabledStates } from "./storage";
 
 chrome.tabs.onUpdated.addListener(async (tabId, { status }, tab) => {
   if (!tab.url || status !== "loading") return;
+  chrome.scripting.executeScript({
+    target: { tabId },
+    injectImmediately: true,
+    world: "MAIN",
+    func: async () => {
+      console.log("test");
+    },
+  });
 
   let { addonsStates } = await syncStorage.get("addonsStates");
   const userLangs = await getUserLangs(tab.url);

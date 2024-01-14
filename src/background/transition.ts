@@ -38,7 +38,5 @@ chrome.management.getSelf().then(async ({ installType, homepageUrl }) => {
       }
     }
   }
-  console.log(addonsStates);
-
   syncStorage.set({ addonsStates });
 });

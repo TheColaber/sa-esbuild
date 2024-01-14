@@ -2,7 +2,7 @@ export default defineAddon({
   name: "Find bar",
   description:
     "Creates a search bar next to the sounds tab to find and jump to scripts, costumes and sounds.",
-  tags: ["codeEditor", "costumeEditor", "recommended"],
+  tags: ["recommended"],
   versionAdded: "1.0.0",
   credits: ["TheColaber", "griffpatch"],
   enabledByDefault: true,

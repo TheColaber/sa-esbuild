@@ -1,18 +1,20 @@
 <template>
   <div :class="[$style.container, { theme: true, lightTheme }]">
-    <!-- <Header v-model:lightTheme="lightTheme"></Header> -->
+    <Header v-model:tab="tab"></Header>
     <Suspense>
-      <Content></Content>
+      <Content :tab="tab"></Content>
     </Suspense>
   </div>
 </template>
 
 <script setup lang="ts">
 import Content from "./content.vue";
-// import Header from "./header.vue";
+import Header from "./header.vue";
 import { syncStorage } from "../../background/storage";
 import pageStorage from "../storage";
 import { ref, watch } from "vue";
+
+const tab = ref<"explore" | "enabled">("explore");
 
 const lightTheme = ref(pageStorage.get("lightTheme") === true);
 syncStorage.watch(["lightTheme"], ({ lightTheme: newLightTheme }) => {

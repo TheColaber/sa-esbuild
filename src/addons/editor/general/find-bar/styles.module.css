@@ -58,7 +58,7 @@
 /* Dropdown Items */
 .item {
   display: flex;
-  padding: 0.5em 0.3em;
+  padding: 0.5em 0.5em;
   white-space: nowrap;
   margin: 0;
   font-weight: bold;
@@ -69,10 +69,6 @@
 
 .item-text {
   overflow: hidden;
-}
-
-.item::before {
-  content: "\25CF  "; /* ● */
 }
 
 .item:hover,

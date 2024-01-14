@@ -53,6 +53,7 @@ chrome.contextMenus.onClicked.addListener((info) => {
   } else if (menuItemId === DEV_RESET_SETTINGS) {
     syncStorage.clear();
     localStorage.clear();
+    chrome.runtime.reload();
   }
 });
 
