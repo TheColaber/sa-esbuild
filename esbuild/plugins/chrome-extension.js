@@ -121,7 +121,7 @@ export default () => ({
           }
         }
         const contents = await readFile(distFile, "utf-8");
-        await writeFile(distFile, `(() => {${contents}})();`)
+        await writeFile(distFile, `(() => {${contents}})();`);
       }
       await writeFile(
         build.initialOptions.outdir + "/manifest.json",

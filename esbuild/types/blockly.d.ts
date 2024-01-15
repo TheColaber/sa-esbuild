@@ -218,7 +218,7 @@ declare global {
       getFlyout(): Flyout | null;
       allInputsFilled(shadowBlocksAreFilled?: boolean): boolean;
       toolbox_?: any;
-      glowBlock(id, val): void; // TODO: update types
+      glowBlock(id, val): void;
       scrollbar: any;
       // TODO: Remove this
       findBar?: FindBar;

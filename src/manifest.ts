@@ -29,7 +29,7 @@ const PAGES = {
   },
   SETTINGS: {
     INDEX: "pages/settings/index.html",
-    // TODO: permissions page, etc.
+    // permissions page, etc.
   },
 };
 

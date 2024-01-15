@@ -24,19 +24,22 @@ export default () => ({
                 .replace(/\\/g, "/")}";` +
               (
                 await build.esbuild.transform(
-                  `const __addon = /* @__PURE__ */ (() => globalThis.scratchAddons.addons["${id}"])();` + code, {
-                  loader: "ts",
-                  pure: [
-                    "defineScripts",
-                    "defineAddon",
-                    "definePopup",
-                    "defineStyles",
-                  ],
-                  define: {
-                    console: `__addon.console`,
-                    addon: `__addon`
+                  `const __addon = /* @__PURE__ */ (() => globalThis.scratchAddons.addons["${id}"])();` +
+                    code,
+                  {
+                    loader: "ts",
+                    pure: [
+                      "defineScripts",
+                      "defineAddon",
+                      "definePopup",
+                      "defineStyles",
+                    ],
+                    define: {
+                      console: `__addon.console`,
+                      addon: `__addon`,
+                    },
                   },
-                })
+                )
               ).code;
             return { contents };
           }

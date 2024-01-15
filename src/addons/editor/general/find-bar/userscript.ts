@@ -1,4 +1,7 @@
-import FindBar from "./find-bar";
+// import Dropdown from "./dropdown";
+import { createApp } from "vue";
+import component from "./find-bar.vue";
+import "./styles.css";
 
 export default async () => {
   const Blockly = await addon.tab.getBlockly();
@@ -6,25 +9,34 @@ export default async () => {
 
   // Add find bar to current workspace
   const mainWorkspace = addon.tab.getWorkspace();
-  mainWorkspace.findBar = new FindBar(mainWorkspace);
+  createFindBar(mainWorkspace);
 
   const createWorkspaceDom = Blockly.WorkspaceSvg.prototype.createDom;
   Blockly.WorkspaceSvg.prototype.createDom = function (opt_backgroundClass) {
     // This is the same check scratch uses to create the toolbox/flyout.
     // If there is no flyout, there shouldn't be a find bar.
     if (this.options.hasCategories) {
-      this.findBar = new FindBar(this);
+      createFindBar(this);
     }
 
     return createWorkspaceDom.call(this, opt_backgroundClass);
   };
 
-  // dispose find bar on current and all future workspaces.
-  const disposeWorkspaceDom = Blockly.WorkspaceSvg.prototype.dispose;
-  Blockly.WorkspaceSvg.prototype.dispose = function () {
-    if (this.findBar) {
-      this.findBar.dispose();
-    }
-    disposeWorkspaceDom.call(this);
-  };
+  function createFindBar(workspace: ScratchBlocks.WorkspaceSvg) {
+    const guiTabList = document.querySelector("ul[class*=gui_tab-list_]");
+
+    const fragment = document.createElement("div");
+
+    const instance = createApp(component, { addon });
+    instance.mount(fragment);
+    guiTabList.append(fragment);
+    // TODO: kinda hacky but will have to do for now.
+    guiTabList.replaceChild(fragment.firstChild, fragment);
+
+    const oldDispose = workspace.dispose;
+    workspace.dispose = function () {
+      instance.unmount();
+      oldDispose.call(this);
+    };
+  }
 };

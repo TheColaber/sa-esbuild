@@ -1,11 +1,17 @@
 <template>
   <div :class="$style.wrapper" ref="wrapper">
-    <div :class="$style['dropdown-out']">
+    <div :class="[$style['dropdown-out'], { [$style.visible]: visible }]">
       <input
         :class="[$style.input, addon.tab.scratchClass('input_input-form')]"
         type="search"
-        placeholder="Find (Ctrl+F)"
+        :placeholder="addon.msg('find-placeholder')"
         autocomplete="off"
+        ref="findInput"
+        v-model="input"
+        @focus="showDropDown(), inputChange()"
+        @focusout="visible = false"
+        @keydown="inputKeyDown"
+        @keyup="inputChange"
       />
       <ul :class="$style.dropdown" style="--text-color: #ffffff">
         <li :class="$style.item" style="--color-primary: #4cbf56">
@@ -22,14 +28,88 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, onUnmounted } from "vue";
 import PopupAddon from "../../../../addon-api/userscript";
 const { addon } = defineProps<{ addon: PopupAddon }>();
 
+const visible = ref(false);
+const input = ref("");
+let prevValue = "";
+
 const wrapper = ref<HTMLDivElement>();
+const findInput = ref<HTMLInputElement>();
 onMounted(() => {
   addon.tab.displayNoneWhileDisabled(wrapper.value);
-})
+});
+
+function showDropDown(showBlock?: ScratchBlocks.BlockSvg) {
+  if (!showBlock && visible.value) {
+    return;
+  }
+  visible.value = true;
+  // setting null forces the results to rerender.
+  prevValue = null;
+  //  this.dropdown.show(showBlock);
+}
+
+function inputChange() {
+  let val = input.value.toLowerCase();
+  if (val !== prevValue) {
+    prevValue = val;
+    // this.dropdown.inputChange();
+  }
+}
+
+function inputKeyDown(e: KeyboardEvent) {
+  // this.dropdown.inputKeyDown(e);
+
+  if (e.key === "Escape") {
+    // If there's any value in the input, clear it, otherwise exit
+    if (input.value.length > 0) {
+      input.value = "";
+      inputChange();
+    } else {
+      findInput.value.blur();
+    }
+    e.preventDefault();
+  }
+}
+(async () => {
+  const Blockly = await addon.tab.getBlockly();
+  const _doBlockClick_ = Blockly.Gesture.prototype.doBlockClick_;
+  Blockly.Gesture.prototype.doBlockClick_ = function () {
+    const searchableBlocks = [
+      "procedures_definition",
+      "procedures_call",
+      "data_variable",
+      "data_changevariableby",
+      "data_setvariableto",
+      "event_whenbroadcastreceived",
+      "event_broadcastandwait",
+      "event_broadcast",
+    ];
+
+    if (
+      addon.enabled &&
+      (this.mostRecentEvent_.button === 1 || this.mostRecentEvent_.shiftKey)
+    ) {
+      // Wheel button or shift-click.
+      for (
+        let block = this.startBlock_;
+        block;
+        block = block.getSurroundParent()
+      ) {
+        if (searchableBlocks.includes(block.type)) {
+          findInput.value.focus();
+          showDropDown(block);
+          return;
+        }
+      }
+    }
+
+    _doBlockClick_.call(this);
+  };
+})();
 </script>
 
 <style lang="scss" module>

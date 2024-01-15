@@ -1,0 +1,4 @@
+/* GUI Tab List - Take up full space so we can put the find bar on the right. */
+[class*="gui_tab-list"] {
+  width: 100%;
+}

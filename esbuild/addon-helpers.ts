@@ -99,7 +99,6 @@ export interface AddonManifest {
   /**
    * The tags for the addon
    * - recommended: This addon is recommended to be enabled. This tag should only be added if approved by developers.
-   * - TODO: finish this
    *
    * The addon's tags will used to categorize the addons.
    *
