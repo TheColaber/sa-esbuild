@@ -18,5 +18,3 @@ export const popup = definePopup({
   badge,
   icon: mailIcon,
 });
-
-export const scripts = defineScripts();

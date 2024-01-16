@@ -159,6 +159,7 @@ export default () => ({
         await mkdir(path.dirname(outputFile), {
           recursive: true,
         });
+        // TODO: allow for html minfication?
         await writeFile(outputFile, root.html());
       }
     });

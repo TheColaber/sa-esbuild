@@ -29,5 +29,3 @@ export const scripts = defineScripts([
     runAtComplete: false,
   },
 ]);
-
-export const popup = definePopup();

@@ -25,8 +25,8 @@ export default () => ({
       for (const addon of addonManifests) {
         const parts = addon.split("/");
         const id = parts.at(-2);
+        const varName = id.replace(/-/g, "_");
         if (item === "default") {
-          const varName = id.replace(/-/g, "_");
           parts.shift();
           parts.shift();
           parts.pop();
@@ -41,9 +41,12 @@ export default () => ({
           );
         } else {
           exports.push(
-            `export { ${item} as ${JSON.stringify(id)} } from "${path
+            `import * as ${varName} from "${path
               .resolve(addon)
-              .replace(/\\/g, "/")}";`,
+              .replace(/\\/g, "/")}";
+            const ${varName}2 = ${varName}.${item};
+
+            export { ${varName}2 as ${JSON.stringify(id)} };`,
           );
         }
       }

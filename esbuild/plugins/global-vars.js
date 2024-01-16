@@ -13,6 +13,7 @@ for (const file of addonScriptFiles) {
 export default () => ({
   name: "glob-vars",
   setup(build) {
+    // TODO: less broad filter so we can be faster.
     build.onLoad({ filter: /.*/ }, async (args) => {
       for (const id in addons) {
         for (const file of addons[id]) {

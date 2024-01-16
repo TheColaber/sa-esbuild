@@ -5,7 +5,6 @@ import globalVars from "./plugins/global-vars.js";
 import virtuals from "./plugins/virtuals.js";
 import vue from "./plugins/vue.js";
 import postcss from "./plugins/postcss.js";
-import path from "path";
 import typedCss from "./plugins/typed-css.js";
 build();
 
@@ -33,6 +32,10 @@ async function build() {
       typedCss(),
     ],
     treeShaking: true,
+    logLevel: "debug",
+    logOverride: {
+      'import-is-undefined': 'silent',
+    },
   });
   console.time("build");
   await ctx.rebuild();
