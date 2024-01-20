@@ -6,6 +6,7 @@ import virtuals from "./plugins/virtuals.js";
 import vue from "./plugins/vue.js";
 import postcss from "./plugins/postcss.js";
 import typedCss from "./plugins/typed-css.js";
+process.env.MODE = "development";
 build();
 
 async function build() {
@@ -22,6 +23,7 @@ async function build() {
     // minify: true,
     define: {
       "process.env.NODE_ENV": "'production'",
+      "process.env.MODE": JSON.stringify(process.env.MODE)
     },
     plugins: [
       chromeExtension(),
@@ -34,7 +36,7 @@ async function build() {
     treeShaking: true,
     logLevel: "debug",
     logOverride: {
-      'import-is-undefined': 'silent',
+      "import-is-undefined": "silent",
     },
   });
   console.time("build");

@@ -82,6 +82,7 @@ defineEmits(["update:tab"]);
         align-items: center;
         justify-content: center;
         transition: font-weight 0.2s;
+        outline: none;
 
         &.selected:nth-child(1) ~ .selectDisplay {
           transform: translateX(20px);

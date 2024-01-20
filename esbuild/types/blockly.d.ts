@@ -19,6 +19,7 @@ declare global {
       getRootBlock(): Block;
       getOutputShape(): number;
       getSurroundParent(): BlockSvg;
+      getColour(): string;
       getColourQuaternary(): string;
       setShadowColour(color: string);
     }

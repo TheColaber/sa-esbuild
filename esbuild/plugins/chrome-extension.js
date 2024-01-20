@@ -4,9 +4,9 @@ import { Module } from "module";
 import { readFile, mkdir, writeFile, cp } from "fs/promises";
 import path from "path";
 import "esbuild-runner/register.js";
-import * as sfc from "@vue/compiler-sfc";
-import { renderToString } from "@vue/server-renderer";
-import { createApp, createSSRApp, h } from "vue";
+// import * as sfc from "@vue/compiler-sfc";
+// import { renderToString } from "@vue/server-renderer";
+// import { createApp, createSSRApp, h } from "vue";
 export default () => ({
   name: "chrome-extension",
   async setup(build) {
@@ -120,8 +120,29 @@ export default () => ({
             );
           }
         }
-        const contents = await readFile(distFile, "utf-8");
-        await writeFile(distFile, `(() => {${contents}})();`);
+        for (const cs of (manifest.content_scripts || []).flatMap((cs) => cs.js)) {
+          if (
+            buildRes.metafile.outputs[distFile].entryPoint ===
+            dir + "/" + cs
+          ) {
+            const contents = await readFile(distFile, "utf-8");
+            const wrappedContents = `(() => {${contents}})();`
+            const fileName = "/a" + path.basename(distFile);
+            if (process.env.MODE === "development") {
+              await writeFile(path.dirname(distFile) + fileName, wrappedContents);
+              await writeFile(distFile, `import(".${fileName}")`);
+              manifestJSON = JSON.parse(manifestJSON);
+              manifestJSON.web_accessible_resources = manifestJSON.web_accessible_resources || [];
+              manifestJSON.web_accessible_resources.push({
+                matches: ["https://*.scratch.mit.edu/*"],
+                resources: ["content-script/aindex.js"]
+              })
+              manifestJSON = JSON.stringify(manifestJSON);
+            } else {
+              await writeFile(distFile, wrappedContents);
+            }
+          }
+        }
       }
       await writeFile(
         build.initialOptions.outdir + "/manifest.json",

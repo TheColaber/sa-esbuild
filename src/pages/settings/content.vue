@@ -1,6 +1,6 @@
 <template>
-  <div v-if="tab === 'explore'">explore</div>
-  <EnabledAddons v-else />
+  <div v-show="tab === 'explore'">explore</div>
+  <EnabledAddons v-show="tab === 'enabled'" />
 </template>
 
 <script setup lang="ts">

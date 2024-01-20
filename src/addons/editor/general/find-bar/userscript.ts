@@ -27,7 +27,7 @@ export default async () => {
 
     const fragment = document.createElement("div");
 
-    const instance = createApp(component, { addon });
+    const instance = createApp(component, { addon, workspace });
     instance.mount(fragment);
     guiTabList.append(fragment);
     // TODO: kinda hacky but will have to do for now.

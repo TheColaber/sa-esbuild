@@ -24,9 +24,9 @@ chrome.tabs.onUpdated.addListener(async (tabId, { status }, tab) => {
   function dispatch(type: string, detail: any) {
     chrome.scripting.executeScript({
       target: { tabId },
-      injectImmediately: true,
+      injectImmediately: process.env.MODE !== "development",
       world: "MAIN",
-      func: async (type, detail: any) => {
+      func: async (type, detail: any) => {        
         scratchAddons.events.dispatchEvent(new CustomEvent(type, { detail }));
       },
       args: [type, detail],
