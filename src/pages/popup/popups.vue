@@ -60,8 +60,8 @@ const msg = chrome.i18n.getMessage;
 chrome.action.getUserSettings().then((s) => s.isOnToolbar);
 // Get light theme from the page localStorage and then update it to the value in storage after changes
 const lightTheme = ref(pageStorage.get("lightTheme") === true);
-syncStorage.watch(["lightTheme"], ({ lightTheme: newLightTheme }) => {
-  lightTheme.value = newLightTheme;
+syncStorage.watch(["lightTheme"], ({ lightTheme: { newValue } }) => {
+  lightTheme.value = newValue;
 });
 
 const { addonsStates = {} } = await syncStorage.get("addonsStates");

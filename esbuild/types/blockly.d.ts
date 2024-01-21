@@ -1,13 +1,15 @@
 // Type definitions for scratch-blocks
 // Project: https://github.com/scratchfoundation/scratch-blocks
 
-import FindBar from "../../src/addons/editor/general/find-bar/find-bar";
 declare global {
   export namespace ScratchBlocks {
     class Block {
       id: string;
       type: string;
       inputList: Input[];
+      category_: string;
+      isShadow_: boolean;
+      getCategory(): string;
       getChildren(): Block[];
       getProcCode(): string;
       getRelativeToSurfaceXY(): { x: number; y: number };
@@ -22,6 +24,7 @@ declare global {
       getColour(): string;
       getColourQuaternary(): string;
       setShadowColour(color: string);
+      isShadow(): boolean;
     }
 
     class Input {
@@ -221,8 +224,6 @@ declare global {
       toolbox_?: any;
       glowBlock(id, val): void;
       scrollbar: any;
-      // TODO: Remove this
-      findBar?: FindBar;
     }
 
     interface Xml {

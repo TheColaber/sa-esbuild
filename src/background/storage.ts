@@ -39,11 +39,15 @@ class Storage<T> {
 
   watch<U extends (keyof T)[]>(
     keys: U,
-    cb: (newStorage: { [key in U[number]]: { newValue: T[key], oldValue: T[key]}}) => any,
+    cb: (newStorage: {
+      [key in U[number]]: { newValue: T[key]; oldValue: T[key] };
+    }) => any,
   ) {
     return chrome.storage[this.type].onChanged.addListener(
-      (changes: { [key in keyof T]: { newValue: T[key], oldValue: T[key]}}) => {
-        let prefixedKeys = Object.keys(changes) as Array<keyof T>;        
+      (changes: {
+        [key in keyof T]: { newValue: T[key]; oldValue: T[key] };
+      }) => {
+        let prefixedKeys = Object.keys(changes) as Array<keyof T>;
         for (const prefixedKey of prefixedKeys) {
           let unprefixedKey = keys.find(
             (key) => this.prefixKey(key) === prefixedKey,
@@ -51,8 +55,12 @@ class Storage<T> {
           if (unprefixedKey) {
             let unprefixedChanges = {
               [unprefixedKey]: changes[prefixedKey],
-            }
-            cb(unprefixedChanges as { [key in U[number]]: { newValue: T[key], oldValue: T[key] } });
+            };
+            cb(
+              unprefixedChanges as {
+                [key in U[number]]: { newValue: T[key]; oldValue: T[key] };
+              },
+            );
           }
         }
       },

@@ -23,7 +23,7 @@ async function build() {
     // minify: true,
     define: {
       "process.env.NODE_ENV": "'production'",
-      "process.env.MODE": JSON.stringify(process.env.MODE)
+      "process.env.MODE": JSON.stringify(process.env.MODE),
     },
     plugins: [
       chromeExtension(),

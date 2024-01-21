@@ -120,23 +120,29 @@ export default () => ({
             );
           }
         }
-        for (const cs of (manifest.content_scripts || []).flatMap((cs) => cs.js)) {
+        for (const cs of (manifest.content_scripts || []).flatMap(
+          (cs) => cs.js,
+        )) {
           if (
             buildRes.metafile.outputs[distFile].entryPoint ===
             dir + "/" + cs
           ) {
             const contents = await readFile(distFile, "utf-8");
-            const wrappedContents = `(() => {${contents}})();`
+            const wrappedContents = `(() => {${contents}})();`;
             const fileName = "/a" + path.basename(distFile);
             if (process.env.MODE === "development") {
-              await writeFile(path.dirname(distFile) + fileName, wrappedContents);
+              await writeFile(
+                path.dirname(distFile) + fileName,
+                wrappedContents,
+              );
               await writeFile(distFile, `import(".${fileName}")`);
               manifestJSON = JSON.parse(manifestJSON);
-              manifestJSON.web_accessible_resources = manifestJSON.web_accessible_resources || [];
+              manifestJSON.web_accessible_resources =
+                manifestJSON.web_accessible_resources || [];
               manifestJSON.web_accessible_resources.push({
                 matches: ["https://*.scratch.mit.edu/*"],
-                resources: ["content-script/aindex.js"]
-              })
+                resources: ["content-script/aindex.js"],
+              });
               manifestJSON = JSON.stringify(manifestJSON);
             } else {
               await writeFile(distFile, wrappedContents);

@@ -35,7 +35,7 @@ scratchAddons.events.addEventListener(
       ({ detail: { id } }: CustomEvent) => {
         const addon = scratchAddons.addons[id];
         console.log(id);
-        
+
         addon.dispatchEvent(new CustomEvent("dynamicDisable"));
         const style = document.createElement("style");
         style.setAttribute("data-addon-disabled-style-" + id, "");

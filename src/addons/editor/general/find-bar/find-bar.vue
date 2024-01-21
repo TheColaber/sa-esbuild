@@ -1,6 +1,9 @@
 <template>
   <div :class="$style.wrapper" ref="wrapper">
-    <div :class="[$style['dropdown-out'], { [$style.visible]: visible }]" :style="{ '--text-color': textColor }">
+    <div
+      :class="[$style['dropdown-out'], { [$style.visible]: visible }]"
+      :style="{ '--text-color': textColor }"
+    >
       <input
         :class="[$style.input, addon.tab.scratchClass('input_input-form')]"
         type="search"
@@ -15,22 +18,19 @@
         v-show="visible || !selected"
       />
       <div
-      v-show="!visible && selected"
-      @click="showDropDown(), inputChange()"
-      :class="$style['selected-display']"
-      :style="{ '--color-primary': selected?.color }"
+        v-show="!visible && selected"
+        @click="showDropDown(), inputChange()"
+        :class="$style['selected-display']"
+        :style="{ '--color-primary': selected?.color }"
       >
-      <span :class="$style['item-text']">{{ selected?.name }}</span>
-          <!-- <span :class="$style.carousel">
+        <span :class="$style['item-text']">{{ selected?.name }}</span>
+        <!-- <span :class="$style.carousel">
             <span :class="$style['carousel-control']">◀</span>
             <span>1 / 2</span>
             <span :class="$style['carousel-control']">▶</span>
           </span> -->
-    </div>
-      <div
-        :class="$style.dropdown"
-        @mousedown.prevent
-      >
+      </div>
+      <div :class="$style.dropdown" @mousedown.prevent>
         <div
           :class="[$style.item, { [$style.selected]: selected === item }]"
           v-for="(item, name) of items"
@@ -78,7 +78,7 @@ async function showDropDown(showBlock?: ScratchBlocks.BlockSvg) {
     return;
   }
   visible.value = true;
-  setTimeout(() => findInput.value.focus())
+  setTimeout(() => findInput.value.focus());
   // setting null forces the results to rerender.
   prevValue = null;
 
@@ -107,8 +107,6 @@ async function showDropDown(showBlock?: ScratchBlocks.BlockSvg) {
   // }
 
   function getScratchBlocks() {
-    const myBlocks = {};
-
     textColor.value = Blockly.Colours.text;
 
     function getBlockName(block, reporters = false) {
@@ -141,12 +139,28 @@ async function showDropDown(showBlock?: ScratchBlocks.BlockSvg) {
 
       return myBlocks[name];
     };
+    const myBlocks = {} as Record<
+      string,
+      {
+        category: string;
+        y: number;
+        color: string;
+        ids: string[];
+      }
+    >;
     const blocks = workspace.getAllBlocks();
-    for (const block of blocks) {      
-      const isEventBlock = block.getCategory() === "events" && !block.isShadow();
-      const isCustomBlock = block.type === "procedures_definition" || block.type === "procedures_call";
+    for (const block of blocks) {
+      const isEventBlock =
+        block.getCategory() === "events" && !block.isShadow();
+      const isCustomBlock =
+        block.type === "procedures_definition" ||
+        block.type === "procedures_call";
 
-      if (isEventBlock || isCustomBlock || block.type === "control_start_as_clone") {
+      if (
+        isEventBlock ||
+        isCustomBlock ||
+        block.type === "control_start_as_clone"
+      ) {
         if (
           [
             "event_whenbroadcastreceived",
@@ -312,7 +326,7 @@ function inputKeyDown(e: KeyboardEvent) {
     display: flex;
     flex-direction: column;
     font-size: 0.75rem;
-  padding: 4px;
+    padding: 4px;
     border-radius: 4px;
     float: right;
 
@@ -337,19 +351,19 @@ function inputKeyDown(e: KeyboardEvent) {
 
     .selected-display {
       display: flex;
-    padding: 6px;
-    white-space: nowrap;
-    margin: 0;
-    font-weight: bold;
-    cursor: pointer;
-    color: var(--text-color);
-    background-color: var(--color-primary);
-    border-radius: 0.25rem;
-    height: 1.5rem;
-    align-items: center;
+      padding: 6px;
+      white-space: nowrap;
+      margin: 0;
+      font-weight: bold;
+      cursor: pointer;
+      color: var(--text-color);
+      background-color: var(--color-primary);
+      border-radius: 0.25rem;
+      height: 1.5rem;
+      align-items: center;
       .item-text {
-          overflow: hidden;
-        }
+        overflow: hidden;
+      }
     }
     .dropdown {
       display: none;
