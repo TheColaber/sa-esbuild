@@ -83,7 +83,7 @@ const sections = [
 
 function toggleAddon(id: string) {
   enabledStates.value[id] = !enabledStates.value[id];
-  addonsStates[id] = enabledStates.value[id] ? "enabled" : "disabled";
+  addonsStates[id] = enabledStates.value[id] ? "enabled" : "disabled";    
   syncStorage.set({ addonsStates });
 }
 </script>

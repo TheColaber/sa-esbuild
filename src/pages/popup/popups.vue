@@ -49,7 +49,7 @@ import pageStorage from "../storage";
 import { ref } from "vue";
 // TODO: Support other languages
 import * as addons from "#addon-popups";
-import settingsComponent from "../settings/content.vue";
+import settingsComponent from "../settings/enabled-addons.vue";
 import PopupAddon from "../../addon-api/popup";
 import { Icon } from "@iconify/vue";
 import toolIcon from "@iconify-icons/tabler/tool";

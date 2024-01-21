@@ -8,17 +8,19 @@ chrome.tabs.onUpdated.addListener(async (tabId, { status }, tab) => {
 
   dispatch("addonData", { addonsStates, addonEnabledStates, userLangs });
 
-  syncStorage.watch(["addonsStates"], ({ addonsStates: newAddonsStates }) => {
-    for (const id in addonsStates) {
-      if (addonsStates[id] !== newAddonsStates[id]) {
-        if (newAddonsStates[id] in addonEnabledStates) {
+  syncStorage.watch(["addonsStates"], ({ addonsStates: {oldValue, newValue} }) => {        
+    for (const id in newValue) {
+      if (oldValue[id] !== newValue[id]) {
+        console.log(newValue[id],addonEnabledStates);
+        
+        if (addonEnabledStates.some((state) => newValue[id] === state)) {
           dispatch("dynamicEnable", { id });
         } else {
           dispatch("dynamicDisable", { id });
         }
       }
     }
-    addonsStates = newAddonsStates;
+    addonsStates = newValue;
   });
 
   function dispatch(type: string, detail: any) {
