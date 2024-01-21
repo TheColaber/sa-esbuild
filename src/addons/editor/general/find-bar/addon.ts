@@ -24,7 +24,7 @@ export default defineAddon({
 
 export const scripts = defineScripts([
   {
-    script: () => /* @__PURE__@ */ import("./userscript.ts"),
+    script: () => import("./userscript.ts"),
     matches: ["projects"],
     runAtComplete: false,
   },

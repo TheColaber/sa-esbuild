@@ -1,7 +1,7 @@
 import path from "path";
 import { globby } from "globby";
 import { DtsCreator } from "typed-css-modules/lib/dts-creator.js";
-const allCSSFiles = await globby("src/addons/**/**.css");
+const allCSSFiles = await globby("src/addons/**/**.module.css");
 
 export default () => ({
   name: "typed-css",

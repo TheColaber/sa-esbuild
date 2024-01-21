@@ -120,16 +120,14 @@ export default () => ({
             );
           }
         }
-        for (const cs of (manifest.content_scripts || []).flatMap(
-          (cs) => cs.js,
-        )) {
+        for (const cs of manifest.content_scripts || []) {
           if (
             buildRes.metafile.outputs[distFile].entryPoint ===
-            dir + "/" + cs
+            dir + "/" + cs.js
           ) {
             const contents = await readFile(distFile, "utf-8");
             const wrappedContents = `(() => {${contents}})();`;
-            const fileName = "/a" + path.basename(distFile);
+            const fileName = "/_" + path.basename(distFile);
             if (process.env.MODE === "development") {
               await writeFile(
                 path.dirname(distFile) + fileName,
@@ -140,8 +138,9 @@ export default () => ({
               manifestJSON.web_accessible_resources =
                 manifestJSON.web_accessible_resources || [];
               manifestJSON.web_accessible_resources.push({
-                matches: ["https://*.scratch.mit.edu/*"],
-                resources: ["content-script/aindex.js"],
+                matches: cs.matches,
+                // TODO: unhardcode
+                resources: ["content-script" + fileName],
               });
               manifestJSON = JSON.stringify(manifestJSON);
             } else {

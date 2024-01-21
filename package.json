@@ -8,7 +8,8 @@
   "type": "module",
   "scripts": {
     "build": "node esbuild/build",
-    "format": "prettier . -w"
+    "format": "prettier . -w",
+    "new-addon": "node cli/new-addon"
   },
   "devDependencies": {
     "@iconify-icons/tabler": "^1.2.95",
@@ -25,6 +26,7 @@
     "postcss": "^8.4.32",
     "postcss-modules": "^6.0.0",
     "prettier": "^3.1.1",
+    "prompts": "^2.4.2",
     "sass": "^1.69.5",
     "typed-css-modules": "^0.8.1",
     "vue": "^3.3.13"

@@ -1,6 +1,5 @@
-// import Dropdown from "./dropdown";
 import { createApp } from "vue";
-import component from "./find-bar.vue";
+import FindBar from "./find-bar.vue";
 import "./styles.css";
 
 export default async () => {
@@ -27,7 +26,7 @@ export default async () => {
 
     const fragment = document.createElement("div");
 
-    const instance = createApp(component, { addon, workspace });
+    const instance = createApp(FindBar, { addon, workspace });
     instance.mount(fragment);
     guiTabList.append(fragment);
     // TODO: kinda hacky but will have to do for now.
