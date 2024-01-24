@@ -1,11 +1,14 @@
 import "./define";
 import "./redux";
 import * as addons from "#addon-scripts";
-import locales from "#addon-l10n";
+import * as localeEN from "#addon-en";
 import MATCH_PATTERNS from "./matches";
 import UserscriptAddon from "../addon-api/userscript";
 import { SyncStorage } from "../background/storage";
 
+const locales = {
+  en: localeEN,
+};
 scratchAddons.events.addEventListener(
   "addonData",
   async ({ detail }: CustomEvent) => {

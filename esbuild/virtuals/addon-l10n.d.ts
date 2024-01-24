@@ -1,4 +1,6 @@
+import locale from "./addon-en";
+
 declare var locales: {
-  [lang: string]: { [addon: string]: { [message: string]: string } };
+  [lang: string]: typeof locale;
 };
 export default locales;

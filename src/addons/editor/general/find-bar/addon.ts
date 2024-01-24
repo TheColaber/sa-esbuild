@@ -29,3 +29,7 @@ export const scripts = defineScripts([
     runAtComplete: false,
   },
 ]);
+
+export const strings = {
+  "find-placeholder": "Find (Ctrl+F)",
+};

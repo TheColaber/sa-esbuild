@@ -1,9 +1,0 @@
-{
-  "find-placeholder": "Find (Ctrl+F)",
-  "complex-broadcast": "(expression)",
-  "var-local": "var {name}",
-  "var-global": "VAR {name}",
-  "list-local": "list {name}",
-  "list-global": "LIST {name}",
-  "event": "event {name}"
-}

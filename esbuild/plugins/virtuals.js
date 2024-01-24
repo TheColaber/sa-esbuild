@@ -3,18 +3,18 @@ import { globby } from "globby";
 import { readFile, readdir } from "fs/promises";
 
 const addonManifests = await globby("src/addons/**/addon.ts");
-const addonLocales = await (
-  await readdir("src/addon-l10n")
-).reduce(async (locales, lang) => {
-  locales[lang] = {};
-  const dir = await readdir("src/addon-l10n/" + lang);
-  for (const id of dir) {
-    locales[lang][id.split(".")[0]] = JSON.parse(
-      await readFile("src/addon-l10n/" + lang + "/" + id, "utf-8"),
-    );
-  }
-  return locales;
-}, {});
+// const addonLocales = await (
+//   await readdir("src/addon-l10n")
+// ).reduce(async (locales, lang) => {
+//   locales[lang] = {};
+//   const dir = await readdir("src/addon-l10n/" + lang);
+//   for (const id of dir) {
+//     locales[lang][id.split(".")[0]] = JSON.parse(
+//       await readFile("src/addon-l10n/" + lang + "/" + id, "utf-8"),
+//     );
+//   }
+//   return locales;
+// }, {});
 
 export default () => ({
   name: "virtual",
@@ -57,7 +57,7 @@ export default () => ({
       "#addon-scripts": exportAddons("scripts"),
       "#addon-styles": exportAddons("styles"),
       "#addon-popups": exportAddons("popup"),
-      "#addon-l10n": `export default ${JSON.stringify(addonLocales)}`,
+      "#addon-en": exportAddons("strings"),
     };
     const filter = new RegExp(
       Object.keys(options)
