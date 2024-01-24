@@ -2,7 +2,7 @@
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.expand": false,
   "explorer.fileNesting.patterns": {
-    "README.md": ".*, *.md, LICENSE, tsconfig.json"
+    "README.md": ".*, *.md, LICENSE, tsconfig.json, *.lock"
   },
   // Hides directories/files from sidebar.
   // Excludes them from search by default, as well as from quick open.
