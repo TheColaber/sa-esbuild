@@ -1,8 +1,9 @@
 import { createApp } from "vue";
 import FindBar from "./find-bar.vue";
-import "./styles.css";
+import { stylesheet } from "./styles.css";
 
 export default async () => {
+  addon.tab.injectStyle(stylesheet);
   const Blockly = await addon.tab.getBlockly();
   await addon.tab.scratchClassesReady();
 

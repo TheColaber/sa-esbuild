@@ -17,10 +17,7 @@ export default () => {
             },
           }),
         ]).process(code, { from: args.path, to: args.path });
-        const contents = `import injectStyle from "${path
-          .resolve("esbuild/inject-style.ts")
-          .replace(/\\/g, "/")}";
-        injectStyle(${JSON.stringify(result.css)});
+        const contents = `export const stylesheet = ${JSON.stringify(result.css)};
         export default ${JSON.stringify(modulesExported[args.path])};`;
         return { contents };
       });

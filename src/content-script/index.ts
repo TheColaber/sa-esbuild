@@ -37,12 +37,16 @@ scratchAddons.events.addEventListener(
       "dynamicDisable",
       ({ detail: { id } }: CustomEvent) => {
         const addon = scratchAddons.addons[id];
-        console.log(id);
-
         addon.dispatchEvent(new CustomEvent("dynamicDisable"));
         const style = document.createElement("style");
         style.setAttribute("data-addon-disabled-style-" + id, "");
         style.textContent = `[data-addon-${id}] { display: none !important; }`;
+        const injectedStyles = document.querySelectorAll(
+          `.scratch-addons-style[data-addon-id=${id}]`,
+        );
+        injectedStyles.forEach(
+          (style: HTMLStyleElement) => (style.disabled = true),
+        );
         document.body.appendChild(style);
       },
     );
@@ -53,6 +57,12 @@ scratchAddons.events.addEventListener(
         if (addon) {
           addon.dispatchEvent(new CustomEvent("dynamicEnable"));
           document.querySelector(`[data-addon-disabled-style-${id}]`).remove();
+          const injectedStyles = document.querySelectorAll(
+            `.scratch-addons-style[data-addon-id=${id}]`,
+          );
+          injectedStyles.forEach(
+            (style: HTMLStyleElement) => (style.disabled = false),
+          );
         } else {
           runAddon(id, true);
         }

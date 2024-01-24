@@ -1,5 +1,6 @@
 import { syncStorage, addonEnabledStates } from "./storage";
 const tabIds = [];
+// TODO: actually maybe what we should do is have the bg ping these tabs to check if sa is on them.
 chrome.tabs.query({}).then((tabs) => {
   tabIds.push(...tabs.filter((tab) => tab.url).map((tab) => tab.id));
 });

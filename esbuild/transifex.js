@@ -1,6 +1,6 @@
 import { transifexApi } from "@transifex/api";
 import download from "download";
-import 'dotenv/config'
+import "dotenv/config";
 
 const ORG_NAME = "scratch-addons";
 const SOURCE_LOCALE = "en";
@@ -45,21 +45,20 @@ const txPull = async function (
       resource,
     });
   } else {
+    const language = {
+      data: {
+        id: `l:${localeCode}`,
+        type: "languages",
+      },
+    };
 
-  const language = {
-    data: {
-      id: `l:${localeCode}`,
-      type: "languages",
-    },
-  };
-
-  // if locale is not English, create a download event of the translation file
-  url = await transifexApi.ResourceTranslationsAsyncDownload.download({
-    mode,
-    resource,
-    language,
-  });
-}
+    // if locale is not English, create a download event of the translation file
+    url = await transifexApi.ResourceTranslationsAsyncDownload.download({
+      mode,
+      resource,
+      language,
+    });
+  }
   let buffer;
   for (let i = 0; i < 5; i++) {
     try {
