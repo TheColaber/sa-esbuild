@@ -21,8 +21,8 @@ if (!addon) throw "addon not valid";
 const addonInstance = new PopupAddon(id);
 
 const lightTheme = ref(pageStorage.get("lightTheme") === true);
-syncStorage.watch(["lightTheme"], ({ lightTheme: newLightTheme }) => {
-  lightTheme.value = newLightTheme;
+syncStorage.watch(["lightTheme"], ({ lightTheme: {newValue} }) => {
+  lightTheme.value = newValue;
 });
 </script>
 

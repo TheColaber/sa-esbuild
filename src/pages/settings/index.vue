@@ -14,11 +14,11 @@ import { syncStorage } from "../../background/storage";
 import pageStorage from "../storage";
 import { ref, watch } from "vue";
 
-const tab = ref<"explore" | "enabled">("explore");
+const tab = ref<"explore" | "enabled" | "themes">("explore");
 
 const lightTheme = ref(pageStorage.get("lightTheme") === true);
-syncStorage.watch(["lightTheme"], ({ lightTheme: newLightTheme }) => {
-  lightTheme.value = newLightTheme;
+syncStorage.watch(["lightTheme"], ({ lightTheme: { newValue } }) => {
+  lightTheme.value = newValue;
   pageStorage.set("lightTheme", lightTheme.value);
 });
 

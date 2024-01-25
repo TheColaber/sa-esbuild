@@ -20,6 +20,12 @@
         >
           My Addons
         </button>
+        <button
+          @click="$emit('update:tab', 'themes')"
+          :class="[$style.tab, { [$style.selected]: tab === 'themes' }]"
+        >
+          Themes
+        </button>
         <div :class="$style.selectDisplay"></div>
       </div>
       <div :class="$style.search">
@@ -33,11 +39,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-
 const msg = chrome.i18n.getMessage;
 
-const { tab } = defineProps<{ tab: "explore" | "enabled" }>();
+const { tab } = defineProps<{ tab: "explore" | "enabled" | "themes" }>();
 defineEmits(["update:tab"]);
 </script>
 
@@ -47,7 +51,7 @@ defineEmits(["update:tab"]);
   background-image: var(--gradient);
   color: #fff;
   display: flex;
-  gap: 40px;
+  gap: 25px;
   .title {
     display: flex;
     align-items: center;
@@ -64,11 +68,11 @@ defineEmits(["update:tab"]);
   .top-bar {
     display: flex;
     flex: 1;
-    gap: 40px;
+    gap: 20px;
 
     .tabs {
       display: flex;
-      gap: 40px;
+      gap: 15px;
 
       .tab {
         border: none;
@@ -84,12 +88,13 @@ defineEmits(["update:tab"]);
         transition: font-weight 0.2s;
         outline: none;
 
-        &.selected:nth-child(1) ~ .selectDisplay {
-          transform: translateX(20px);
+        @for $i from 1 through 3 {
+&.selected:nth-child(#{$i}) ~ .selectDisplay {
+          transform: translateX(calc(20px + 115px * (#{$i} - 1)));
         }
-        &.selected:nth-child(2) ~ .selectDisplay {
-          transform: translateX(160px);
-        }
+}
+
+        
 
         &::before {
           content: "";
