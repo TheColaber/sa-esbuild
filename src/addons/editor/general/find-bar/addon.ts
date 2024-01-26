@@ -6,30 +6,37 @@ export default defineAddon({
   versionAdded: "1.0.0",
   credits: ["TheColaber", "griffpatch"],
   enabledByDefault: true,
-  // hotkeys: [
-  //   {
-  //     id: "openFindBar",
-  //     name: "Open find bar",
-  //     description:
-  //       "Use to open the find bar",
-  //     default: [["Ctrl", "F"], ["F3"]],
-  //     try: [["F"]] // is this a good idea? A hotkey that the user might want to try?
-  //   },
-  //   {
-  //     id: "carouselNext",
-  //     name: "Next block",
-  //     description:
-  //       "Go to the next block.",
-  //     default: [["F2"]],
-  //   },
-  //   {
-  //     id: "carouselPrevious",
-  //     name: "Previous block",
-  //     description:
-  //       "Go to the previous block.",
-  //     default: [["Shift", "F2"]],
-  //   },
-  // ],
+  hotkeys: [
+    {
+      id: "openFindBar",
+      name: "Open find bar",
+      description:
+        "Use to open the find bar",
+      default: [["Ctrl", "F"], ["F3"]],
+      try: [["F"]] // is this a good idea? A hotkey that the user might want to try?
+    },
+    {
+      id: "carouselNext",
+      name: "Next block",
+      description:
+        "Go to the next block.",
+      default: [["F2"]],
+    },
+    {
+      id: "carouselPrevious",
+      name: "Previous block",
+      description:
+        "Go to the previous block.",
+      default: [["Shift", "F2"]],
+    },
+    {
+      id: "blockLink",
+      name: "Block link",
+      description: "Click block while using hotkey to open the find bar with the block selected",
+      default: [["WheelButton"], ["Shift"]],
+      action: "Block"
+    }
+  ],
 });
 
 export const scripts = defineScripts([

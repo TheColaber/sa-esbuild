@@ -105,22 +105,16 @@ function showDropdown(showBlock?: ScratchBlocks.BlockSvg) {
   // ? this.getScratchSounds()
   // : [];
 
-  selected.value =
+  const focusBlock = 
     showBlock &&
     items.value.find(
       (item) =>
-        item.id === showBlock.id &&
-        item.clones.find((id) => id === showBlock.id),
+        item.ids.find((id) => id === showBlock.id),
     );
-  // for (const item of items.value) {
-  //   if (
-  //     showBlock &&
-  //     item.id === showBlock.id &&
-  //     item.clones.find((id) => id === showBlock.id)
-  //   ) {
-  //     this.selectItem(item);
-  //   }
-  // }
+    if (focusBlock) {
+      focusBlock.carouselIndex = focusBlock.ids.indexOf(showBlock.id);
+      selectItem(focusBlock)
+    }
 
   function getScratchBlocks() {
     textColor.value = Blockly.Colours.text;
@@ -534,14 +528,12 @@ Blockly.Gesture.prototype.doBlockClick_ = function () {
         margin: 0;
         font-weight: bold;
         cursor: pointer;
-        /* variable set in dropdown-item.ts */
         color: var(--color-primary);
         .item-text {
           overflow: hidden;
         }
         &:hover,
         &.selected {
-          /* variables set in dropdown-item.ts */
           color: var(--text-color);
           background-color: var(--color-primary);
         }
