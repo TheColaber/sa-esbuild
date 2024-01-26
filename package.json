@@ -8,10 +8,10 @@
   "type": "module",
   "scripts": {
     "dev": "ts-node --esm esbuild/build.ts --dev",
-    "build": "ts-node esbuild/build",
-    "pull-translations": "ts-node esbuild/pull-translations",
+    "build": "ts-node --esm esbuild/build.ts",
+    "pull-translations": "ts-node --esm esbuild/pull-translations.ts",
     "format": "prettier . -w",
-    "new-addon": "ts-node cli/new-addon"
+    "new-addon": "ts-node --esm cli/new-addon.ts"
   },
   "devDependencies": {
     "@iconify-icons/tabler": "^1.2.95",

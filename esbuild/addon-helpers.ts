@@ -100,7 +100,7 @@ export interface AddonManifest {
    * }
    * ```
    */
-  credits: string[];
+  credits?: string[];
   /**
    * The tags for the addon
    * - recommended: This addon is recommended to be enabled. This tag should only be added if approved by developers.
@@ -110,11 +110,11 @@ export interface AddonManifest {
    * Example:
    * ```js
    * {
-   *    tags: ["codeEditor", "codeEditor"]
+   *    tags: []
    * }
    * ```
    */
-  tags: ("recommended" | "costumeEditor" | "codeEditor")[];
+  tags?: ("recommended")[];
   // category?: ("editor" | "popup" | "code" | "general")[];
   mode?: "dev" | "prod";
   enabledByDefault?: boolean;
