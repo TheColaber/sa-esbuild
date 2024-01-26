@@ -4,6 +4,7 @@ export default class Tab {
   id: string;
   _waitForElementSet: WeakSet<{}>;
   _classes: string[];
+  _blockly: ScratchBlocks.RealBlockly;
   redux: Redux;
 
   constructor(id: string) {
@@ -91,16 +92,23 @@ export default class Tab {
     return "projectpage";
   }
 
-  async getBlockly() {
-    return (await scratchAddons.getCache()).BlocklyInstance;
-  }
-
   async getVM() {
     return (await scratchAddons.getCache()).vm;
   }
 
   getWorkspace() {
     return scratchAddons.getMainWorkspace();
+  }
+
+  async blocklyReady() {
+    return (this._blockly = (await scratchAddons.getCache()).BlocklyInstance);
+  }
+
+  get Blockly() {
+    if (!this._blockly) {
+      throw "await Tab.blocklyReady before getting Tab.Blockly";
+    }
+    return this._blockly;
   }
 
   async scratchClassesReady() {
@@ -110,7 +118,7 @@ export default class Tab {
   scratchClass(...args: (string | { others: string })[]) {
     let res = "";
     if (!this._classes) {
-      throw "Await scratchClassesReady before calling scratchClass";
+      throw "await Tab.scratchClassesReady before calling scratchClass";
     }
     for (const classNameToFind of args) {
       if (typeof classNameToFind !== "string") continue;

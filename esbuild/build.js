@@ -39,15 +39,12 @@ async function build() {
       "import-is-undefined": "silent",
     },
   });
-  console.time("build");
-  await ctx.rebuild();
-  console.timeEnd("build");
-  let buildCount = 1;
-  chokidar.watch(base).on("change", async () => {
-    let currentCount = buildCount;
-    buildCount++;
-    console.time("build" + currentCount);
-    await ctx.rebuild();
-    console.timeEnd("build" + currentCount);
-  });
+  let promise = null;
+  async function rebuild() {
+    if (promise) await promise;
+    console.time("build");
+    promise = ctx.rebuild().then(() =>{ promise = null, console.timeEnd("build")});;
+  }
+  rebuild()
+  chokidar.watch(base).on("change", rebuild);
 }

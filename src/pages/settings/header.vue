@@ -89,12 +89,10 @@ defineEmits(["update:tab"]);
         outline: none;
 
         @for $i from 1 through 3 {
-&.selected:nth-child(#{$i}) ~ .selectDisplay {
-          transform: translateX(calc(20px + 115px * (#{$i} - 1)));
+          &.selected:nth-child(#{$i}) ~ .selectDisplay {
+            transform: translateX(calc(20px + 115px * (#{$i} - 1)));
+          }
         }
-}
-
-        
 
         &::before {
           content: "";

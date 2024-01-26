@@ -158,15 +158,14 @@ function toggleAddon(id: string) {
         }
 
         &[state="true"] {
-            .switch{
-              background-color: transparent;
-              &::before {
+          .switch {
+            background-color: transparent;
+            &::before {
               background-color: #fff;
               left: 25px;
             }
-            }
-
           }
+        }
 
         .switch {
           display: flex;

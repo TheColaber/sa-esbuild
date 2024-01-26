@@ -4,7 +4,7 @@ import { stylesheet } from "./styles.css";
 
 export default async () => {
   addon.tab.injectStyle(stylesheet);
-  const Blockly = await addon.tab.getBlockly();
+  const Blockly = await addon.tab.blocklyReady();
   await addon.tab.scratchClassesReady();
 
   // Add find bar to current workspace

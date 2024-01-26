@@ -339,6 +339,7 @@ declare global {
       ): Workspace;
       Colours: Colours;
       Gesture: typeof Gesture;
+      hideChaff();
     }
   }
 }

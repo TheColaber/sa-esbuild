@@ -11,37 +11,50 @@
         autocomplete="off"
         ref="findInput"
         v-model="input"
-        @focus="showDropDown(), inputChange()"
-        @focusout="visible = false"
+        @focus="showDropdown(), inputChange()"
+        @focusout="hideDropdown"
         @keydown="inputKeyDown"
         @keyup="inputChange"
         v-show="visible || !selected"
       />
       <div
-        v-show="!visible && selected"
-        @click="showDropDown(), inputChange()"
+        v-if="!visible && selected"
+        @click="showDropdown(), inputChange()"
         :class="$style['selected-display']"
         :style="{ '--color-primary': selected?.color }"
       >
-        <span :class="$style['item-text']">{{ selected?.name }}</span>
-        <!-- <span :class="$style.carousel">
-            <span :class="$style['carousel-control']">◀</span>
-            <span>1 / 2</span>
-            <span :class="$style['carousel-control']">▶</span>
-          </span> -->
+        <span :class="$style['item-text']">{{ selected.name }}</span>
+        <span :class="$style.carousel" v-if="selected.ids.length > 1">
+          <span :class="$style['carousel-control']" @click.stop="nextItem(-1)"
+            >◀</span
+          >
+          <span
+            >{{ selected.carouselIndex + 1 }} / {{ selected.ids.length }}</span
+          >
+          <span :class="$style['carousel-control']" @click.stop="nextItem(1)"
+            >▶</span
+          >
+        </span>
       </div>
       <div :class="$style.dropdown" @mousedown.prevent>
         <div
           :class="[$style.item, { [$style.selected]: selected === item }]"
           v-for="(item, name) of items"
           :style="{ '--color-primary': item.color }"
-          @mousedown="selected = item"
+          @mousedown="selectItem(item)"
         >
           <span :class="$style['item-text']">{{ item.name }}</span>
-          <span :class="$style.carousel">
-            <span :class="$style['carousel-control']">◀</span>
-            <span>1 / {{ item.ids.length }}</span>
-            <span :class="$style['carousel-control']">▶</span>
+          <span
+            :class="$style.carousel"
+            v-if="selected === item && item.ids.length > 1"
+          >
+            <span :class="$style['carousel-control']" @click.stop="nextItem(-1)"
+              >◀</span
+            >
+            <span>{{ item.carouselIndex + 1 }} / {{ item.ids.length }}</span>
+            <span :class="$style['carousel-control']" @click.stop="nextItem(1)"
+              >▶</span
+            >
           </span>
         </div>
       </div>
@@ -50,13 +63,14 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import PopupAddon from "../../../../addon-api/userscript";
 const { addon, workspace } = defineProps<{
   addon: PopupAddon;
   workspace: ScratchBlocks.WorkspaceSvg;
 }>();
 
+let mounted = true;
 const visible = ref(false);
 const input = ref("");
 let prevValue = "";
@@ -69,11 +83,13 @@ const findInput = ref<HTMLInputElement>();
 onMounted(() => {
   addon.tab.displayNoneWhileDisabled(wrapper.value);
 });
+onUnmounted(() => {
+  mounted = false;
+});
 
-async function showDropDown(showBlock?: ScratchBlocks.BlockSvg) {
-  // TODO: not ideal.
-  const Blockly = await addon.tab.getBlockly();
+const { Blockly } = addon.tab;
 
+function showDropdown(showBlock?: ScratchBlocks.BlockSvg) {
   if (!showBlock && visible.value) {
     return;
   }
@@ -134,6 +150,7 @@ async function showDropDown(showBlock?: ScratchBlocks.BlockSvg) {
         y,
         color,
         ids: [],
+        carouselIndex: 0,
       };
       myBlocks[name].ids.push(block.id);
 
@@ -146,6 +163,7 @@ async function showDropDown(showBlock?: ScratchBlocks.BlockSvg) {
         y: number;
         color: string;
         ids: string[];
+        carouselIndex: number;
       }
     >;
     const blocks = workspace.getAllBlocks();
@@ -253,6 +271,13 @@ async function showDropDown(showBlock?: ScratchBlocks.BlockSvg) {
   }
 }
 
+function hideDropdown() {
+  visible.value = false;
+  if (selected.value.ids.length === 1) {
+    selected.value = null;
+  }
+}
+
 function inputChange() {
   let val = input.value.toLowerCase();
   if (val !== prevValue) {
@@ -275,42 +300,151 @@ function inputKeyDown(e: KeyboardEvent) {
     e.preventDefault();
   }
 }
-(async () => {
-  const Blockly = await addon.tab.getBlockly();
-  const _doBlockClick_ = Blockly.Gesture.prototype.doBlockClick_;
-  Blockly.Gesture.prototype.doBlockClick_ = function () {
-    const searchableBlocks = [
-      "procedures_definition",
-      "procedures_call",
-      "data_variable",
-      "data_changevariableby",
-      "data_setvariableto",
-      "event_whenbroadcastreceived",
-      "event_broadcastandwait",
-      "event_broadcast",
-    ];
 
-    if (
-      addon.enabled &&
-      (this.mostRecentEvent_.button === 1 || this.mostRecentEvent_.shiftKey)
+let glowBlock = null;
+let glowInterval = null;
+function goToBlock(id: string) {
+  const currentBlock = workspace.getBlockById(id);
+  // The quaternary color is the darkest shade of the block, so set the shadow color to it
+  // which is what the glowBlock function uses to change the color of the block.
+  currentBlock.setShadowColour(currentBlock.getColourQuaternary());
+  const rootBlock = currentBlock.getRootBlock();
+
+  // If the user spam presses, lets make sure the glowing doesn't spam itself to death.
+  if (glowBlock) {
+    clearInterval(glowInterval);
+    workspace.glowBlock(glowBlock, false);
+  }
+
+  let topmostBlock = currentBlock;
+  while (topmostBlock.getOutputShape() && topmostBlock.getSurroundParent()) {
+    topmostBlock = topmostBlock.getSurroundParent();
+  }
+
+  // Calculate the positions and dimensions of the blocks
+  const { x } = rootBlock.getRelativeToSurfaceXY(); // Align with the left of the block 'stack'
+  const { y } = topmostBlock.getRelativeToSurfaceXY(); // Align with the top of the block
+  const { scale } = workspace;
+  const leftX = x * scale;
+  const topY = y * scale;
+  const { height: blockHeight } = currentBlock;
+  const bottomY = topY + blockHeight;
+
+  // Get the viewport metrics
+  const viewportMetrics = workspace.getMetrics();
+  const { viewLeft, viewTop, viewHeight, contentLeft, contentTop } =
+    viewportMetrics;
+  const padding = 30; // Consistant with scratch when making new custom blocks.
+
+  // Check if either the current block is not in the right x psoition or is outside the viewport
+  if (
+    Math.round(leftX) !== Math.round(viewLeft + padding) ||
+    topY < viewTop - padding ||
+    bottomY > viewTop + viewHeight
+  ) {
+    const scrollX = leftX - contentLeft - padding;
+    const scrollY = topY - contentTop - padding;
+    workspace.scrollbar.set(scrollX, scrollY);
+  }
+  Blockly.hideChaff();
+  let glow = true;
+  let count = 4;
+  glowInterval = setInterval(() => {
+    glowBlock = currentBlock.id;
+    workspace.glowBlock(currentBlock.id, glow);
+    count--;
+    glow = !glow;
+    if (count === 0) clearInterval(glowInterval);
+  }, 200);
+}
+
+function selectItem(item) {
+  selected.value = item;
+  goToBlock(item.ids[item.carouselIndex]);
+}
+
+function nextItem(increase: number) {
+  if (selected.value.ids.length === 1) return;
+  selected.value.carouselIndex += increase;
+  selected.value.carouselIndex =
+    selected.value.carouselIndex % selected.value.ids.length;
+  goToBlock(selected.value.ids[selected.value.carouselIndex]);
+}
+
+document.addEventListener("keydown", (event) => {
+  if (!addon.enabled || !mounted) return;
+
+  let ctrlKey = event.ctrlKey || event.metaKey;
+
+  if (event.key.toLowerCase() === "f" && ctrlKey && !event.shiftKey) {
+    // Ctrl + F (Override default Ctrl+F find)
+    findInput.value.focus();
+    findInput.value.select();
+    event.stopPropagation();
+    event.preventDefault();
+    return true;
+  }
+
+  if (visible.value && event.key === "ArrowDown") {
+    const selectedIndex = items.value.indexOf(selected.value);
+    const nextItem =
+      items.value[
+        (((selectedIndex + 1) % items.value.length) + items.value.length) %
+          items.value.length
+      ];
+    selectItem(nextItem);
+  }
+  if (visible.value && event.key === "ArrowUp") {
+    const selectedIndex = items.value.indexOf(selected.value);
+    const previousItem =
+      items.value[
+        (((selectedIndex - 1) % items.value.length) + items.value.length) %
+          items.value.length
+      ];
+    selectItem(previousItem);
+  }
+  if (visible.value && selected.value && event.key === "ArrowLeft") {
+    nextItem(-1);
+  }
+  if (visible.value && selected.value && event.key === "ArrowRight") {
+    nextItem(1);
+  }
+});
+
+const _doBlockClick_ = Blockly.Gesture.prototype.doBlockClick_;
+Blockly.Gesture.prototype.doBlockClick_ = function () {
+  const searchableBlocks = [
+    "procedures_definition",
+    "procedures_call",
+    "data_variable",
+    "data_changevariableby",
+    "data_setvariableto",
+    "event_whenbroadcastreceived",
+    "event_broadcastandwait",
+    "event_broadcast",
+  ];
+
+  if (
+    mounted &&
+    addon.enabled &&
+    (this.mostRecentEvent_.button === 1 || this.mostRecentEvent_.shiftKey)
+  ) {
+    // Wheel button or shift-click.
+    for (
+      let block = this.startBlock_;
+      block;
+      block = block.getSurroundParent()
     ) {
-      // Wheel button or shift-click.
-      for (
-        let block = this.startBlock_;
-        block;
-        block = block.getSurroundParent()
-      ) {
-        if (searchableBlocks.includes(block.type)) {
-          findInput.value.focus();
-          showDropDown(block);
-          return;
-        }
+      if (searchableBlocks.includes(block.type)) {
+        findInput.value.focus();
+        showDropdown(block);
+        return;
       }
     }
+  }
 
-    _doBlockClick_.call(this);
-  };
-})();
+  _doBlockClick_.call(this);
+};
 </script>
 
 <style lang="scss" module>
@@ -329,6 +463,7 @@ function inputKeyDown(e: KeyboardEvent) {
     padding: 4px;
     border-radius: 4px;
     float: right;
+    line-height: 1;
 
     &.visible {
       box-shadow: 0px 0px 8px 1px rgba(0, 0, 0, 0.3);
@@ -364,11 +499,25 @@ function inputKeyDown(e: KeyboardEvent) {
       .item-text {
         overflow: hidden;
       }
+      .carousel {
+        font-weight: normal;
+        white-space: nowrap;
+        background-color: inherit;
+        padding: 0;
+        flex: 1;
+        display: flex;
+        justify-content: flex-end;
+        .carousel-control {
+          padding: 0 6px;
+          &:hover {
+            color: #ffff80;
+          }
+        }
+      }
     }
     .dropdown {
       display: none;
       padding: 0.2em 0;
-      line-height: 1;
       overflow-y: auto;
       min-height: 128px;
       max-height: 65vh;
