@@ -85,7 +85,8 @@ scratchAddons.events.addEventListener(
         const addonLocales = {};
         for (const lang of userLangs) {
           for (const key in locales[lang][id]) {
-            addonLocales[key] = addonLocales[key] || locales[lang][id][key];
+            const string = locales[lang][id][key].string || locales[lang][id][key];
+            addonLocales[key] = addonLocales[key] || string;
           }
         }
         console.log(addonLocales);

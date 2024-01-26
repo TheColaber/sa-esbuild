@@ -28,13 +28,20 @@ declare global {
     }
 
     class Input {
-      fieldRow: Field[];
+      fieldRow: (Field|FieldVariable|FieldVariableGetter)[];
+      name: string;
     }
 
     class Field {
       name: string;
       getText(): string;
     }
+
+    class FieldVariable extends Field {
+      getVariable(): VariableModel
+    }
+
+    class FieldVariableGetter extends FieldVariable {}
 
     class BlockSvg extends Block {
       width: number;
@@ -339,6 +346,9 @@ declare global {
       ): Workspace;
       Colours: Colours;
       Gesture: typeof Gesture;
+      Field: typeof Field;
+      FieldVariable: typeof FieldVariable
+      FieldVariableGetter: typeof FieldVariableGetter
       hideChaff();
     }
   }

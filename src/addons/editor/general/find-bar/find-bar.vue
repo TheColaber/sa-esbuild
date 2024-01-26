@@ -169,7 +169,11 @@ function showDropdown(showBlock?: ScratchBlocks.BlockSvg) {
     const blocks = workspace.getAllBlocks();
     for (const block of blocks) {
       const isEventBlock =
-        block.getCategory() === "events" && !block.isShadow();
+        block.getCategory() === "events" && !block.isShadow();        
+        const isVariableBlock =
+        block.getCategory() === "data" && !block.isShadow();
+        const isListBlock =
+        block.getCategory() === "data-lists" && !block.isShadow();
       const isCustomBlock =
         block.type === "procedures_definition" ||
         block.type === "procedures_call";
@@ -177,6 +181,8 @@ function showDropdown(showBlock?: ScratchBlocks.BlockSvg) {
       if (
         isEventBlock ||
         isCustomBlock ||
+        isVariableBlock ||
+        isListBlock ||
         block.type === "control_start_as_clone"
       ) {
         if (
@@ -196,7 +202,7 @@ function showDropdown(showBlock?: ScratchBlocks.BlockSvg) {
             event = childRow.find((input) => input.name === "BROADCAST_OPTION");
           }
 
-          addBlock(block, "event " + event.getText());
+          addBlock(block, addon.msg("event", { name: event.getText() }));
         } else if (block.type === "procedures_call") {
           let childProc = block.getProcCode();
 
@@ -208,6 +214,15 @@ function showDropdown(showBlock?: ScratchBlocks.BlockSvg) {
               }
             }
           }
+        } else if (isVariableBlock || isListBlock) {
+          const list = (block.inputList.find(list => list.name=== "" ||list.name === "VALUE") );
+  const input = (list.fieldRow.find(row => row instanceof Blockly.FieldVariable || row instanceof Blockly.FieldVariableGetter));
+  if (isVariableBlock) {    
+    addBlock(block, addon.msg(input.getVariable().isLocal? "var-local":"var-global", { name: input.getText() }))
+  } else {
+    addBlock(block, addon.msg(input.getVariable().isLocal? "list-local":"list-global", { name: input.getText() }))
+  }
+
         } else {
           addBlock(block);
         }
@@ -273,7 +288,7 @@ function showDropdown(showBlock?: ScratchBlocks.BlockSvg) {
 
 function hideDropdown() {
   visible.value = false;
-  if (selected.value.ids.length === 1) {
+  if (selected.value && selected.value.ids.length === 1) {
     selected.value = null;
   }
 }
@@ -364,11 +379,12 @@ function selectItem(item) {
 }
 
 function nextItem(increase: number) {
-  if (selected.value.ids.length === 1) return;
-  selected.value.carouselIndex += increase;
-  selected.value.carouselIndex =
-    selected.value.carouselIndex % selected.value.ids.length;
-  goToBlock(selected.value.ids[selected.value.carouselIndex]);
+  const item = selected.value
+  if (item.ids.length === 1) return;
+  
+  item.carouselIndex = (((item.carouselIndex + increase) % item.ids.length) + item.ids.length) %
+  item.ids.length
+  goToBlock(item.ids[item.carouselIndex]);
 }
 
 document.addEventListener("keydown", (event) => {
@@ -376,16 +392,15 @@ document.addEventListener("keydown", (event) => {
 
   let ctrlKey = event.ctrlKey || event.metaKey;
 
+  // F3 also opens
   if (event.key.toLowerCase() === "f" && ctrlKey && !event.shiftKey) {
-    // Ctrl + F (Override default Ctrl+F find)
-    findInput.value.focus();
-    findInput.value.select();
-    event.stopPropagation();
+    showDropdown();
+    inputChange()
     event.preventDefault();
-    return true;
   }
 
-  if (visible.value && event.key === "ArrowDown") {
+  if (visible.value) {
+    if (event.key === "ArrowDown") {
     const selectedIndex = items.value.indexOf(selected.value);
     const nextItem =
       items.value[
@@ -394,7 +409,7 @@ document.addEventListener("keydown", (event) => {
       ];
     selectItem(nextItem);
   }
-  if (visible.value && event.key === "ArrowUp") {
+  if (event.key === "ArrowUp") {
     const selectedIndex = items.value.indexOf(selected.value);
     const previousItem =
       items.value[
@@ -403,12 +418,23 @@ document.addEventListener("keydown", (event) => {
       ];
     selectItem(previousItem);
   }
-  if (visible.value && selected.value && event.key === "ArrowLeft") {
+  if (selected.value) {
+  if (event.key === "ArrowLeft") {
     nextItem(-1);
   }
-  if (visible.value && selected.value && event.key === "ArrowRight") {
+  if (event.key === "ArrowRight") {
     nextItem(1);
+  }}
   }
+  if (selected.value && event.key === "F2") {
+      if (event.shiftKey) {
+        nextItem(-1);
+
+      } else {
+        nextItem(1);
+
+      }
+}
 });
 
 const _doBlockClick_ = Blockly.Gesture.prototype.doBlockClick_;
