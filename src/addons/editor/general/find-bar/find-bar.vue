@@ -138,12 +138,11 @@ function showDropdown(showBlock?: ScratchBlocks.BlockSvg) {
       }
       return name.join(" ");
     }
-    const addBlock = (block: ScratchBlocks.Block, name?: string) => {
+    const addBlock = (block: ScratchBlocks.Block, category, name?: string) => {
       const isWhenFlagClicked = block.type === "event_whenflagclicked";
       const color = isWhenFlagClicked ? "#4cbf56" : block.getColour();
       const { y } = block.getRelativeToSurfaceXY();
       name = name || getBlockName(block);
-      const category = isWhenFlagClicked ? "flag" : block.getCategory();
 
       myBlocks[name] = myBlocks[name] || {
         category,
@@ -202,7 +201,7 @@ function showDropdown(showBlock?: ScratchBlocks.BlockSvg) {
             event = childRow.find((input) => input.name === "BROADCAST_OPTION");
           }
 
-          addBlock(block, addon.msg("event", { name: event.getText() }));
+          addBlock(block, "broadcast", addon.msg("event", { name: event.getText() }));
         } else if (block.type === "procedures_call") {
           let childProc = block.getProcCode();
 
@@ -210,68 +209,47 @@ function showDropdown(showBlock?: ScratchBlocks.BlockSvg) {
             if (b.type === "procedures_definition") {
               let label = b.getChildren()[0];
               if (label.getProcCode() === childProc) {
-                addBlock(block, getBlockName(b));
+                addBlock(block, "custom", getBlockName(b));
               }
             }
           }
         } else if (isVariableBlock || isListBlock) {
           const list = (block.inputList.find(list => list.name=== "" ||list.name === "VALUE") );
   const input = (list.fieldRow.find(row => row instanceof Blockly.FieldVariable || row instanceof Blockly.FieldVariableGetter));
-  if (isVariableBlock) {    
-    addBlock(block, addon.msg(input.getVariable().isLocal? "var-local":"var-global", { name: input.getText() }))
+  const {isLocal} = input.getVariable();
+  let name;
+  if (isVariableBlock) {
+    name = isLocal? "var-local":"var-global"
   } else {
-    addBlock(block, addon.msg(input.getVariable().isLocal? "list-local":"list-global", { name: input.getText() }))
+    name = isLocal? "list-local":"list-global"
   }
+  addBlock(block, name, addon.msg(name, { name: input.getText() }))
 
         } else {
-          addBlock(block);
+          addBlock(block, block.getCategory());
         }
       }
     }
 
-    // let map = workspace.getVariableMap();
-
-    // let vars = map.getVariablesOfType("");
-    // for (const row of vars) {
-    //   addBlock(
-    //     row.isLocal ? "var" : "VAR",
-    //     row.isLocal
-    //       ? addon.msg("var-local", { name: row.name })
-    //       : addon.msg("var-global", { name: row.name }),
-    //     row.getId(),
-    //     null,
-    //   );
-    // }
-
-    // let lists = map.getVariablesOfType("list");
-    // for (const row of lists) {
-    //   addBlock(
-    //     row.isLocal ? "list" : "LIST",
-    //     row.isLocal
-    //       ? addon.msg("list-local", { name: row.name })
-    //       : addon.msg("list-global", { name: row.name }),
-    //     row.getId(),
-    //     null,
-    //   );
-    // }
-
-    const clsOrder = [
+    const order = [
       "flag",
-      "receive",
+      "broadcast",
       "event",
       "control",
-      "define",
-      "var",
-      "VAR",
-      "list",
-      "LIST",
+      "custom",
+      "var-local",
+      "var-global",
+      "list-local",
+      "list-global",
     ];
-    // Sort by the following: Using the above
+
+    // Sort first by `order`, then by alphabetical, then top of page to bottom.
     return Object.entries(myBlocks)
       .map(([name, block]) => ({ name, ...block }))
       .sort((a, b) => {
+        
         let orderDiff =
-          clsOrder.indexOf(a.category) - clsOrder.indexOf(b.category);
+        order.indexOf(a.category) - order.indexOf(b.category);
         if (orderDiff !== 0) {
           return orderDiff;
         }
