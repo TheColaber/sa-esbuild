@@ -1,4 +1,4 @@
-import { version, homepage } from "../package.json";
+import pkg from "../package.json" assert { type: "json" };
 
 // Values that are "__MSG_text__" are localized based on the user's browser language.
 // All text that the user sees in the extension should be localized.
@@ -33,7 +33,7 @@ const PAGES = {
   },
 };
 
-const isPrerelease = version.split("-")[1] === "prerelease";
+const isPrerelease = pkg.version.split("-")[1] === "prerelease";
 const iconDisplay: keyof typeof ICONS = isPrerelease
   ? "DEVELOPMENT"
   : "PRODUCTION";
@@ -42,9 +42,9 @@ const manifest: chrome.runtime.ManifestV3 = {
   manifest_version: 3,
   name: "__MSG_name__",
   description: "__MSG_description__",
-  version: version.split("-")[0],
-  version_name: version,
-  homepage_url: homepage,
+  version: pkg.version.split("-")[0],
+  version_name: pkg.version,
+  homepage_url: pkg.homepage,
   author: "Scratch Addons",
   default_locale: "en",
   icons: ICONS[iconDisplay],

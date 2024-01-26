@@ -1,11 +1,11 @@
 import esbuild from "esbuild";
 import chokidar from "chokidar";
-import chromeExtension from "./plugins/chrome-extension.js";
-import globalVars from "./plugins/global-vars.js";
-import virtuals from "./plugins/virtuals.js";
-import vue from "./plugins/vue.js";
-import postcss from "./plugins/postcss.js";
-import typedCss from "./plugins/typed-css.js";
+import chromeExtension from "./plugins/chrome-extension.ts";
+import globalVars from "./plugins/global-vars.ts";
+import virtuals from "./plugins/virtuals.ts";
+import vue from "./plugins/vue.ts";
+import postcss from "./plugins/postcss.ts";
+import typedCss from "./plugins/typed-css.ts";
 process.env.MODE = "development";
 build();
 

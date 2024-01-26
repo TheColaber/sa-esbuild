@@ -3,7 +3,11 @@ import esm from "esm";
 import { Module } from "module";
 import { readFile, mkdir, writeFile, cp } from "fs/promises";
 import path from "path";
-import "esbuild-runner/register.js";
+import {
+  default as manifest,
+  extraIcons,
+  extraPages,
+} from "../../src/manifest.ts"
 // import * as sfc from "@vue/compiler-sfc";
 // import { renderToString } from "@vue/server-renderer";
 // import { createApp, createSSRApp, h } from "vue";
@@ -13,12 +17,6 @@ export default () => ({
     build.initialOptions.metafile = true;
     const manifestPath = build.initialOptions.entryPoints[0];
     if (!manifestPath) return;
-    const resolve = esm(new Module("module"));
-    const {
-      default: manifest,
-      extraIcons,
-      extraPages,
-    } = resolve("./src/manifest.ts");
     let manifestJSON = JSON.stringify(manifest, undefined, "  ");
     const dir = path.dirname(manifestPath);
 
@@ -134,15 +132,15 @@ export default () => ({
                 wrappedContents,
               );
               await writeFile(distFile, `import(".${fileName}")`);
-              manifestJSON = JSON.parse(manifestJSON);
-              manifestJSON.web_accessible_resources =
-                manifestJSON.web_accessible_resources || [];
-              manifestJSON.web_accessible_resources.push({
+              const manifestParsed = JSON.parse(manifestJSON);
+              manifestParsed.web_accessible_resources =
+              manifestParsed.web_accessible_resources || [];
+              manifestParsed.web_accessible_resources.push({
                 matches: cs.matches,
                 // TODO: unhardcode
                 resources: ["content-script" + fileName],
               });
-              manifestJSON = JSON.stringify(manifestJSON);
+              manifestJSON = JSON.stringify(manifestParsed);
             } else {
               await writeFile(distFile, wrappedContents);
             }

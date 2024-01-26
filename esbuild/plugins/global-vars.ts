@@ -1,6 +1,7 @@
 import path from "path";
 import { readFile } from "fs/promises";
 import { globby } from "globby";
+import * as addonHelpers from "../addon-helpers.ts";
 
 const addonScriptFiles = await globby("src/addons/**/addon.ts");
 const addons = {};
@@ -29,12 +30,7 @@ export default () => ({
                     code,
                   {
                     loader: "ts",
-                    pure: [
-                      "defineScripts",
-                      "defineAddon",
-                      "definePopup",
-                      "defineStyles",
-                    ],
+                    pure: Object.keys(addonHelpers),
                     define: {
                       console: `__addon.console`,
                       addon: `__addon`,

@@ -8,6 +8,7 @@ declare global {
   const defineScripts: typeof import("./addon-helpers").defineScripts;
   const defineStyles: typeof import("./addon-helpers").defineStyles;
   const definePopup: typeof import("./addon-helpers").definePopup;
+  const defineStrings: typeof import("./addon-helpers").defineStrings;
   const addon: UserscriptAddon;
 }
 
@@ -25,6 +26,10 @@ export function defineStyles(styles: AddonStyle[]) {
 
 export function definePopup(popup: AddonPopup) {
   return popup;
+}
+
+export function defineStrings(strings: AddonStrings) {
+  return strings;
 }
 
 export interface AddonManifest {
@@ -137,4 +142,11 @@ export interface AddonPopup {
   icon: IconifyIcon;
   component: Component;
   badge?: Component;
+}
+
+export interface AddonStrings {
+  [name: string]: string | {
+    string: string
+    comment: string
+  }
 }

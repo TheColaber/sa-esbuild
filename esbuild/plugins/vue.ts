@@ -2,20 +2,13 @@ import path from "path";
 import * as fs from "fs";
 import * as crypto from "crypto";
 import * as sfc from "@vue/compiler-sfc";
-// import { load } from "cheerio";
-
-// import { replaceRules } from "./paths";
 
 export default (opts = {}) => ({
   name: "vue",
   async setup({ initialOptions, ...build }) {
     initialOptions.define = initialOptions.define || {};
-    initialOptions.define["__VUE_OPTIONS_API__"] = opts.disableOptionsApi
-      ? "false"
-      : "true";
-    initialOptions.define["__VUE_PROD_DEVTOOLS__"] = opts.enableDevTools
-      ? "true"
-      : "false";
+    initialOptions.define["__VUE_OPTIONS_API__"] = "true";
+    initialOptions.define["__VUE_PROD_DEVTOOLS__"] = "false"
 
     // Resolve main ".vue" import
     build.onResolve({ filter: /\.vue/ }, async (args) => {
@@ -100,7 +93,7 @@ export default (opts = {}) => ({
         code += "const script = {};";
       }
 
-      const renderFuncName = opts.renderSSR ? "ssrRender" : "render";
+      const renderFuncName = "render";
       code += `import { ${renderFuncName} } from "${encPath}?type=template";`;
 
       for (const style in descriptor.styles) {
@@ -153,15 +146,12 @@ export default (opts = {}) => ({
       let code = "const script = {};";
 
       const filename = path.relative(process.cwd(), args.path);
-      const renderFuncName = opts.renderSSR ? "ssrRender" : "render";
+      const renderFuncName = "render";
       const encPath = args.path.replace(/\\/g, "\\\\");
 
       code += `import { ${renderFuncName} } from "${encPath}?type=loader"; script.${renderFuncName} = ${renderFuncName};`;
 
       code += `script.__file = ${JSON.stringify(filename)};`;
-      if (opts.renderSSR) {
-        code += "script.__ssrInlineRender = true;";
-      }
 
       code += "export default script;";
 
@@ -218,14 +208,11 @@ export default (opts = {}) => ({
         filename: args.path,
         scoped: descriptor.styles.some((o) => o.scoped),
         slotted: descriptor.slotted,
-        ssr: opts.renderSSR,
         ssrCssVars: [],
         isProd: process.env.NODE_ENV === "production" || initialOptions.minify,
         compilerOptions: {
-          inSSR: opts.renderSSR,
           directiveTransforms: {},
           bindingMetadata: script?.bindings,
-          ...opts.compilerOptions,
         },
       });
 
@@ -269,34 +256,12 @@ export default (opts = {}) => ({
         postcssOptions: {},
         postcssPlugins: [],
         preprocessLang: style.lang,
-        preprocessOptions: Object.assign(
-          {
-            includePaths: [path.dirname(args.path)],
-            importer: [
-              (url) => {
-                const modulePath = path.join(
-                  process.cwd(),
-                  "node_modules",
-                  url,
-                );
-
-                if (fs.existsSync(modulePath)) {
-                  return { file: modulePath };
-                }
-
-                return null;
-              },
-              (url) => ({ file: replaceRules(url) }),
-            ],
-          },
-          opts.preprocessorOptions,
-        ),
         scoped: style.scoped,
         modules: style.module,
       });
 
       if (result.errors.length > 0) {
-        const errors = result.errors;
+        const errors: any[] = result.errors;
 
         return {
           errors: errors.map((o) => ({
