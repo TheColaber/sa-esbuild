@@ -21,7 +21,7 @@ export default () => ({
           if (args.path === path.resolve(file)) {
             const code = await readFile(args.path, "utf-8");
             const contents =
-              `import { defineAddon, defineScripts, definePopup, defineStyles } from "${path
+              `import { ${Object.keys(addonHelpers).join(",")} } from "${path
                 .resolve("esbuild/addon-helpers.ts")
                 .replace(/\\/g, "/")}";` +
               (

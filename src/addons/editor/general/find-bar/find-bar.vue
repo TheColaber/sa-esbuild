@@ -14,7 +14,6 @@
         @focus="showDropdown(), inputChange()"
         @focusout="hideDropdown"
         @keydown="inputKeyDown"
-        @keyup="inputChange"
         v-show="visible || !selected"
       />
       <div
@@ -40,10 +39,16 @@
         <div
           :class="[$style.item, { [$style.selected]: selected === item }]"
           v-for="(item, name) of items"
+          v-show="!input || item.filteredName === undefined || item.filteredName.length > 0"
           :style="{ '--color-primary': item.color }"
           @mousedown="selectItem(item)"
         >
-          <span :class="$style['item-text']">{{ item.name }}</span>
+          <span :class="$style['item-text']">
+            <template v-if="item.filteredName !== undefined && item.filteredName.length > 0">
+              {{ item.filteredName[0] }}<b :class="$style.highlighted">{{ item.filteredName[1] }}</b>{{ item.filteredName[2] }}
+            </template>
+            <template v-else>{{ item.name }}</template>
+          </span>
           <span
             :class="$style.carousel"
             v-if="selected === item && item.ids.length > 1"
@@ -63,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref, watch } from "vue";
 import PopupAddon from "../../../../addon-api/userscript";
 const { addon, workspace } = defineProps<{
   addon: PopupAddon;
@@ -89,8 +94,10 @@ onUnmounted(() => {
 
 const { Blockly } = addon.tab;
 
-function showDropdown(showBlock?: ScratchBlocks.BlockSvg) {
-  if (!showBlock && visible.value) {
+function showDropdown(
+  options: { showBlock?: ScratchBlocks.BlockSvg; showMore?: boolean } = {},
+) {
+  if (!options.showBlock && !("showMore" in options) && visible.value) {
     return;
   }
   visible.value = true;
@@ -105,34 +112,53 @@ function showDropdown(showBlock?: ScratchBlocks.BlockSvg) {
   // ? this.getScratchSounds()
   // : [];
 
-  const focusBlock = 
-    showBlock &&
-    items.value.find(
-      (item) =>
-        item.ids.find((id) => id === showBlock.id),
+  const focusBlock =
+    options.showBlock &&
+    items.value.find((item) =>
+      item.ids.find((id) => id === options.showBlock.id),
     );
-    if (focusBlock) {
-      focusBlock.carouselIndex = focusBlock.ids.indexOf(showBlock.id);
-      selectItem(focusBlock)
-    }
+  if (focusBlock) {
+    focusBlock.carouselIndex = focusBlock.ids.indexOf(options.showBlock.id);
+    selectItem(focusBlock);
+  }
 
   function getScratchBlocks() {
     textColor.value = Blockly.Colours.text;
 
     function getBlockName(block, reporters = false) {
-      let name = block.inputList[0].fieldRow.map((row) => row.getText());
+      let name = block.inputList.flatMap((list) => {
+        const inputs = list.fieldRow.map((row) =>
+          row instanceof Blockly.FieldDropdown ? "[]" : row.getText(),
+        );
+
+        if (list.type === 1) inputs.push("()");
+        return inputs;
+      });
+
       let child = block.getChildren()[0];
+
       if (child && child.isShadow()) {
         let shape = child.getOutputShape();
-        if (shape === 2)
-          name.push(
-            "(" + (reporters ? getBlockName(child, reporters) : "") + ")",
-          );
-        else name.push(getBlockName(child, reporters));
+        if (shape !== 2) {
+          name.push(getBlockName(child, reporters));
+        }
       }
       return name.join(" ");
     }
-    const addBlock = (block: ScratchBlocks.Block, category, name?: string) => {
+    const addBlock = (
+      block: ScratchBlocks.Block,
+      category: string,
+      name?: string,
+    ) => {
+      if (category === "show-more" || category === "show-less") {
+        return (myBlocks[name] = {
+          category,
+          color: "#593849",
+          ids: [],
+          carouselIndex: 0,
+        });
+      }
+      if (block.isShadow()) return;
       const isWhenFlagClicked = block.type === "event_whenflagclicked";
       const color = isWhenFlagClicked ? "#4cbf56" : block.getColour();
       const { y } = block.getRelativeToSurfaceXY();
@@ -144,6 +170,7 @@ function showDropdown(showBlock?: ScratchBlocks.BlockSvg) {
         color,
         ids: [],
         carouselIndex: 0,
+        filteredName: [],
       };
       myBlocks[name].ids.push(block.id);
 
@@ -153,25 +180,25 @@ function showDropdown(showBlock?: ScratchBlocks.BlockSvg) {
       string,
       {
         category: string;
-        y: number;
+        y?: number;
         color: string;
         ids: string[];
         carouselIndex: number;
+        filteredName?: string[];
       }
     >;
     const blocks = workspace.getAllBlocks();
     for (const block of blocks) {
-      const isEventBlock =
-        block.getCategory() === "events" && !block.isShadow();        
-        const isVariableBlock =
-        block.getCategory() === "data" && !block.isShadow();
-        const isListBlock =
-        block.getCategory() === "data-lists" && !block.isShadow();
+      const isEventBlock = block.getCategory() === "events";
+      const isVariableBlock = block.getCategory() === "data";
+      const isListBlock = block.getCategory() === "data-lists";
       const isCustomBlock =
         block.type === "procedures_definition" ||
         block.type === "procedures_call";
 
-      if (
+      if (options.showMore) {
+        addBlock(block, block.getCategory());
+      } else if (
         isEventBlock ||
         isCustomBlock ||
         isVariableBlock ||
@@ -195,7 +222,11 @@ function showDropdown(showBlock?: ScratchBlocks.BlockSvg) {
             event = childRow.find((input) => input.name === "BROADCAST_OPTION");
           }
 
-          addBlock(block, "broadcast", addon.msg("event", { name: event.getText() }));
+          addBlock(
+            block,
+            "broadcast",
+            addon.msg("event", { name: event.getText() }),
+          );
         } else if (block.type === "procedures_call") {
           let childProc = block.getProcCode();
 
@@ -208,22 +239,29 @@ function showDropdown(showBlock?: ScratchBlocks.BlockSvg) {
             }
           }
         } else if (isVariableBlock || isListBlock) {
-          const list = (block.inputList.find(list => list.name=== "" ||list.name === "VALUE") );
-  const input = (list.fieldRow.find(row => row instanceof Blockly.FieldVariable || row instanceof Blockly.FieldVariableGetter));
-  const {isLocal} = input.getVariable();
-  let name;
-  if (isVariableBlock) {
-    name = isLocal? "var-local":"var-global"
-  } else {
-    name = isLocal? "list-local":"list-global"
-  }
-  addBlock(block, name, addon.msg(name, { name: input.getText() }))
-
+          const list = block.inputList.find(
+            (list) => list.name === "" || list.name === "VALUE",
+          );
+          const input = list.fieldRow.find(
+            (row) =>
+              row instanceof Blockly.FieldVariable ||
+              row instanceof Blockly.FieldVariableGetter,
+          );
+          const { isLocal } = input.getVariable();
+          let name;
+          if (isVariableBlock) {
+            name = isLocal ? "var-local" : "var-global";
+          } else {
+            name = isLocal ? "list-local" : "list-global";
+          }
+          addBlock(block, name, addon.msg(name, { name: input.getText() }));
         } else {
           addBlock(block, block.getCategory());
         }
       }
     }
+    let showName = options.showMore ? "show-less" : "show-more";
+    addBlock(null, showName, addon.msg(showName));
 
     const order = [
       "flag",
@@ -235,15 +273,15 @@ function showDropdown(showBlock?: ScratchBlocks.BlockSvg) {
       "var-global",
       "list-local",
       "list-global",
+      "show-more",
+      "show-less",
     ];
 
     // Sort first by `order`, then by alphabetical, then top of page to bottom.
     return Object.entries(myBlocks)
       .map(([name, block]) => ({ name, ...block }))
       .sort((a, b) => {
-        
-        let orderDiff =
-        order.indexOf(a.category) - order.indexOf(b.category);
+        let orderDiff = order.indexOf(a.category) - order.indexOf(b.category);
         if (orderDiff !== 0) {
           return orderDiff;
         }
@@ -267,11 +305,27 @@ function hideDropdown() {
 
 function inputChange() {
   let val = input.value.toLowerCase();
-  if (val !== prevValue) {
-    prevValue = val;
-    // this.dropdown.inputChange();
+  if (val === prevValue) {
+    return;
+  }
+  prevValue = val;
+
+  for (const item of items.value) {
+    if (item.filteredName === undefined) continue
+    item.filteredName = [];
+    if (val !== "") {
+
+    let indexOfSearch = item.name.toLowerCase().indexOf(val);
+    if (indexOfSearch >= 0) {
+      item.filteredName.push(item.name.substring(0, indexOfSearch));
+      item.filteredName.push(item.name.substr(indexOfSearch, val.length));
+      if (indexOfSearch + val.length < item.name.length) {
+        item.filteredName.push(item.name.substr(indexOfSearch + val.length));
+      }
+    }}
   }
 }
+watch(input, inputChange)
 
 function inputKeyDown(e: KeyboardEvent) {
   // this.dropdown.inputKeyDown(e);
@@ -346,16 +400,28 @@ function goToBlock(id: string) {
 }
 
 function selectItem(item) {
+  if (item.category === "show-more") {
+    showDropdown({ showMore: true });
+    inputChange()
+    return;
+  }
+  if (item.category === "show-less") {
+    showDropdown({ showMore: false });
+    inputChange()
+    return;
+  }
+
   selected.value = item;
   goToBlock(item.ids[item.carouselIndex]);
 }
 
 function nextItem(increase: number) {
-  const item = selected.value
+  const item = selected.value;
   if (item.ids.length === 1) return;
-  
-  item.carouselIndex = (((item.carouselIndex + increase) % item.ids.length) + item.ids.length) %
-  item.ids.length
+
+  item.carouselIndex =
+    (((item.carouselIndex + increase) % item.ids.length) + item.ids.length) %
+    item.ids.length;
   goToBlock(item.ids[item.carouselIndex]);
 }
 
@@ -367,46 +433,45 @@ document.addEventListener("keydown", (event) => {
   // F3 also opens
   if (event.key.toLowerCase() === "f" && ctrlKey && !event.shiftKey) {
     showDropdown();
-    inputChange()
+    inputChange();
     event.preventDefault();
   }
 
   if (visible.value) {
     if (event.key === "ArrowDown") {
-    const selectedIndex = items.value.indexOf(selected.value);
-    const nextItem =
-      items.value[
-        (((selectedIndex + 1) % items.value.length) + items.value.length) %
-          items.value.length
-      ];
-    selectItem(nextItem);
-  }
-  if (event.key === "ArrowUp") {
-    const selectedIndex = items.value.indexOf(selected.value);
-    const previousItem =
-      items.value[
-        (((selectedIndex - 1) % items.value.length) + items.value.length) %
-          items.value.length
-      ];
-    selectItem(previousItem);
-  }
-  if (selected.value) {
-  if (event.key === "ArrowLeft") {
-    nextItem(-1);
-  }
-  if (event.key === "ArrowRight") {
-    nextItem(1);
-  }}
+      const selectedIndex = items.value.indexOf(selected.value);
+      const nextItem =
+        items.value[
+          (((selectedIndex + 1) % items.value.length) + items.value.length) %
+            items.value.length
+        ];
+      selectItem(nextItem);
+    }
+    if (event.key === "ArrowUp") {
+      const selectedIndex = items.value.indexOf(selected.value);
+      const previousItem =
+        items.value[
+          (((selectedIndex - 1) % items.value.length) + items.value.length) %
+            items.value.length
+        ];
+      selectItem(previousItem);
+    }
+    if (selected.value) {
+      if (event.key === "ArrowLeft") {
+        nextItem(-1);
+      }
+      if (event.key === "ArrowRight") {
+        nextItem(1);
+      }
+    }
   }
   if (selected.value && event.key === "F2") {
-      if (event.shiftKey) {
-        nextItem(-1);
-
-      } else {
-        nextItem(1);
-
-      }
-}
+    if (event.shiftKey) {
+      nextItem(-1);
+    } else {
+      nextItem(1);
+    }
+  }
 });
 
 const _doBlockClick_ = Blockly.Gesture.prototype.doBlockClick_;
@@ -435,7 +500,7 @@ Blockly.Gesture.prototype.doBlockClick_ = function () {
     ) {
       if (searchableBlocks.includes(block.type)) {
         findInput.value.focus();
-        showDropdown(block);
+        showDropdown({ showBlock: block });
         return;
       }
     }
@@ -531,6 +596,10 @@ Blockly.Gesture.prototype.doBlockClick_ = function () {
         color: var(--color-primary);
         .item-text {
           overflow: hidden;
+          .highlighted {
+            background-color: #aaffaa;
+    color: black;
+          }
         }
         &:hover,
         &.selected {

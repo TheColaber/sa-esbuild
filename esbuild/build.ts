@@ -43,8 +43,10 @@ async function build() {
   async function rebuild() {
     if (promise) await promise;
     console.time("build");
-    promise = ctx.rebuild().then(() =>{ promise = null, console.timeEnd("build")});;
+    promise = ctx.rebuild().then(() => {
+      (promise = null), console.timeEnd("build");
+    });
   }
-  rebuild()
+  rebuild();
   chokidar.watch(base).on("change", rebuild);
 }

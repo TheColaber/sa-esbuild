@@ -8,7 +8,7 @@ export default (opts = {}) => ({
   async setup({ initialOptions, ...build }) {
     initialOptions.define = initialOptions.define || {};
     initialOptions.define["__VUE_OPTIONS_API__"] = "true";
-    initialOptions.define["__VUE_PROD_DEVTOOLS__"] = "false"
+    initialOptions.define["__VUE_PROD_DEVTOOLS__"] = "false";
 
     // Resolve main ".vue" import
     build.onResolve({ filter: /\.vue/ }, async (args) => {

@@ -47,23 +47,25 @@ export const scripts = defineScripts([
   },
 ]);
 
-export const strings = defineStrings( {
+export const strings = defineStrings({
   "find-placeholder": "Find (Ctrl+F)",
   "var-local": {
     string: "var {name}",
-    comment: "Lowercase 'var' refers to a local variable."
+    comment: "Lowercase 'var' refers to a local variable.",
   },
   "var-global": {
     string: "VAR {name}",
-    comment: "Uppercase 'VAR' refers to a global variable."
+    comment: "Uppercase 'VAR' refers to a global variable.",
   },
   "list-local": {
     string: "list {name}",
-    comment: "Lowercase 'list' refers to a local list."
+    comment: "Lowercase 'list' refers to a local list.",
   },
   "list-global": {
     string: "LIST {name}",
-    comment: "Uppercase 'LIST' refers to a global list."
+    comment: "Uppercase 'LIST' refers to a global list.",
   },
-  "event": "event {name}"
+  event: "event {name}",
+  "show-more": "Search for all blocks",
+  "show-less": "Search for less blocks",
 });

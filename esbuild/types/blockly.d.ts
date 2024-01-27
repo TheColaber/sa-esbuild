@@ -28,7 +28,7 @@ declare global {
     }
 
     class Input {
-      fieldRow: (Field|FieldVariable|FieldVariableGetter)[];
+      fieldRow: (Field | FieldVariable | FieldVariableGetter)[];
       name: string;
     }
 
@@ -38,7 +38,7 @@ declare global {
     }
 
     class FieldVariable extends Field {
-      getVariable(): VariableModel
+      getVariable(): VariableModel;
     }
 
     class FieldVariableGetter extends FieldVariable {}
@@ -47,6 +47,8 @@ declare global {
       width: number;
       height: number;
     }
+
+    class FieldDropdown extends Field {}
 
     interface EventsAbstract {}
 
@@ -347,8 +349,9 @@ declare global {
       Colours: Colours;
       Gesture: typeof Gesture;
       Field: typeof Field;
-      FieldVariable: typeof FieldVariable
-      FieldVariableGetter: typeof FieldVariableGetter
+      FieldVariable: typeof FieldVariable;
+      FieldVariableGetter: typeof FieldVariableGetter;
+      FieldDropdown: typeof FieldDropdown;
       hideChaff();
     }
   }

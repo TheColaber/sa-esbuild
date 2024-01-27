@@ -114,7 +114,7 @@ export interface AddonManifest {
    * }
    * ```
    */
-  tags?: ("recommended")[];
+  tags?: "recommended"[];
   // category?: ("editor" | "popup" | "code" | "general")[];
   mode?: "dev" | "prod";
   enabledByDefault?: boolean;
@@ -145,8 +145,10 @@ export interface AddonPopup {
 }
 
 export interface AddonStrings {
-  [name: string]: string | {
-    string: string
-    comment: string
-  }
+  [name: string]:
+    | string
+    | {
+        string: string;
+        comment: string;
+      };
 }

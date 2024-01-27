@@ -1,7 +1,13 @@
 import { sep } from "path";
 import prompts from "prompts";
-import { existsSync, readdirSync, mkdirSync, writeFileSync, readFileSync } from "fs";
-const pkg = JSON.parse(readFileSync("package.json", { encoding: "utf-8"}))
+import {
+  existsSync,
+  readdirSync,
+  mkdirSync,
+  writeFileSync,
+  readFileSync,
+} from "fs";
+const pkg = JSON.parse(readFileSync("package.json", { encoding: "utf-8" }));
 const [node, source, addonId] = process.argv;
 
 const { category, subcategory, id, name, description } = await prompts([
@@ -28,7 +34,7 @@ const { category, subcategory, id, name, description } = await prompts([
     ],
   },
   {
-    type: (prev) => prev === "editor" ? "select" : null,
+    type: (prev) => (prev === "editor" ? "select" : null),
     name: "subcategory",
     message: "Subcategory",
     choices: [
@@ -52,7 +58,7 @@ const { category, subcategory, id, name, description } = await prompts([
         description: "Addon will run in stage.",
         value: "project-player",
       },
-    ]
+    ],
   },
   {
     type: "text",
@@ -77,24 +83,36 @@ const { category, subcategory, id, name, description } = await prompts([
     message: "Description",
   },
 ]);
-if (!id) throw "no id"
-let dir = process.cwd() + sep + "src" + sep + "addons" + sep + category + (subcategory ? sep + subcategory : "") + sep + id;
+if (!id) throw "no id";
+let dir =
+  process.cwd() +
+  sep +
+  "src" +
+  sep +
+  "addons" +
+  sep +
+  category +
+  (subcategory ? sep + subcategory : "") +
+  sep +
+  id;
 
 if (existsSync(dir)) {
   if (readdirSync(dir).length) {
     throw (
-      ("\x1b[31m%s" +
+      "\x1b[31m%s" +
       "[Error] A folder with this addon ID already exists!" +
-      "\x1b[0m")
+      "\x1b[0m"
     );
   }
-} else mkdirSync(dir, {recursive:true});
+} else mkdirSync(dir, { recursive: true });
 
-const file = [`export default defineAddon({
+const file = [
+  `export default defineAddon({
   name: "${name}",
   description: "${description}",
   versionAdded: "${pkg.version.split("-")[0]}",
-});`]
+});`,
+];
 
 if (category === "editor") {
   file.push(`export const scripts = defineScripts([
@@ -109,9 +127,6 @@ if (category === "editor") {
   writeFileSync(dir + sep + "script.ts", script);
 }
 
-writeFileSync(
-  dir + sep + "addon.ts",
-  file.join("\n\n"),
-);
+writeFileSync(dir + sep + "addon.ts", file.join("\n\n"));
 
 console.log("\x1b[34m%s", "Addon created:", "\x1b[0m", dir);

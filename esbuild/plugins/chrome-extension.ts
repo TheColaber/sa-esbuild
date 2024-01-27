@@ -7,7 +7,7 @@ import {
   default as manifest,
   extraIcons,
   extraPages,
-} from "../../src/manifest.ts"
+} from "../../src/manifest.ts";
 // import * as sfc from "@vue/compiler-sfc";
 // import { renderToString } from "@vue/server-renderer";
 // import { createApp, createSSRApp, h } from "vue";
@@ -134,7 +134,7 @@ export default () => ({
               await writeFile(distFile, `import(".${fileName}")`);
               const manifestParsed = JSON.parse(manifestJSON);
               manifestParsed.web_accessible_resources =
-              manifestParsed.web_accessible_resources || [];
+                manifestParsed.web_accessible_resources || [];
               manifestParsed.web_accessible_resources.push({
                 matches: cs.matches,
                 // TODO: unhardcode
