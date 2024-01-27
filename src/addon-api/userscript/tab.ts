@@ -5,6 +5,7 @@ export default class Tab {
   _waitForElementSet: WeakSet<{}>;
   _classes: string[];
   _blockly: ScratchBlocks.RealBlockly;
+  _vm: any;
   redux: Redux;
 
   constructor(id: string) {
@@ -92,12 +93,19 @@ export default class Tab {
     return "projectpage";
   }
 
-  async getVM() {
-    return (await scratchAddons.getCache()).vm;
-  }
-
   getWorkspace() {
     return scratchAddons.getMainWorkspace();
+  }
+
+  async vmReady() {
+    return (this._vm = (await scratchAddons.getCache()).vm);
+  }
+
+  get vm() {
+    if (!this._vm) {
+      throw "await Tab.vmReady before getting Tab.vm";
+    }
+    return this._vm;
   }
 
   async blocklyReady() {

@@ -11,14 +11,14 @@
         autocomplete="off"
         ref="findInput"
         v-model="input"
-        @focus="showDropdown(), inputChange()"
-        @focusout="hideDropdown"
+        @focus="show(), filter()"
+        @focusout="hide"
         @keydown="inputKeyDown"
         v-show="visible || !selected"
       />
       <div
         v-if="!visible && selected"
-        @click="showDropdown(), inputChange()"
+        @click="show(), filter()"
         :class="$style['selected-display']"
         :style="{ '--color-primary': selected?.color }"
       >
@@ -39,19 +39,29 @@
         <div
           :class="[$style.item, { [$style.selected]: selected === item }]"
           v-for="(item, name) of items"
-          v-show="!input || item.filteredName === undefined || item.filteredName.length > 0"
+          v-show="
+            !input ||
+            item.filteredName === undefined ||
+            item.filteredName.length > 0
+          "
           :style="{ '--color-primary': item.color }"
           @mousedown="selectItem(item)"
         >
           <span :class="$style['item-text']">
-            <template v-if="item.filteredName !== undefined && item.filteredName.length > 0">
-              {{ item.filteredName[0] }}<b :class="$style.highlighted">{{ item.filteredName[1] }}</b>{{ item.filteredName[2] }}
+            <template
+              v-if="
+                item.filteredName !== undefined && item.filteredName.length > 0
+              "
+            >
+              {{ item.filteredName[0]
+              }}<b :class="$style.highlighted">{{ item.filteredName[1] }}</b
+              >{{ item.filteredName[2] }}
             </template>
             <template v-else>{{ item.name }}</template>
           </span>
           <span
             :class="$style.carousel"
-            v-if="selected === item && item.ids.length > 1"
+            v-if="selected === item && item.ids && item.ids.length > 1"
           >
             <span :class="$style['carousel-control']" @click.stop="nextItem(-1)"
               >◀</span
@@ -69,9 +79,9 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, watch } from "vue";
-import PopupAddon from "../../../../addon-api/userscript";
+import UserscriptAddon from "../../../../addon-api/userscript";
 const { addon, workspace } = defineProps<{
-  addon: PopupAddon;
+  addon: UserscriptAddon;
   workspace: ScratchBlocks.WorkspaceSvg;
 }>();
 
@@ -92,9 +102,9 @@ onUnmounted(() => {
   mounted = false;
 });
 
-const { Blockly } = addon.tab;
+const { Blockly, vm } = addon.tab;
 
-function showDropdown(
+function show(
   options: { showBlock?: ScratchBlocks.BlockSvg; showMore?: boolean } = {},
 ) {
   if (!options.showBlock && !("showMore" in options) && visible.value) {
@@ -106,11 +116,14 @@ function showDropdown(
   prevValue = null;
 
   const selectedTab = addon.tab.redux.state.scratchGui.editorTab.activeTabIndex;
-  items.value = selectedTab === 0 ? getScratchBlocks() : []; // selectedTab === 1
-  // ? this.getScratchCostumes()
-  // : selectedTab === 2
-  // ? this.getScratchSounds()
-  // : [];
+  items.value =
+    selectedTab === 0
+      ? getBlocks()
+      : selectedTab === 1
+        ? getCostumes()
+        : selectedTab === 2
+          ? getSounds()
+          : [];
 
   const focusBlock =
     options.showBlock &&
@@ -122,7 +135,7 @@ function showDropdown(
     selectItem(focusBlock);
   }
 
-  function getScratchBlocks() {
+  function getBlocks() {
     textColor.value = Blockly.Colours.text;
 
     function getBlockName(block, reporters = false) {
@@ -294,16 +307,48 @@ function showDropdown(
         return a.y - b.y;
       });
   }
+
+  function getCostumes() {
+    textColor.value = "#fff";
+
+    let costumes = vm.editingTarget.getCostumes().map((asset, i) => ({
+      category: "costume",
+      name: asset.name,
+      color: "#855cd6",
+      carouselIndex: 0,
+      filteredName: [],
+      y: i,
+    }));
+    return costumes;
+  }
+
+  function getSounds() {
+    textColor.value = "#fff";
+
+    let sounds = vm.editingTarget.getSounds().map((asset, i) => ({
+      category: "sound",
+      name: asset.name,
+      color: "#855cd6",
+      carouselIndex: 0,
+      filteredName: [],
+      y: i,
+    }));
+    return sounds;
+  }
 }
 
-function hideDropdown() {
+function hide() {
   visible.value = false;
-  if (selected.value && selected.value.ids.length === 1) {
+  if (
+    !selected.value ||
+    !selected.value.ids ||
+    selected.value.ids.length === 1
+  ) {
     selected.value = null;
   }
 }
 
-function inputChange() {
+function filter() {
   let val = input.value.toLowerCase();
   if (val === prevValue) {
     return;
@@ -311,21 +356,21 @@ function inputChange() {
   prevValue = val;
 
   for (const item of items.value) {
-    if (item.filteredName === undefined) continue
+    if (item.filteredName === undefined) continue;
     item.filteredName = [];
     if (val !== "") {
-
-    let indexOfSearch = item.name.toLowerCase().indexOf(val);
-    if (indexOfSearch >= 0) {
-      item.filteredName.push(item.name.substring(0, indexOfSearch));
-      item.filteredName.push(item.name.substr(indexOfSearch, val.length));
-      if (indexOfSearch + val.length < item.name.length) {
-        item.filteredName.push(item.name.substr(indexOfSearch + val.length));
+      let indexOfSearch = item.name.toLowerCase().indexOf(val);
+      if (indexOfSearch >= 0) {
+        item.filteredName.push(item.name.substring(0, indexOfSearch));
+        item.filteredName.push(item.name.substr(indexOfSearch, val.length));
+        if (indexOfSearch + val.length < item.name.length) {
+          item.filteredName.push(item.name.substr(indexOfSearch + val.length));
+        }
       }
-    }}
+    }
   }
 }
-watch(input, inputChange)
+watch(input, filter);
 
 function inputKeyDown(e: KeyboardEvent) {
   // this.dropdown.inputKeyDown(e);
@@ -334,7 +379,7 @@ function inputKeyDown(e: KeyboardEvent) {
     // If there's any value in the input, clear it, otherwise exit
     if (input.value.length > 0) {
       input.value = "";
-      inputChange();
+      filter();
     } else {
       findInput.value.blur();
     }
@@ -401,23 +446,42 @@ function goToBlock(id: string) {
 
 function selectItem(item) {
   if (item.category === "show-more") {
-    showDropdown({ showMore: true });
-    inputChange()
+    show({ showMore: true });
+    filter();
     return;
   }
   if (item.category === "show-less") {
-    showDropdown({ showMore: false });
-    inputChange()
+    show({ showMore: false });
+    filter();
+    return;
+  }
+  selected.value = item;
+  if (item.category === "costume" || item.category === "sound") {
+    // Viewing costumes/sounds - jump to selected costume/sound
+    const assetPanel = document.querySelector("[class^=asset-panel_wrapper]");
+    if (assetPanel) {
+      const reactInstance = assetPanel[addon.tab.getInternalKey(assetPanel)];
+      const reactProps = reactInstance.pendingProps.children[0].props;
+      reactProps.onItemClick(item.y);
+      const selectorList = assetPanel.firstElementChild.firstElementChild;
+      selectorList.children[item.y].scrollIntoView({
+        behavior: "auto",
+        block: "center",
+        inline: "start",
+      });
+      // The wrapper seems to scroll when we use the function above.
+      let wrapper = assetPanel.closest("div[class*=gui_flex-wrapper]");
+      wrapper.scrollTop = 0;
+    }
     return;
   }
 
-  selected.value = item;
   goToBlock(item.ids[item.carouselIndex]);
 }
 
 function nextItem(increase: number) {
   const item = selected.value;
-  if (item.ids.length === 1) return;
+  if (!item.ids || item.ids.length === 1) return;
 
   item.carouselIndex =
     (((item.carouselIndex + increase) % item.ids.length) + item.ids.length) %
@@ -432,8 +496,8 @@ document.addEventListener("keydown", (event) => {
 
   // F3 also opens
   if (event.key.toLowerCase() === "f" && ctrlKey && !event.shiftKey) {
-    showDropdown();
-    inputChange();
+    show();
+    filter();
     event.preventDefault();
   }
 
@@ -500,7 +564,7 @@ Blockly.Gesture.prototype.doBlockClick_ = function () {
     ) {
       if (searchableBlocks.includes(block.type)) {
         findInput.value.focus();
-        showDropdown({ showBlock: block });
+        show({ showBlock: block });
         return;
       }
     }
@@ -598,7 +662,7 @@ Blockly.Gesture.prototype.doBlockClick_ = function () {
           overflow: hidden;
           .highlighted {
             background-color: #aaffaa;
-    color: black;
+            color: black;
           }
         }
         &:hover,
