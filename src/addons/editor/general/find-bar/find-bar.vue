@@ -11,14 +11,14 @@
         autocomplete="off"
         ref="findInput"
         v-model="input"
-        @focus="show(), filter()"
+        @focus="open()"
         @focusout="hide"
         @keydown="inputKeyDown"
         v-show="visible || !selected"
       />
       <div
         v-if="!visible && selected"
-        @click="show(), filter()"
+        @click="open()"
         :class="$style['selected-display']"
         :style="{ '--color-primary': selected?.color }"
       >
@@ -103,6 +103,13 @@ onUnmounted(() => {
 });
 
 const { Blockly, vm } = addon.tab;
+
+function open(
+  options: { showBlock?: ScratchBlocks.BlockSvg; showMore?: boolean } = {},
+) {
+  show(options);
+  filter();
+}
 
 function show(
   options: { showBlock?: ScratchBlocks.BlockSvg; showMore?: boolean } = {},
@@ -446,13 +453,11 @@ function goToBlock(id: string) {
 
 function selectItem(item) {
   if (item.category === "show-more") {
-    show({ showMore: true });
-    filter();
+    open({ showMore: true });
     return;
   }
   if (item.category === "show-less") {
-    show({ showMore: false });
-    filter();
+    open({ showMore: false });
     return;
   }
   selected.value = item;
@@ -496,8 +501,7 @@ document.addEventListener("keydown", (event) => {
 
   // F3 also opens
   if (event.key.toLowerCase() === "f" && ctrlKey && !event.shiftKey) {
-    show();
-    filter();
+    open();
     event.preventDefault();
   }
 

@@ -123,6 +123,11 @@ declare global {
 
     class Flyout {
       constructor(options);
+      init(this: this, targetWorkspace: Workspace)
+      eventWrappers_
+      svgGroup_
+      wheel_
+      scrollbar_
     }
 
     class VerticalFlyout extends Flyout {
@@ -130,7 +135,11 @@ declare global {
       init(workspace: Workspace);
       layout_;
       createDom(tagName: string);
-    }
+      position(this: this);
+      targetWorkspace_: WorkspaceSvg;
+      parentToolbox_: any;
+      width_: number;
+      toolboxPosition_:0|1|2|3   }
 
     interface WorkspaceOptions {}
 
@@ -336,6 +345,7 @@ declare global {
     interface RealBlockly {
       Workspace: WorkspaceConstructor;
       WorkspaceSvg: typeof WorkspaceSvg;
+      Flyout: typeof Flyout;
       VerticalFlyout: typeof VerticalFlyout;
       Xml: Xml;
       getMainWorkspace(): Workspace | null;
@@ -346,6 +356,7 @@ declare global {
         blockDragSurface,
         workspaceDragSurface,
       ): Workspace;
+      bindEventWithChecks_(node: EventTarget, name: string, thisObject: any, func: Function, opt_noCaptureIdentifier?:boolean, opt_noPreventDefault?:boolean): [][]
       Colours: Colours;
       Gesture: typeof Gesture;
       Field: typeof Field;
@@ -353,6 +364,7 @@ declare global {
       FieldVariableGetter: typeof FieldVariableGetter;
       FieldDropdown: typeof FieldDropdown;
       hideChaff();
+      TOOLBOX_AT_RIGHT: 0;
     }
   }
 }

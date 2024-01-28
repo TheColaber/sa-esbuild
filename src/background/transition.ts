@@ -27,9 +27,9 @@ chrome.management.getSelf().then(async ({ installType, homepageUrl }) => {
     const manifest = addons[id];
     if (
       addonsStates[id] === undefined ||
-      (addonsStates[id] === "dev" && manifest.mode !== "dev")
+      addonsStates[id] === "dev"
     ) {
-      if (!!manifest.enabledByDefault) {
+      if (manifest.enabledByDefault) {
         addonsStates[id] = "defaultEnabled";
       } else if (devMode && manifest.mode === "dev") {
         addonsStates[id] = "dev";
