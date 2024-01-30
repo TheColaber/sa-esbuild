@@ -44,7 +44,7 @@ declare global {
     sharedObserver: import("./shared-observer").default;
     addons: { [id: string]: UserscriptAddon };
     cache: {
-      BlocklyInstance: typeof import("../../esbuild/types/blockly").Blockly;
+      BlocklyInstance: typeof import("../../esbuild/types/blockly/index").Blockly;
       vm: any;
     };
     classNames: Promise<string[]>;

@@ -25,10 +25,7 @@ chrome.management.getSelf().then(async ({ installType, homepageUrl }) => {
   const { addonsStates = {} } = await syncStorage.get("addonsStates");
   for (const id in addons) {
     const manifest = addons[id];
-    if (
-      addonsStates[id] === undefined ||
-      addonsStates[id] === "dev"
-    ) {
+    if (addonsStates[id] === undefined || addonsStates[id] === "dev") {
       if (manifest.enabledByDefault) {
         addonsStates[id] = "defaultEnabled";
       } else if (devMode && manifest.mode === "dev") {

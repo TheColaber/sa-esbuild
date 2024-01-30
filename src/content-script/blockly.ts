@@ -1,5 +1,5 @@
 function getDataFromEl(elem: Element): {
-  ScratchBlocks: ScratchBlocks.RealBlockly;
+  ScratchBlocks: ScratchBlocks.Blockly;
   workspace: ScratchBlocks.WorkspaceSvg;
   props: { vm: any };
 } {
