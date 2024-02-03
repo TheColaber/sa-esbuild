@@ -341,11 +341,6 @@ async function loadMessages() {
             commentLocations[message.comment_type].push(location);
           }
           location.commentIds.push(message.comment_id);
-          if (message.comment_type === 1) {
-            console.log({ ...commentLocations[1][0] }, [
-              ...location.commentIds,
-            ]);
-          }
           let resourceObject;
           if (message.comment_type === 0)
             resourceObject = getProject(
@@ -361,11 +356,6 @@ async function loadMessages() {
         default:
           console.error("UNKNOWN MESSAGE! Please send to SA Devs:", message);
           break;
-      }
-      if (commentLocations?.[1]?.[0]?.commentIds.length === 0) {
-        console.log(commentLocations[1]);
-
-        throw "aBRUHHHHHHHHHHHHHHHHHHHh";
       }
     }
 
@@ -437,7 +427,7 @@ function checkCommentLocation(
   commentIds,
   elementObject,
 ) {
-  return fetchComments(addon, {
+  return fetchComments({
     resourceType,
     resourceId,
     commentIds,
@@ -469,7 +459,7 @@ function checkCommentLocation(
     }
 
     // Preserve chronological sort when using JSON API
-    const parentComments = Object.entries(comments).filter(
+    const parentComments = Object.entries(comments.value).filter(
       (c) => c[1].childOf === null,
     );
     const sortedParentComments = parentComments.sort(
@@ -484,6 +474,7 @@ function checkCommentLocation(
           : getStudio;
 
     const resourceObject = resourceGetFunction(resourceId);
+
     for (const sortedId of sortedIds)
       resourceObject.commentChains.push(sortedId);
 
@@ -491,27 +482,33 @@ function checkCommentLocation(
   });
 }
 
-function fetchComments(
-  addon,
-  { resourceType, resourceId, commentIds, page = 1, commentsObj = {} },
-) {
+function fetchComments({
+  resourceType,
+  resourceId,
+  commentIds,
+  page = 1,
+  commentsObj = {},
+}) {
   if (resourceType === "user")
-    return fetchLegacyComments(addon, {
+    return fetchLegacyComments({
       resourceType,
       resourceId,
       commentIds,
       page,
       commentsObj,
     });
-  // return fetchMigratedComments(addon, { resourceType, resourceId, commentIds, page, commentsObj });
+  // return fetchMigratedComments({ resourceType, resourceId, commentIds, page, commentsObj });
 }
 
 const parser = new DOMParser();
 
-async function fetchLegacyComments(
-  addon,
-  { resourceType, resourceId, commentIds, page = 1, commentsObj = {} },
-) {
+async function fetchLegacyComments({
+  resourceType,
+  resourceId,
+  commentIds,
+  page = 1,
+  commentsObj = {},
+}) {
   const res = await fetch(
     `https://scratch.mit.edu/site-api/comments/${resourceType}/${resourceId}/?page=${page}`,
     {
@@ -596,24 +593,24 @@ async function fetchLegacyComments(
   }
   // We haven't found some comments
   if (page < 3)
-    return await fetchLegacyComments(addon, {
+    return await fetchLegacyComments({
       resourceType,
       resourceId,
       commentIds,
       page: page + 1,
       commentsObj,
     });
-  else {
-    console.log(
-      "Could not find all comments for ",
-      resourceType,
-      " ",
-      resourceId,
-      ", remaining ids: ",
-      JSON.parse(JSON.stringify(commentIds)),
-    );
-    return commentsObj;
-  }
+  // else {
+  //   console.log(
+  //     "Could not find all comments for ",
+  //     resourceType,
+  //     " ",
+  //     resourceId,
+  //     ", remaining ids: ",
+  //     JSON.parse(JSON.stringify(commentIds)),
+  //   );
+  //   return commentsObj;
+  // }
 }
 
 type followuser = {

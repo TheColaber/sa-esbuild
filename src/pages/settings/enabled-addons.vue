@@ -19,7 +19,7 @@
         <div :class="$style.addon" v-for="addon of section.addons">
           <div>{{ addon.name }}</div>
           <div>{{ addon.description }}</div>
-          <div v-if="addon.credits.length > 0">
+          <div v-if="addon.credits && addon.credits.length > 0">
             <div v-for="user of addon.credits">{{ user }}</div>
           </div>
           <button
