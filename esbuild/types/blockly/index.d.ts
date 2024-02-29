@@ -1,6 +1,5 @@
 declare global {
   namespace ScratchBlocks {
-    namespace Blockly {
       let mainWorkspace: Blockly.WorkspaceSvg | null;
       let selected: Block | null;
       let draggingConnections_: Connection[];
@@ -72,7 +71,7 @@ declare global {
       function unbindEvent_(bindData: Array<Array<any>>): (e: Event) => void;
 
       function isNumber(str: string): boolean;
-    }
+    
   }
 }
-export const Blockly: typeof ScratchBlocks.Blockly;
+export const Blockly: typeof ScratchBlocks;

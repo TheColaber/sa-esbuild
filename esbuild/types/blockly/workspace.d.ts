@@ -1,9 +1,8 @@
 declare global {
   namespace ScratchBlocks {
-    namespace Blockly {
-      export class Workspace {
+      class Workspace {
         id: string;
-        options: Blockly.Options;
+        options: Options;
         RTL: boolean;
         horizontalLayout: boolean;
         toolboxPosition: any;
@@ -94,7 +93,7 @@ declare global {
 
         static getById(id: string): Blockly.Workspace | null;
       }
-    }
+    
   }
 }
 export {};

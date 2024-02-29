@@ -4,7 +4,7 @@ export default class Tab {
   id: string;
   _waitForElementSet: WeakSet<{}>;
   _classes: string[];
-  _blockly: typeof ScratchBlocks.Blockly;
+  _blockly: typeof ScratchBlocks;
   _vm: any;
   redux: Redux;
 

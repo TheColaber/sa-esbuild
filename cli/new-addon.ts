@@ -111,6 +111,7 @@ const file = [
   name: "${name}",
   description: "${description}",
   versionAdded: "${pkg.version.split("-")[0]}",
+  mode: true,
 });`,
 ];
 
