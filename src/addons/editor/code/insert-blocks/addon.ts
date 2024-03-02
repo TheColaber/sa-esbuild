@@ -2,7 +2,7 @@ export default defineAddon({
   name: "Insert blocks",
   description: "todo",
   versionAdded: "2.0.0",
-  mode: "dev"
+  mode: "dev",
 });
 
 export const scripts = defineScripts([

@@ -106,7 +106,7 @@ declare global {
       forceStartBlockDrag(fakeEvent: any, block: Blockly.BlockSvg): void;
 
       duplicateOnDrag_(): void;
-  }
+    }
   }
 }
 export {};

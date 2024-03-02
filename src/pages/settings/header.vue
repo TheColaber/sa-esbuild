@@ -52,17 +52,21 @@ defineEmits(["update:tab"]);
   color: #fff;
   display: flex;
   gap: 25px;
+  height: 60px;
+  padding: 0px 20px;
+
   .title {
     display: flex;
     align-items: center;
+
     .text {
       font-size: 18px;
       font-weight: 400;
       flex: 1;
     }
+
     .logo {
       height: 30px;
-      padding: 15px 20px;
     }
   }
   .top-bar {
@@ -100,7 +104,7 @@ defineEmits(["update:tab"]);
           opacity: 0;
           height: 60px;
           width: 150px;
-          position: fixed;
+          position: absolute;
           background: radial-gradient(
             ellipse farthest-corner at 50% 1500%,
             #ffffffb0,
@@ -122,7 +126,7 @@ defineEmits(["update:tab"]);
         width: 60px;
         display: block;
         height: 6px;
-        position: fixed;
+        position: absolute;
         background: #fff;
         align-self: flex-end;
         border-radius: 4px 4px 0px 0px;
@@ -147,7 +151,6 @@ defineEmits(["update:tab"]);
 
     .buttons {
       display: flex;
-      padding-right: 20px;
       .button {
         border: none;
         background: none;
@@ -156,6 +159,24 @@ defineEmits(["update:tab"]);
         font-size: inherit;
         padding: 0px;
       }
+    }
+  }
+}
+
+@media only screen and (max-width: 960px) {
+  .header {
+    .top-bar {
+      .buttons {
+        display: none;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 760px) {
+  .header {
+    .title {
+      display: none;
     }
   }
 }

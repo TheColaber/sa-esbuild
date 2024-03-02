@@ -17,18 +17,21 @@
     <div :class="$style['extended-list']">
       <template v-for="section of sections">
         <div :class="$style.addon" v-for="addon of section.addons">
-          <div>{{ addon.name }}</div>
+          <div :class="$style['top-bar']">
+            <div :class="$style.name">{{ addon.name }}</div>
+            <button
+              :class="$style['switch-background']"
+              @click="toggleAddon(addon.id)"
+              :state="enabledStates[addon.id]"
+            >
+              <div :class="$style.switch"></div>
+            </button>
+          </div>
+
           <div>{{ addon.description }}</div>
           <div v-if="addon.credits && addon.credits.length > 0">
             <div v-for="user of addon.credits">{{ user }}</div>
           </div>
-          <button
-            :class="$style['switch-background']"
-            @click="toggleAddon(addon.id)"
-            :state="enabledStates[addon.id]"
-          >
-            <div :class="$style.switch"></div>
-          </button>
         </div>
       </template>
     </div>
@@ -104,7 +107,7 @@ function toggleAddon(id: string) {
     width: 300px;
     padding: 10px;
     flex-direction: column;
-    gap: 15px;
+    gap: 10px;
     .section {
       display: flex;
       flex-direction: column;
@@ -120,6 +123,9 @@ function toggleAddon(id: string) {
 
       .addons {
         display: flex;
+        flex-direction: column;
+        gap: 6px;
+
         .addon {
           background: var(--background-tertiary);
           color: inherit;
@@ -140,52 +146,65 @@ function toggleAddon(id: string) {
     flex-direction: column;
     width: 100%;
     padding: 10px;
+    gap: 10px;
+
     .addon {
       display: flex;
+      flex-direction: column;
+      background: var(--background-secondary);
+      padding: 5px;
 
-      .switch-background {
-        background-image: var(--gradient);
-        border-radius: 10px;
-        overflow: hidden;
-        cursor: pointer;
-        border: none;
-        color: inherit;
-        padding: 0px;
+      .top-bar {
+        display: flex;
 
-        &:focus-visible {
-          outline: none;
-          box-shadow: 0 0 0 3px var(--content-text);
+        .name {
+          flex: 1;
         }
 
-        &[state="true"] {
-          .switch {
-            background-color: transparent;
-            &::before {
-              background-color: #fff;
-              left: 25px;
+        .switch-background {
+          background-image: var(--gradient);
+          border-radius: 10px;
+          overflow: hidden;
+          cursor: pointer;
+          border: none;
+          color: inherit;
+          padding: 0px;
+
+          &:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 3px var(--content-text);
+          }
+
+          &[state="true"] {
+            .switch {
+              background-color: transparent;
+              &::before {
+                background-color: #fff;
+                left: 25px;
+              }
             }
           }
-        }
 
-        .switch {
-          display: flex;
-          background-color: var(--switch-background);
-          width: 40px;
-          height: 20px;
-          position: relative;
-          cursor: pointer;
-          transition: all 0.25s ease;
-          &::before {
-            content: "";
-            position: absolute;
-            display: block;
-            width: 10px;
-            height: 10px;
-            background-color: var(--switch-inner-background);
-            border-radius: 5px;
-            top: 5px;
-            left: 5px;
-            transition: left 0.25s ease;
+          .switch {
+            display: flex;
+            background-color: var(--switch-background);
+            width: 40px;
+            height: 20px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            &::before {
+              content: "";
+              position: absolute;
+              display: block;
+              width: 10px;
+              height: 10px;
+              background-color: var(--switch-inner-background);
+              border-radius: 5px;
+              top: 5px;
+              left: 5px;
+              transition: left 0.25s ease;
+            }
           }
         }
       }

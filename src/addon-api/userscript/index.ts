@@ -1,3 +1,4 @@
+import Settings from "./settings";
 import Tab from "./tab";
 
 export default class UserscriptAddon extends EventTarget {
@@ -6,7 +7,8 @@ export default class UserscriptAddon extends EventTarget {
   enabledLate: boolean;
   tab: Tab;
   console: Console;
-  enabled: boolean = true;
+  settings: Settings;
+  enabled = true;
 
   constructor(
     id: string,
@@ -27,6 +29,7 @@ export default class UserscriptAddon extends EventTarget {
         "color: #ff9a57",
       ),
     };
+    this.settings = new Settings();
   }
 
   msg(msg: string, parameters?: { [param: string]: string }) {

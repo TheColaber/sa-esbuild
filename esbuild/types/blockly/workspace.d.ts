@@ -1,99 +1,98 @@
 declare global {
   namespace ScratchBlocks {
-      class Workspace {
-        id: string;
-        options: Options;
-        RTL: boolean;
-        horizontalLayout: boolean;
-        toolboxPosition: any;
-        topBlocks_: Blockly.Block[];
-        topComments_: Blockly.WorkspaceComment[];
-        commentDB_: { [id: string]: Blockly.WorkspaceComment };
-        listeners_: Function[];
-        tapListeners_: Function[];
-        undoStack_: Blockly.Events.Abstract[];
-        redoStack_: Blockly.Events.Abstract[];
-        blockDB_: { [id: string]: Blockly.Block };
-        variableMap_: Blockly.VariableMap;
-        potentialVariableMap_: Blockly.VariableMap | null;
+    class Workspace {
+      id: string;
+      options: Options;
+      RTL: boolean;
+      horizontalLayout: boolean;
+      toolboxPosition: any;
+      topBlocks_: Blockly.Block[];
+      topComments_: Blockly.WorkspaceComment[];
+      commentDB_: { [id: string]: Blockly.WorkspaceComment };
+      listeners_: Function[];
+      tapListeners_: Function[];
+      undoStack_: Blockly.Events.Abstract[];
+      redoStack_: Blockly.Events.Abstract[];
+      blockDB_: { [id: string]: Blockly.Block };
+      variableMap_: Blockly.VariableMap;
+      potentialVariableMap_: Blockly.VariableMap | null;
 
-        rendered: boolean;
-        isClearing: boolean;
-        MAX_UNDO: number;
+      rendered: boolean;
+      isClearing: boolean;
+      MAX_UNDO: number;
 
-        static SCAN_ANGLE: number;
+      static SCAN_ANGLE: number;
 
-        constructor(opt_options?: Blockly.Options);
+      constructor(opt_options?: Blockly.Options);
 
-        refreshToolboxSelection_(): void;
+      refreshToolboxSelection_(): void;
 
-        dispose(): void;
+      dispose(): void;
 
-        addTopBlock(block: Blockly.Block): void;
+      addTopBlock(block: Blockly.Block): void;
 
-        removeTopBlock(block: Blockly.Block): void;
+      removeTopBlock(block: Blockly.Block): void;
 
-        getTopBlocks(ordered: boolean): Blockly.Block[];
+      getTopBlocks(ordered: boolean): Blockly.Block[];
 
-        addTopComment(comment: Blockly.WorkspaceComment): void;
+      addTopComment(comment: Blockly.WorkspaceComment): void;
 
-        removeTopComment(comment: Blockly.WorkspaceComment): void;
+      removeTopComment(comment: Blockly.WorkspaceComment): void;
 
-        getTopComments(ordered: boolean): Blockly.WorkspaceComment[];
+      getTopComments(ordered: boolean): Blockly.WorkspaceComment[];
 
-        getAllBlocks(ordered: boolean): Blockly.Block[];
+      getAllBlocks(ordered: boolean): Blockly.Block[];
 
-        clear(): void;
+      clear(): void;
 
-        renameVariableById(id: string, newName: string): void;
+      renameVariableById(id: string, newName: string): void;
 
-        createVariable(
-          name: string,
-          opt_type?: string | null,
-          opt_id?: string,
-          opt_isLocal?: boolean,
-          opt_isCloud?: boolean,
-        ): Blockly.VariableMap | null;
+      createVariable(
+        name: string,
+        opt_type?: string | null,
+        opt_id?: string,
+        opt_isLocal?: boolean,
+        opt_isCloud?: boolean,
+      ): Blockly.VariableMap | null;
 
-        getVariableUsesById(id: string): Blockly.Block[];
+      getVariableUsesById(id: string): Blockly.Block[];
 
-        deleteVariableById(id: string): void;
+      deleteVariableById(id: string): void;
 
-        getWidth(): number;
+      getWidth(): number;
 
-        newBlock(prototypeName: string | null, opt_id?: string): Blockly.Block;
+      newBlock(prototypeName: string | null, opt_id?: string): Blockly.Block;
 
-        undo(redo: boolean): void;
+      undo(redo: boolean): void;
 
-        clearUndo(): void;
+      clearUndo(): void;
 
-        hasRedoStack(): boolean;
+      hasRedoStack(): boolean;
 
-        hasUndoStack(): boolean;
+      hasUndoStack(): boolean;
 
-        addChangeListener(func: Function): Function;
+      addChangeListener(func: Function): Function;
 
-        removeChangeListener(func: Function): void;
+      removeChangeListener(func: Function): void;
 
-        fireChangeListener(event: Blockly.Events.Abstract): void;
+      fireChangeListener(event: Blockly.Events.Abstract): void;
 
-        getBlockById(id: string): Blockly.Block | null;
+      getBlockById(id: string): Blockly.Block | null;
 
-        getCommentById(id: string): Blockly.WorkspaceComment | null;
+      getCommentById(id: string): Blockly.WorkspaceComment | null;
 
-        getFlyout(): Blockly.Flyout | null;
+      getFlyout(): Blockly.Flyout | null;
 
-        allInputsFilled(opt_shadowBlocksAreFilled?: boolean): boolean;
+      allInputsFilled(opt_shadowBlocksAreFilled?: boolean): boolean;
 
-        getPotentialVariableMap(): Blockly.VariableMap | null;
+      getPotentialVariableMap(): Blockly.VariableMap | null;
 
-        createPotentialVariableMap(): void;
+      createPotentialVariableMap(): void;
 
-        getVariableMap(): Blockly.VariableMap | null;
+      getVariableMap(): Blockly.VariableMap | null;
 
-        static getById(id: string): Blockly.Workspace | null;
-      }
-    
+      static getById(id: string): Blockly.Workspace | null;
+    }
   }
 }
 export {};

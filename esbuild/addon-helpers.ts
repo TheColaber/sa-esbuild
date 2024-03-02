@@ -118,12 +118,35 @@ export interface AddonManifest {
   // category?: ("editor" | "popup" | "code" | "general")[];
   mode?: "dev" | "prod";
   enabledByDefault?: boolean;
+  settings?: AddonSetting[];
   // hotkeys?: {
   //   id: string;
   //   description: string;
   //   default: string[];
   // }[];
 }
+
+type AddonSetting = {
+  id: string;
+  name: string;
+} & (
+  | {
+      type: "integer";
+      min?: number;
+      max?: number;
+      presets: {
+        default: number;
+        [preset: string]: number;
+      };
+    }
+  | {
+      type: "string";
+      presets: {
+        default: string;
+        [preset: string]: string;
+      };
+    }
+);
 
 export interface AddonScript {
   script: () => Promise<{ default: () => any }>;

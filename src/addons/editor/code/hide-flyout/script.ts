@@ -41,7 +41,10 @@ export default async () => {
   // };
   let toggle = false;
   const oldSetSelectedItem = Blockly.Toolbox.prototype.setSelectedItem;
-  Blockly.Toolbox.prototype.setSelectedItem = function (item, shouldScroll = true) {
+  Blockly.Toolbox.prototype.setSelectedItem = function (
+    item,
+    shouldScroll = true,
+  ) {
     const previousSelection = this.selectedItem_;
     oldSetSelectedItem.call(this, item, shouldScroll);
     if (!addon.enabled) return;
@@ -55,5 +58,4 @@ export default async () => {
       toggle = true;
     }
   };
-
 };
