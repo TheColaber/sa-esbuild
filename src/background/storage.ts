@@ -10,6 +10,11 @@ class Storage<T> {
     return this.name + "-" + key.toString();
   }
 
+  unprefixKey(key: keyof T) {
+    if (!(typeof key === "string")) return;
+    return key.split(this.name + "-")[1];
+  }
+
   async get<K extends keyof T>(...keys: K[]) {
     let prefixedKeys = keys.flatMap((key) => this.prefixKey(key));
     const storage = (await chrome.storage[this.type].get(
@@ -28,7 +33,6 @@ class Storage<T> {
       val,
     ]);
     const storage = Object.fromEntries(entries);
-    console.log(storage);
 
     return chrome.storage[this.type].set(storage);
   }
@@ -37,10 +41,9 @@ class Storage<T> {
     return chrome.storage[this.type].clear();
   }
 
-  watch<U extends (keyof T)[]>(
-    keys: U,
+  watch(
     cb: (newStorage: {
-      [key in U[number]]: { newValue: T[key]; oldValue: T[key] };
+      [key in keyof T]: { newValue: T[key]; oldValue: T[key] } | undefined;
     }) => any,
   ) {
     return chrome.storage[this.type].onChanged.addListener(
@@ -48,21 +51,15 @@ class Storage<T> {
         [key in keyof T]: { newValue: T[key]; oldValue: T[key] };
       }) => {
         let prefixedKeys = Object.keys(changes) as Array<keyof T>;
+        let unprefixedChanges = {};
         for (const prefixedKey of prefixedKeys) {
-          let unprefixedKey = keys.find(
-            (key) => this.prefixKey(key) === prefixedKey,
-          );
-          if (unprefixedKey) {
-            let unprefixedChanges = {
-              [unprefixedKey]: changes[prefixedKey],
-            };
-            cb(
-              unprefixedChanges as {
-                [key in U[number]]: { newValue: T[key]; oldValue: T[key] };
-              },
-            );
-          }
+          unprefixedChanges[this.unprefixKey(prefixedKey)] = changes[prefixedKey]
         }
+        cb(
+          unprefixedChanges as {
+            [key in keyof T]: { newValue: T[key]; oldValue: T[key] };
+          },
+        );
       },
     );
   }
@@ -78,7 +75,7 @@ export const syncStorage = new Storage<SyncStorage>("sync", "syncstorage");
 
 export interface AddonStorage {
   [addonId: string]: {
-    [settingId: string]: boolean | string;
+    [settingId: string]: number | string;
   };
 }
 export const addonStorage = new Storage<AddonStorage>("sync", "addonstorage");

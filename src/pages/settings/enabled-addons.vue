@@ -32,6 +32,13 @@
           <div v-if="addon.credits && addon.credits.length > 0">
             <div v-for="user of addon.credits">{{ user }}</div>
           </div>
+
+          <div v-if="addon.settings && addon.settings.length > 0">
+            <div v-for="setting of addon.settings">
+              <div>{{ setting.name }}</div>
+              <input v-if="setting.type === 'integer'" type="number" v-model="settings[addon.id][setting.id]" @change="updateSettings(addon.id)" />
+            </div>
+          </div>
         </div>
       </template>
     </div>
@@ -45,6 +52,7 @@ import {
   syncStorage,
   allAddonStates,
   addonEnabledStates,
+  addonStorage
 } from "../../background/storage";
 const { addonsStates } = await syncStorage.get("addonsStates");
 const enabledStates = ref(
@@ -71,6 +79,10 @@ const categories = objectArray(
     ),
   ),
 );
+
+const enabledAddons = [...categories.enabled, ...categories.defaultEnabled, ...categories.dev];
+const settings = await addonStorage.get(...enabledAddons.map((addon) => addon.id))
+
 const productionAddons = [...categories.enabled, ...categories.defaultEnabled];
 const sections = [
   {
@@ -81,7 +93,7 @@ const sections = [
     name: "Editor Addons",
     addons: productionAddons.filter(
       (addon) =>
-        addon.category.includes("editor") && addon.category.includes("general"),
+        addon.category.includes("editor"),
     ),
   },
   {
@@ -94,8 +106,12 @@ const sections = [
 
 function toggleAddon(id: string) {
   enabledStates.value[id] = !enabledStates.value[id];
-  addonsStates[id] = enabledStates.value[id] ? "enabled" : "disabled";
+  addonsStates[id] = enabledStates.value[id] ? addons[id].mode === "dev" ? "dev" : "enabled" : "disabled";
   syncStorage.set({ addonsStates });
+}
+
+function updateSettings(addon: string) {
+  addonStorage.set({ [addon]: settings[addon] })
 }
 </script>
 
@@ -152,7 +168,7 @@ function toggleAddon(id: string) {
       display: flex;
       flex-direction: column;
       background: var(--background-secondary);
-      padding: 5px;
+      padding: 10px;
 
       .top-bar {
         display: flex;

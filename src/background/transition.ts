@@ -1,5 +1,5 @@
 import * as addons from "#addons";
-import { localStorage, syncStorage } from "./storage";
+import { addonStorage, localStorage, syncStorage } from "./storage";
 
 chrome.runtime.onInstalled.addListener(async (details) => {
   const { version } = chrome.runtime.getManifest();
@@ -33,6 +33,17 @@ chrome.management.getSelf().then(async ({ installType, homepageUrl }) => {
       } else {
         addonsStates[id] = "defaultDisabled";
       }
+    }
+    if (manifest.settings) {      
+      const settings = await addonStorage.get(id) || {};
+
+      for (const setting of manifest.settings) {
+        
+        if (settings[id][setting.id] === undefined) {
+          settings[id][setting.id] = setting.presets.default;
+        }
+      }
+      addonStorage.set({ [id]: settings[id] })
     }
   }
   syncStorage.set({ addonsStates });

@@ -1,4 +1,4 @@
-import { syncStorage, addonEnabledStates } from "./storage";
+import { syncStorage, addonEnabledStates, addonStorage } from "./storage";
 const tabIds = [];
 // TODO: actually maybe what we should do is have the bg ping these tabs to check if sa is on them.
 chrome.tabs.query({}).then((tabs) => {
@@ -9,39 +9,53 @@ chrome.tabs.onUpdated.addListener(async (tabId, { status }, tab) => {
   if (!tab.url || status !== "loading") return;
   tabIds.push(tabId);
 
+  const enabledAddons = [];
   let { addonsStates } = await syncStorage.get("addonsStates");
+  for (const id in addonsStates) {
+    if (addonEnabledStates.some((enabledState) => enabledState === addonsStates[id])) {
+      enabledAddons.push(id);
+    }
+  }
+  const addonSettings = await addonStorage.get(...enabledAddons)
   const userLangs = await getUserLangs(tab.url);
 
-  dispatch("addonData", { addonsStates, addonEnabledStates, userLangs }, tabId);
+  dispatch("addonData", { enabledAddons, addonSettings, userLangs });
 });
 
 syncStorage.watch(
-  ["addonsStates"],
-  ({ addonsStates: { oldValue, newValue } }) => {
-    for (const id in newValue) {
-      if (oldValue[id] !== newValue[id]) {
-        for (const tabId of tabIds) {
-          if (addonEnabledStates.some((state) => newValue[id] === state)) {
-            dispatch("dynamicEnable", { id }, tabId);
-          } else {
-            dispatch("dynamicDisable", { id }, tabId);
-          }
+  ({ addonsStates }) => {
+    if (!addonsStates) return;
+    for (const id in addonsStates.newValue) {
+      if (addonsStates.oldValue[id] !== addonsStates.newValue[id]) {
+        if (addonEnabledStates.some((state) => addonsStates.newValue[id] === state)) {
+          dispatch("dynamicEnable", { id });
+        } else {
+          dispatch("dynamicDisable", { id });
         }
       }
     }
   },
 );
+addonStorage.watch(
+  (changes) => {
+    for (const id in changes) {
+      dispatch("settingChange", { id, settings: changes[id].newValue });      
+    }
+  },
+);
 
-function dispatch(type: string, detail: any, tabId: number) {
-  chrome.scripting.executeScript({
-    target: { tabId },
-    injectImmediately: process.env.MODE !== "development",
-    world: "MAIN",
-    func: async (type, detail: any) => {
-      scratchAddons.events.dispatchEvent(new CustomEvent(type, { detail }));
-    },
-    args: [type, detail],
-  });
+function dispatch(type: string, detail: any) {
+  for (const tabId of tabIds) {
+    chrome.scripting.executeScript({
+      target: { tabId },
+      injectImmediately: process.env.MODE !== "development",
+      world: "MAIN",
+      func: async (type, detail: any) => {
+        scratchAddons.events.dispatchEvent(new CustomEvent(type, { detail }));
+      },
+      args: [type, detail],
+    });
+  }
 }
 
 async function getUserLangs(url: string) {

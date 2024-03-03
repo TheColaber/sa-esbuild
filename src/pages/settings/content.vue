@@ -6,5 +6,5 @@
 <script setup lang="ts">
 import EnabledAddons from "./enabled-addons.vue";
 
-const { tab } = defineProps<{ tab: "explore" | "enabled" }>();
+const { tab } = defineProps<{ tab: "explore" | "enabled" | "themes" }>();
 </script>

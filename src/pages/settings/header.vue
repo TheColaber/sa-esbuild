@@ -8,24 +8,27 @@
     </div>
     <div :class="$style['top-bar']">
       <div :class="$style.tabs">
-        <button
+        <a
           @click="$emit('update:tab', 'explore')"
+          href="#explore"
           :class="[$style.tab, { [$style.selected]: tab === 'explore' }]"
         >
           Explore Addons
-        </button>
-        <button
+        </a>
+        <a
           @click="$emit('update:tab', 'enabled')"
+          href="#enabled"
           :class="[$style.tab, { [$style.selected]: tab === 'enabled' }]"
         >
           My Addons
-        </button>
-        <button
+        </a>
+        <a
           @click="$emit('update:tab', 'themes')"
+          href="#themes"
           :class="[$style.tab, { [$style.selected]: tab === 'themes' }]"
         >
           Themes
-        </button>
+        </a>
         <div :class="$style.selectDisplay"></div>
       </div>
       <div :class="$style.search">
@@ -79,18 +82,13 @@ defineEmits(["update:tab"]);
       gap: 15px;
 
       .tab {
-        border: none;
-        background: none;
-        color: inherit;
-        font-family: inherit;
-        font-size: inherit;
-        padding: 0px;
-        width: 100px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: font-weight 0.2s;
-        outline: none;
+    color: inherit;
+    width: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: font-weight 0.2s;
+    text-decoration: none;
 
         @for $i from 1 through 3 {
           &.selected:nth-child(#{$i}) ~ .selectDisplay {

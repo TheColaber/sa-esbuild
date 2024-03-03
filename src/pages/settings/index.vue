@@ -14,7 +14,12 @@ import { syncStorage } from "../../background/storage";
 import pageStorage from "../storage";
 import { ref, watch } from "vue";
 
-const tab = ref<"explore" | "enabled" | "themes">("explore");
+const { hash } = window.location;
+let hashTab = hash ? hash.slice(1) : "explore";
+if (hashTab !== "explore" && hashTab !== "enabled" && hashTab !== "themes") {
+  hashTab = "explore";
+}
+const tab = ref<"explore" | "enabled" | "themes">(hashTab);
 
 const lightTheme = ref(pageStorage.get("lightTheme") === true);
 syncStorage.watch(["lightTheme"], ({ lightTheme: { newValue } }) => {

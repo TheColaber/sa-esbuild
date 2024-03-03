@@ -1,3 +1,4 @@
+import { AddonStorage } from "../../background/storage";
 import Settings from "./settings";
 import Tab from "./tab";
 
@@ -14,6 +15,7 @@ export default class UserscriptAddon extends EventTarget {
     id: string,
     messages: { [id: string]: string },
     enabledLate: boolean,
+    settings: AddonStorage[any]
   ) {
     super();
     this.id = id;
@@ -29,7 +31,7 @@ export default class UserscriptAddon extends EventTarget {
         "color: #ff9a57",
       ),
     };
-    this.settings = new Settings();
+    this.settings = new Settings(settings);
   }
 
   msg(msg: string, parameters?: { [param: string]: string }) {
