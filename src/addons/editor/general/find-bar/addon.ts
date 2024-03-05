@@ -66,6 +66,6 @@ export const strings = defineStrings({
     comment: "Uppercase 'LIST' refers to a global list.",
   },
   event: "event {name}",
-  "show-more": "Search for all blocks",
-  "show-less": "Search for less blocks",
+  "show-more": "Search all blocks",
+  "show-less": "Search less blocks",
 });

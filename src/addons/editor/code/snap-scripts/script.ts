@@ -9,22 +9,22 @@ export default async () => {
     return originalInit.call(this, ...args);
   };
 
-  const originalGetCandidate = Blockly.InsertionMarkerManager.prototype.getCandidate_;
-  Blockly.InsertionMarkerManager.prototype.getCandidate_ = function(dxy) {
-    const candidate = originalGetCandidate.call(this, dxy);
-    if (candidate.closest === null) {
-      // todo show little insetionmarker where it would go
-      //https://github.com/scratchfoundation/scratch-blocks/blob/a6197a1c0a76a06b7629b6dc3a3af544c7b059a1/core/rendered_connection.js#L39
-      //https://github.com/scratchfoundation/scratch-blocks/blob/develop/core/block_render_svg_horizontal.js#L873
-      //https://github.com/scratchfoundation/scratch-blocks/blob/develop/core/insertion_marker_manager.js#L366
-      return {
-        closest: null,
-        local: null,
-        radius: 48
-      }
-    }
-    return res;
-  }
+  // const originalGetCandidate = Blockly.InsertionMarkerManager.prototype.getCandidate_;
+  // Blockly.InsertionMarkerManager.prototype.getCandidate_ = function(dxy) {
+  //   const candidate = originalGetCandidate.call(this, dxy);
+  //   if (candidate.closest === null) {
+  //     // todo show little insetionmarker where it would go
+  //     //https://github.com/scratchfoundation/scratch-blocks/blob/a6197a1c0a76a06b7629b6dc3a3af544c7b059a1/core/rendered_connection.js#L39
+  //     //https://github.com/scratchfoundation/scratch-blocks/blob/develop/core/block_render_svg_horizontal.js#L873
+  //     //https://github.com/scratchfoundation/scratch-blocks/blob/develop/core/insertion_marker_manager.js#L366
+  //     return {
+  //       closest: null,
+  //       local: null,
+  //       radius: 48
+  //     }
+  //   }
+  //   return res;
+  // }
 
 
   setGrid(true);
