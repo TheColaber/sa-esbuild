@@ -82,13 +82,13 @@ defineEmits(["update:tab"]);
       gap: 15px;
 
       .tab {
-    color: inherit;
-    width: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: font-weight 0.2s;
-    text-decoration: none;
+        color: inherit;
+        width: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: font-weight 0.2s;
+        text-decoration: none;
 
         @for $i from 1 through 3 {
           &.selected:nth-child(#{$i}) ~ .selectDisplay {

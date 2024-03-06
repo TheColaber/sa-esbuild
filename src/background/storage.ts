@@ -53,7 +53,8 @@ class Storage<T> {
         let prefixedKeys = Object.keys(changes) as Array<keyof T>;
         let unprefixedChanges = {};
         for (const prefixedKey of prefixedKeys) {
-          unprefixedChanges[this.unprefixKey(prefixedKey)] = changes[prefixedKey]
+          unprefixedChanges[this.unprefixKey(prefixedKey)] =
+            changes[prefixedKey];
         }
         cb(
           unprefixedChanges as {

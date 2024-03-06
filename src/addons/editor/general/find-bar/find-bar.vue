@@ -208,15 +208,14 @@ function show(
       }
     >;
     const blocks = workspace.getAllBlocks();
-    for (const block of blocks) {      
+    for (const block of blocks) {
       let category = block.getCategory();
-      category = category === "sounds" ? "sound" : category
-      category = category === null ? "myBlocks" : category
+      category = category === "sounds" ? "sound" : category;
+      category = category === null ? "myBlocks" : category;
       const isEventBlock = category === "events";
       const isVariableBlock = category === "data";
       const isListBlock = category === "data-lists";
-      const isCustomBlock =
-        block.type === "procedures_call";
+      const isCustomBlock = block.type === "procedures_call";
 
       if (options.showMore) {
         addBlock(block, category);
@@ -299,13 +298,14 @@ function show(
       "show-less",
     ];
 
-    if (options.showMore) {      
+    if (options.showMore) {
       const treeChildren = [...workspace.options.languageTree.childNodes];
-      const categoryChildren = treeChildren.filter((child) => child.tagName && child.tagName.toUpperCase() === 'CATEGORY');      
+      const categoryChildren = treeChildren.filter(
+        (child) => child.tagName && child.tagName.toUpperCase() === "CATEGORY",
+      );
       order.unshift(...categoryChildren.map((child) => child.id));
     }
-    
-    
+
     // Sort first by `order`, then by alphabetical, then top of page to bottom.
     return Object.entries(myBlocks)
       .map(([name, block]) => ({ name, ...block }))
@@ -471,7 +471,7 @@ function selectItem(item) {
   }
   selected.value = item;
   console.log(item.category);
-  
+
   if (item.category === "gui" || item.category === "gui") {
     // Viewing costumes/sounds - jump to selected costume/sound
     const assetPanel = document.querySelector("[class^=asset-panel_wrapper]");

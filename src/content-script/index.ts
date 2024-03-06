@@ -6,8 +6,8 @@ import MATCH_PATTERNS from "./matches";
 import UserscriptAddon from "../addon-api/userscript";
 import { AddonStorage } from "../background/storage";
 
-let enabledAddons: string[]
-let addonSettings: AddonStorage
+let enabledAddons: string[];
+let addonSettings: AddonStorage;
 let userLangs: string[];
 
 const locales = {
@@ -15,9 +15,11 @@ const locales = {
 };
 scratchAddons.events.addEventListener(
   "addonData",
-  async ({ detail }: CustomEvent<{
+  async ({
+    detail,
+  }: CustomEvent<{
     enabledAddons: string[];
-    addonSettings: AddonStorage
+    addonSettings: AddonStorage;
     userLangs: string[];
   }>) => {
     if (scratchAddons.addonsLoaded) return;
@@ -76,7 +78,9 @@ scratchAddons.events.addEventListener(
   ({ detail: { id, settings } }: CustomEvent) => {
     const addon = scratchAddons.addons[id];
     addonSettings[id] = settings;
-    addon.settings.dispatchEvent(new CustomEvent("change", {detail: settings}));
+    addon.settings.dispatchEvent(
+      new CustomEvent("change", { detail: settings }),
+    );
   },
 );
 
@@ -96,15 +100,13 @@ function runAddon(id, enabledLate = false) {
     const addonLocales = {};
     for (const lang of userLangs) {
       for (const key in locales[lang][id]) {
-        const string =
-          locales[lang][id][key].string || locales[lang][id][key];
+        const string = locales[lang][id][key].string || locales[lang][id][key];
         addonLocales[key] = addonLocales[key] || string;
       }
     }
 
     const settings = addonSettings[id];
     console.log(addonSettings, id, settings);
-    
 
     const addonInstance = new UserscriptAddon(
       id,

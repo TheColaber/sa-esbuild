@@ -26,7 +26,6 @@ export default async () => {
   //   return res;
   // }
 
-
   setGrid(true);
 
   addon.settings.addEventListener("change", () => setGrid(true));

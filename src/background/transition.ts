@@ -34,16 +34,15 @@ chrome.management.getSelf().then(async ({ installType, homepageUrl }) => {
         addonsStates[id] = "defaultDisabled";
       }
     }
-    if (manifest.settings) {      
-      const settings = await addonStorage.get(id) || {};
+    if (manifest.settings) {
+      const settings = (await addonStorage.get(id)) || {};
 
       for (const setting of manifest.settings) {
-        
         if (settings[id][setting.id] === undefined) {
           settings[id][setting.id] = setting.presets.default;
         }
       }
-      addonStorage.set({ [id]: settings[id] })
+      addonStorage.set({ [id]: settings[id] });
     }
   }
   syncStorage.set({ addonsStates });

@@ -4,11 +4,15 @@
       <div
         :class="$style.section"
         v-for="section of sections"
-        v-show="section.addons.length"
+        v-show="section.addons.length > 0"
       >
-        <button :class="$style.name">{{ section.name }}</button>
+        <div :class="$style.name">{{ section.name }}</div>
         <div :class="$style.addons">
-          <button :class="$style.addon" v-for="addon of section.addons">
+          <button
+            :class="$style.addon"
+            @click="scrollToAddon(addon.id)"
+            v-for="addon of section.addons"
+          >
             {{ addon.name }}
           </button>
         </div>
@@ -16,7 +20,13 @@
     </div>
     <div :class="$style['extended-list']">
       <template v-for="section of sections">
-        <div :class="$style.addon" v-for="addon of section.addons">
+        <div v-if="section.addons.length > 0">{{ section.name }}</div>
+        <div
+          :class="$style.addon"
+          :id="'addon-' + addon.id"
+          v-for="addon of section.addons"
+          :ref="(el) => (addonEls[addon.id] = el)"
+        >
           <div :class="$style['top-bar']">
             <div :class="$style.name">{{ addon.name }}</div>
             <button
@@ -36,7 +46,12 @@
           <div v-if="addon.settings && addon.settings.length > 0">
             <div v-for="setting of addon.settings">
               <div>{{ setting.name }}</div>
-              <input v-if="setting.type === 'integer'" type="number" v-model="settings[addon.id][setting.id]" @change="updateSettings(addon.id)" />
+              <input
+                v-if="setting.type === 'integer'"
+                type="number"
+                v-model="settings[addon.id][setting.id]"
+                @change="updateSettings(addon.id)"
+              />
             </div>
           </div>
         </div>
@@ -52,8 +67,9 @@ import {
   syncStorage,
   allAddonStates,
   addonEnabledStates,
-  addonStorage
+  addonStorage,
 } from "../../background/storage";
+import { Port } from "../../background/messaging";
 const { addonsStates } = await syncStorage.get("addonsStates");
 const enabledStates = ref(
   Object.fromEntries(
@@ -80,8 +96,14 @@ const categories = objectArray(
   ),
 );
 
-const enabledAddons = [...categories.enabled, ...categories.defaultEnabled, ...categories.dev];
-const settings = await addonStorage.get(...enabledAddons.map((addon) => addon.id))
+const enabledAddons = [
+  ...categories.enabled,
+  ...categories.defaultEnabled,
+  ...categories.dev,
+];
+const settings = await addonStorage.get(
+  ...enabledAddons.map((addon) => addon.id),
+);
 
 const productionAddons = [...categories.enabled, ...categories.defaultEnabled];
 const sections = [
@@ -91,9 +113,8 @@ const sections = [
   },
   {
     name: "Editor Addons",
-    addons: productionAddons.filter(
-      (addon) =>
-        addon.category.includes("editor"),
+    addons: productionAddons.filter((addon) =>
+      addon.category.includes("editor"),
     ),
   },
   {
@@ -104,20 +125,44 @@ const sections = [
   },
 ];
 
+const port = new Port();
+const addonsOnTab = await port.send<string[]>("getRunningAddons");
+if (addonsOnTab) {
+  for (const section of sections) {
+    section.addons = section.addons.filter(
+      ({ id }) => !addonsOnTab.includes(id),
+    );
+  }
+  sections.unshift({
+    name: "Running on tab",
+    addons: addonsOnTab.map((id) => addons[id]),
+  });
+}
+
 function toggleAddon(id: string) {
   enabledStates.value[id] = !enabledStates.value[id];
-  addonsStates[id] = enabledStates.value[id] ? addons[id].mode === "dev" ? "dev" : "enabled" : "disabled";
+  addonsStates[id] = enabledStates.value[id]
+    ? addons[id].mode === "dev"
+      ? "dev"
+      : "enabled"
+    : "disabled";
   syncStorage.set({ addonsStates });
 }
 
 function updateSettings(addon: string) {
-  addonStorage.set({ [addon]: settings[addon] })
+  addonStorage.set({ [addon]: settings[addon] });
+}
+const addonEls = ref<{ [addon: string]: Element }>({});
+function scrollToAddon(id) {
+  window.location.hash = "#" + addonEls.value[id].id;
 }
 </script>
 
 <style lang="scss" module>
 .container {
   display: flex;
+  height: calc(100vh - 60px);
+
   .sections {
     display: flex;
     width: 300px;
@@ -128,6 +173,8 @@ function updateSettings(addon: string) {
       display: flex;
       flex-direction: column;
       width: 100%;
+      gap: 2px;
+
       .name {
         font-size: 16px;
         background: none;
@@ -143,15 +190,17 @@ function updateSettings(addon: string) {
         gap: 6px;
 
         .addon {
-          background: var(--background-tertiary);
           color: inherit;
           border: none;
           font-family: inherit;
-          padding: 5px 10px;
           width: 100%;
           text-align: start;
-          border-radius: 6px;
           font-size: 14px;
+          border-radius: 4px;
+          border: 1px solid var(--background-tertiary);
+          background: var(--background-secondary);
+          box-shadow: var(--content-shadow);
+          padding: 6px;
         }
       }
     }
@@ -163,12 +212,21 @@ function updateSettings(addon: string) {
     width: 100%;
     padding: 10px;
     gap: 10px;
+    overflow-y: auto;
+    scroll-behavior: smooth;
 
     .addon {
       display: flex;
       flex-direction: column;
+      border-radius: 4px;
+      border: 1px solid var(--background-tertiary);
       background: var(--background-secondary);
-      padding: 10px;
+      box-shadow: var(--content-shadow);
+      padding: 8px;
+
+      &:target {
+        animation: addon-flash 1s 2 ease-in-out;
+      }
 
       .top-bar {
         display: flex;
@@ -225,6 +283,20 @@ function updateSettings(addon: string) {
         }
       }
     }
+  }
+}
+
+@media only screen and (max-width: 520px) {
+  .container {
+    .sections {
+      display: none;
+    }
+  }
+}
+
+@keyframes addon-flash {
+  50% {
+    background: green;
   }
 }
 </style>

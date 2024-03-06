@@ -15,7 +15,7 @@ export default class UserscriptAddon extends EventTarget {
     id: string,
     messages: { [id: string]: string },
     enabledLate: boolean,
-    settings: AddonStorage[any]
+    settings: AddonStorage[any],
   ) {
     super();
     this.id = id;
