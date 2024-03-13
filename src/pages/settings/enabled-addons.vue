@@ -63,38 +63,10 @@
 <script setup lang="ts">
 import * as addons from "#addons";
 import { ref } from "vue";
-import {
-  syncStorage,
-  allAddonStates,
-  addonEnabledStates,
-  addonStorage,
-} from "../../background/storage";
+import { syncStorage, addonStorage } from "../../background/storage";
 import { Port } from "../../background/messaging";
-const { addonsStates } = await syncStorage.get("addonsStates");
-const enabledStates = ref(
-  Object.fromEntries(
-    Object.entries(addonsStates).map(([id, state]) => [
-      id,
-      addonEnabledStates.some((enabledState) => enabledState === state),
-    ]),
-  ),
-);
-function typedObject<T extends string, U>(key: T, value: U) {
-  return { [key]: value } as { [K in T]: U };
-}
-function objectArray<T>(array: T[]) {
-  return array.reduce((all, single) => ({ ...single, ...all }), {} as T);
-}
-const categories = objectArray(
-  allAddonStates.map((state) =>
-    typedObject(
-      state,
-      Object.keys(addonsStates)
-        .filter((id) => addonsStates[id] === state)
-        .map((id) => addons[id]),
-    ),
-  ),
-);
+import { store } from "./store";
+const { categories, enabledStates, toggleAddon } = store;
 
 const enabledAddons = [
   ...categories.enabled,
@@ -139,16 +111,6 @@ if (addonsOnTab) {
   });
 }
 
-function toggleAddon(id: string) {
-  enabledStates.value[id] = !enabledStates.value[id];
-  addonsStates[id] = enabledStates.value[id]
-    ? addons[id].mode === "dev"
-      ? "dev"
-      : "enabled"
-    : "disabled";
-  syncStorage.set({ addonsStates });
-}
-
 function updateSettings(addon: string) {
   addonStorage.set({ [addon]: settings[addon] });
 }
@@ -169,6 +131,7 @@ function scrollToAddon(id) {
     padding: 10px;
     flex-direction: column;
     gap: 10px;
+
     .section {
       display: flex;
       flex-direction: column;

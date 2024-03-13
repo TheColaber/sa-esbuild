@@ -6,6 +6,7 @@ import virtuals from "./plugins/virtuals.ts";
 import vue from "./plugins/vue.ts";
 import postcss from "./plugins/postcss.ts";
 import typedCss from "./plugins/typed-css.ts";
+import image from "esbuild-plugin-inline-image";
 process.env.MODE = "development";
 build();
 
@@ -32,6 +33,7 @@ async function build() {
       vue({ cssInline: true }),
       postcss(),
       typedCss(),
+      image({ limit: 0 }),
     ],
     treeShaking: true,
     logLevel: "debug",

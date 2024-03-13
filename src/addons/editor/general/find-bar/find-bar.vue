@@ -438,12 +438,13 @@ function goToBlock(id: string) {
     viewportMetrics;
   const padding = 30; // Consistant with scratch when making new custom blocks.
 
-  // Check if either the current block is not in the right x psoition or is outside the viewport
+  // Check if either the current block is not in the right x position or is outside the viewport
   if (
     Math.round(leftX) !== Math.round(viewLeft + padding) ||
     topY < viewTop - padding ||
     bottomY > viewTop + viewHeight
   ) {
+    // TODO: RTL ;(
     const scrollX = leftX - contentLeft - padding;
     const scrollY = topY - contentTop - padding;
     workspace.scrollbar.set(scrollX, scrollY);
@@ -470,7 +471,6 @@ function selectItem(item) {
     return;
   }
   selected.value = item;
-  console.log(item.category);
 
   if (item.category === "gui" || item.category === "gui") {
     // Viewing costumes/sounds - jump to selected costume/sound
@@ -594,7 +594,6 @@ Blockly.Gesture.prototype.doBlockClick_ = function () {
   height: 2rem;
   width: 100%;
   z-index: 100;
-  margin-left: 1em;
   margin-bottom: 6px;
 
   .dropdown-out {
@@ -703,5 +702,9 @@ Blockly.Gesture.prototype.doBlockClick_ = function () {
       }
     }
   }
+}
+
+[dir="rtl"] .dropdown-out {
+  float: left;
 }
 </style>

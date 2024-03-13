@@ -22,8 +22,8 @@ if (hashTab !== "explore" && hashTab !== "enabled" && hashTab !== "themes") {
 const tab = ref<"explore" | "enabled" | "themes">(hashTab);
 
 const lightTheme = ref(pageStorage.get("lightTheme") === true);
-syncStorage.watch(["lightTheme"], ({ lightTheme: { newValue } }) => {
-  lightTheme.value = newValue;
+syncStorage.watch(({ lightTheme: newLightTheme }) => {
+  lightTheme.value = newLightTheme;
   pageStorage.set("lightTheme", lightTheme.value);
 });
 

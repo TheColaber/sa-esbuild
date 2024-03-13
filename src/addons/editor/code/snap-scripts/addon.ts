@@ -1,9 +1,9 @@
+import image from "./image.png";
 export default defineAddon({
   name: "Snap scripts to grid",
   description:
     "Scripts will automatically align its position to the code area dots.",
   versionAdded: "2.0.0",
-  mode: "dev",
   settings: [
     {
       id: "grid",
@@ -16,6 +16,7 @@ export default defineAddon({
       },
     },
   ],
+  image,
 });
 
 export const scripts = defineScripts([

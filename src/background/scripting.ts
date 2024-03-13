@@ -6,12 +6,12 @@ chrome.tabs.query({}).then((tabs) => {
   tabIds.push(...tabs.filter((tab) => tab.url).map((tab) => tab.id));
 });
 
+let { addonsStates } = await syncStorage.get("addonsStates");
 chrome.tabs.onUpdated.addListener(async (tabId, { status }, tab) => {
   if (!tab.url || status !== "loading") return;
   tabIds.push(tabId);
 
   const enabledAddons = [];
-  let { addonsStates } = await syncStorage.get("addonsStates");
   for (const id in addonsStates) {
     if (
       addonEnabledStates.some(
@@ -27,23 +27,22 @@ chrome.tabs.onUpdated.addListener(async (tabId, { status }, tab) => {
   dispatch("addonData", { enabledAddons, addonSettings, userLangs });
 });
 
-syncStorage.watch(({ addonsStates }) => {
+syncStorage.watch(({ addonsStates: newAddonStates }) => {
   if (!addonsStates) return;
-  for (const id in addonsStates.newValue) {
-    if (addonsStates.oldValue[id] !== addonsStates.newValue[id]) {
-      if (
-        addonEnabledStates.some((state) => addonsStates.newValue[id] === state)
-      ) {
+  for (const id in newAddonStates) {
+    if (addonsStates[id] !== newAddonStates[id]) {
+      if (addonEnabledStates.some((state) => newAddonStates[id] === state)) {
         dispatch("dynamicEnable", { id });
       } else {
         dispatch("dynamicDisable", { id });
       }
     }
   }
+  addonsStates = newAddonStates;
 });
 addonStorage.watch((changes) => {
   for (const id in changes) {
-    dispatch("settingChange", { id, settings: changes[id].newValue });
+    dispatch("settingChange", { id, settings: changes[id] });
   }
 });
 

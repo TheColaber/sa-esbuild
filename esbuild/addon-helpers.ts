@@ -124,6 +124,7 @@ export interface AddonManifest {
   //   description: string;
   //   default: string[];
   // }[];
+  image?: string;
 }
 
 type AddonSetting = {

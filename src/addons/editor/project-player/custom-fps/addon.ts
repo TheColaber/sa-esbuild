@@ -1,9 +1,8 @@
-import image from "./image.png";
 export default defineAddon({
-  name: "Auto-hiding block palette",
-  description: "taco",
+  name: "Custom project framerate",
+  description: "",
   versionAdded: "2.0.0",
-  image,
+  mode: "dev",
 });
 
 export const scripts = defineScripts([

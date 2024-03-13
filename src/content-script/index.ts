@@ -78,6 +78,7 @@ scratchAddons.events.addEventListener(
   ({ detail: { id, settings } }: CustomEvent) => {
     const addon = scratchAddons.addons[id];
     addonSettings[id] = settings;
+    console.log(id);
     addon.settings.dispatchEvent(
       new CustomEvent("change", { detail: settings }),
     );
@@ -99,6 +100,7 @@ function runAddon(id, enabledLate = false) {
 
     const addonLocales = {};
     for (const lang of userLangs) {
+      if (!locales[lang]) continue;
       for (const key in locales[lang][id]) {
         const string = locales[lang][id][key].string || locales[lang][id][key];
         addonLocales[key] = addonLocales[key] || string;
@@ -106,7 +108,6 @@ function runAddon(id, enabledLate = false) {
     }
 
     const settings = addonSettings[id];
-    console.log(addonSettings, id, settings);
 
     const addonInstance = new UserscriptAddon(
       id,
