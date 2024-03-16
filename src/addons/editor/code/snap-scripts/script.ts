@@ -9,22 +9,42 @@ export default async () => {
     return originalInit.call(this, ...args);
   };
 
-  // const originalGetCandidate = Blockly.InsertionMarkerManager.prototype.getCandidate_;
-  // Blockly.InsertionMarkerManager.prototype.getCandidate_ = function(dxy) {
-  //   const candidate = originalGetCandidate.call(this, dxy);
-  //   if (candidate.closest === null) {
-  //     // todo show little insetionmarker where it would go
-  //     //https://github.com/scratchfoundation/scratch-blocks/blob/a6197a1c0a76a06b7629b6dc3a3af544c7b059a1/core/rendered_connection.js#L39
-  //     //https://github.com/scratchfoundation/scratch-blocks/blob/develop/core/block_render_svg_horizontal.js#L873
-  //     //https://github.com/scratchfoundation/scratch-blocks/blob/develop/core/insertion_marker_manager.js#L366
-  //     return {
-  //       closest: null,
-  //       local: null,
-  //       radius: 48
-  //     }
-  //   }
-  //   return res;
-  // }
+  let connectToGrid = true;
+  const originalUpdate = Blockly.InsertionMarkerManager.prototype.update;
+  Blockly.InsertionMarkerManager.prototype.update = function (dxy, deleteArea) {
+    originalUpdate.call(this, dxy, deleteArea);
+    if (!connectToGrid) return;
+    const block = this.firstMarker_;
+
+    block.render();
+    block.rendered = true;
+    block.getSvgRoot().setAttribute("visibility", "visible");
+    const grid = this.workspace_.getGrid();
+    const spacing = grid.getSpacing();
+    const half = spacing / 2;
+    const xy = this.topBlock_.getRelativeToSurfaceXY();
+    let dx = Math.round((xy.x - half) / spacing) * spacing + half;
+    let dy = Math.round((xy.y - half) / spacing) * spacing + half;
+    dx = Math.round(dx);
+    dy = Math.round(dy);
+    block.translate(dx, dy);
+    block.snapToGrid();
+  };
+  const originalConnect =
+    Blockly.InsertionMarkerManager.prototype.connectMarker_;
+  Blockly.InsertionMarkerManager.prototype.connectMarker_ = function (...args) {
+    connectToGrid = false;
+    return originalConnect.call(this, ...args);
+  };
+
+  const originalDisconnect =
+    Blockly.InsertionMarkerManager.prototype.disconnectMarker_;
+  Blockly.InsertionMarkerManager.prototype.disconnectMarker_ = function (
+    ...args
+  ) {
+    connectToGrid = true;
+    return originalDisconnect.call(this, ...args);
+  };
 
   setGrid(true);
 
