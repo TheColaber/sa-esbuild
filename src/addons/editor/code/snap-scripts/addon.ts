@@ -16,6 +16,10 @@ export default defineAddon({
       },
     },
   ],
+  presetNames: {
+    wholeBlock: "Whole Block",
+    halfBlock: "Half Block",
+  },
   image,
 });
 

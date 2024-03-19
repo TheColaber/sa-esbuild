@@ -1,10 +1,7 @@
-import { AddonManifest } from "../addon-helpers";
+import { ExtraAddonManifest } from "../addon-helpers";
 
 declare var addons: {
-  [id: string]: AddonManifest & {
-    id: string;
-    category: ("editor" | "general" | "popup")[];
-  };
+  [id: string]: ExtraAddonManifest;
 };
 
 export = addons;

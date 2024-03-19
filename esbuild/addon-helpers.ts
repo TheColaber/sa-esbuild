@@ -119,6 +119,9 @@ export interface AddonManifest {
   mode?: "dev" | "prod";
   enabledByDefault?: boolean;
   settings?: AddonSetting[];
+  presetNames: {
+    [id: string]: string;
+  };
   // hotkeys?: {
   //   id: string;
   //   description: string;
@@ -126,6 +129,11 @@ export interface AddonManifest {
   // }[];
   image?: string;
 }
+
+export type ExtraAddonManifest = AddonManifest & {
+  id: string;
+  category: ("editor" | "general" | "popup")[];
+};
 
 type AddonSetting = {
   id: string;

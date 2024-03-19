@@ -6,40 +6,42 @@ chrome.tabs.query({}).then((tabs) => {
   tabIds.push(...tabs.filter((tab) => tab.url).map((tab) => tab.id));
 });
 
-let { addonsStates } = await syncStorage.get("addonsStates");
-chrome.tabs.onUpdated.addListener(async (tabId, { status }, tab) => {
-  if (!tab.url || status !== "loading") return;
-  tabIds.push(tabId);
+(async () => {
+  let { addonsStates } = await syncStorage.get("addonsStates");
+  chrome.tabs.onUpdated.addListener(async (tabId, { status }, tab) => {
+    if (!tab.url || status !== "loading") return;
+    tabIds.push(tabId);
 
-  const enabledAddons = [];
-  for (const id in addonsStates) {
-    if (
-      addonEnabledStates.some(
-        (enabledState) => enabledState === addonsStates[id],
-      )
-    ) {
-      enabledAddons.push(id);
-    }
-  }
-  const addonSettings = await addonStorage.get(...enabledAddons);
-  const userLangs = await getUserLangs(tab.url);
-
-  dispatch("addonData", { enabledAddons, addonSettings, userLangs });
-});
-
-syncStorage.watch(({ addonsStates: newAddonStates }) => {
-  if (!addonsStates) return;
-  for (const id in newAddonStates) {
-    if (addonsStates[id] !== newAddonStates[id]) {
-      if (addonEnabledStates.some((state) => newAddonStates[id] === state)) {
-        dispatch("dynamicEnable", { id });
-      } else {
-        dispatch("dynamicDisable", { id });
+    const enabledAddons = [];
+    for (const id in addonsStates) {
+      if (
+        addonEnabledStates.some(
+          (enabledState) => enabledState === addonsStates[id],
+        )
+      ) {
+        enabledAddons.push(id);
       }
     }
-  }
-  addonsStates = newAddonStates;
-});
+    const addonSettings = await addonStorage.get(...enabledAddons);
+    const userLangs = await getUserLangs(tab.url);
+
+    dispatch("addonData", { enabledAddons, addonSettings, userLangs });
+  });
+
+  syncStorage.watch(({ addonsStates: newAddonStates }) => {
+    if (!addonsStates) return;
+    for (const id in newAddonStates) {
+      if (addonsStates[id] !== newAddonStates[id]) {
+        if (addonEnabledStates.some((state) => newAddonStates[id] === state)) {
+          dispatch("dynamicEnable", { id });
+        } else {
+          dispatch("dynamicDisable", { id });
+        }
+      }
+    }
+    addonsStates = newAddonStates;
+  });
+})();
 addonStorage.watch((changes) => {
   for (const id in changes) {
     dispatch("settingChange", { id, settings: changes[id] });

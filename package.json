@@ -19,6 +19,8 @@
     "@transifex/api": "^6.0.2",
     "@types/chrome": "^0.0.254",
     "@types/node": "^20.10.5",
+    "@vueuse/components": "^10.9.0",
+    "@vueuse/core": "^10.9.0",
     "cheerio": "^1.0.0-rc.12",
     "chokidar": "^3.5.3",
     "dotenv": "^16.4.1",

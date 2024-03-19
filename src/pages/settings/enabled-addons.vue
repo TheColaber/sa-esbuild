@@ -21,40 +21,7 @@
     <div :class="$style['extended-list']">
       <template v-for="section of sections">
         <div v-if="section.addons.length > 0">{{ section.name }}</div>
-        <div
-          :class="$style.addon"
-          :id="'addon-' + addon.id"
-          v-for="addon of section.addons"
-          :ref="(el) => (addonEls[addon.id] = el)"
-        >
-          <div :class="$style['top-bar']">
-            <div :class="$style.name">{{ addon.name }}</div>
-            <button
-              :class="$style['switch-background']"
-              @click="toggleAddon(addon.id)"
-              :state="enabledStates[addon.id]"
-            >
-              <div :class="$style.switch"></div>
-            </button>
-          </div>
-
-          <div>{{ addon.description }}</div>
-          <div v-if="addon.credits && addon.credits.length > 0">
-            <div v-for="user of addon.credits">{{ user }}</div>
-          </div>
-
-          <div v-if="addon.settings && addon.settings.length > 0">
-            <div v-for="setting of addon.settings">
-              <div>{{ setting.name }}</div>
-              <input
-                v-if="setting.type === 'integer'"
-                type="number"
-                v-model="settings[addon.id][setting.id]"
-                @change="updateSettings(addon.id)"
-              />
-            </div>
-          </div>
-        </div>
+        <ListItem v-for="addon of section.addons" :addon="addon"></ListItem>
       </template>
     </div>
   </div>
@@ -62,20 +29,10 @@
 
 <script setup lang="ts">
 import * as addons from "#addons";
-import { ref } from "vue";
-import { syncStorage, addonStorage } from "../../background/storage";
 import { Port } from "../../background/messaging";
+import ListItem from "./addon/list-item.vue";
 import { store } from "./store";
-const { categories, enabledStates, toggleAddon } = store;
-
-const enabledAddons = [
-  ...categories.enabled,
-  ...categories.defaultEnabled,
-  ...categories.dev,
-];
-const settings = await addonStorage.get(
-  ...enabledAddons.map((addon) => addon.id),
-);
+const { categories } = store;
 
 const productionAddons = [...categories.enabled, ...categories.defaultEnabled];
 const sections = [
@@ -111,12 +68,8 @@ if (addonsOnTab) {
   });
 }
 
-function updateSettings(addon: string) {
-  addonStorage.set({ [addon]: settings[addon] });
-}
-const addonEls = ref<{ [addon: string]: Element }>({});
-function scrollToAddon(id) {
-  window.location.hash = "#" + addonEls.value[id].id;
+function scrollToAddon(id: string) {
+  window.location.hash = "#addon-" + id;
 }
 </script>
 
@@ -131,6 +84,7 @@ function scrollToAddon(id) {
     padding: 10px;
     flex-direction: column;
     gap: 10px;
+    overflow-y: auto;
 
     .section {
       display: flex;
@@ -177,75 +131,6 @@ function scrollToAddon(id) {
     gap: 10px;
     overflow-y: auto;
     scroll-behavior: smooth;
-
-    .addon {
-      display: flex;
-      flex-direction: column;
-      border-radius: 4px;
-      border: 1px solid var(--background-tertiary);
-      background: var(--background-secondary);
-      box-shadow: var(--content-shadow);
-      padding: 8px;
-
-      &:target {
-        animation: addon-flash 1s 2 ease-in-out;
-      }
-
-      .top-bar {
-        display: flex;
-
-        .name {
-          flex: 1;
-        }
-
-        .switch-background {
-          background-image: var(--gradient);
-          border-radius: 10px;
-          overflow: hidden;
-          cursor: pointer;
-          border: none;
-          color: inherit;
-          padding: 0px;
-
-          &:focus-visible {
-            outline: none;
-            box-shadow: 0 0 0 3px var(--content-text);
-          }
-
-          &[state="true"] {
-            .switch {
-              background-color: transparent;
-              &::before {
-                background-color: #fff;
-                left: 25px;
-              }
-            }
-          }
-
-          .switch {
-            display: flex;
-            background-color: var(--switch-background);
-            width: 40px;
-            height: 20px;
-            position: relative;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            &::before {
-              content: "";
-              position: absolute;
-              display: block;
-              width: 10px;
-              height: 10px;
-              background-color: var(--switch-inner-background);
-              border-radius: 5px;
-              top: 5px;
-              left: 5px;
-              transition: left 0.25s ease;
-            }
-          }
-        }
-      }
-    }
   }
 }
 
@@ -254,12 +139,6 @@ function scrollToAddon(id) {
     .sections {
       display: none;
     }
-  }
-}
-
-@keyframes addon-flash {
-  50% {
-    background: green;
   }
 }
 </style>
