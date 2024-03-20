@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { store } from "../store";
+import { categories } from "../store";
 import { ExtraAddonManifest } from "../../../../esbuild/addon-helpers";
 import Setting from "./setting.vue";
 import { addonStorage } from "../../../background/storage";
@@ -33,11 +33,11 @@ import { ref, watch } from "vue";
 import Toggle from "../components/toggle.vue";
 
 const { addon } = defineProps<{ addon: ExtraAddonManifest }>();
-const { categories } = store;
+// TODO
 const enabledAddons = [
-  ...categories.enabled,
-  ...categories.defaultEnabled,
-  ...categories.dev,
+  ...categories.value.enabled,
+  ...categories.value.defaultEnabled,
+  ...categories.value.dev,
 ];
 const settings = ref(
   await addonStorage.get(...enabledAddons.map((addon) => addon.id)),
@@ -62,7 +62,7 @@ watch(
   padding: 8px;
 
   &:target {
-    animation: addon-flash 1s 2 ease-in-out;
+    animation: addon-flash 0.6s 2 ease-in-out;
   }
 
   .top-bar {
@@ -79,8 +79,15 @@ watch(
 }
 
 @keyframes addon-flash {
+  0% {
+    border: 1px solid var(--background-tertiary);
+  }
   50% {
-    background: green;
+    border: 1px solid var(--theme);
+    filter: drop-shadow(0px 0px 4px var(--theme));
+  }
+  100% {
+    border: 1px solid var(--background-tertiary);
   }
 }
 </style>

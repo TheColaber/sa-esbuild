@@ -5,11 +5,10 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import GridItem from "./addon/grid-item.vue";
-import { store } from "./store";
-const { categories } = store;
-const disabledAddons = [...categories.defaultDisabled, ...categories.disabled];
+import { categories } from "./store";
+const disabledAddons = computed(() =>[...categories.value.defaultDisabled, ...categories.value.disabled]);
 </script>
 
-<style lang="scss" module>
-</style>
+<style lang="scss" module></style>

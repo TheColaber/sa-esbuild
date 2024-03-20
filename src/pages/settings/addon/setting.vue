@@ -1,7 +1,8 @@
 <template>
   <div :class="$style.setting">
     <div>{{ setting.name }}</div>
-    <input
+    <div :class="$style.options">
+      <input
       v-if="setting.type === 'integer'"
       :class="$style.input"
       name="addon-setting"
@@ -31,6 +32,7 @@
       </div>
     </div>
   </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -57,22 +59,27 @@ const showPresetsList = ref(false);
 <style lang="scss" module>
 .setting {
   display: flex;
-  .input {
-    width: 70px;
-    background: var(--background-tertiary);
+
+  .options {
+    display: flex;
+    border: 1px solid var(--button-border);
+    border-radius: 12px;
+    overflow: hidden;
+    .input {
+      width: 60px;
+    background: var(--background-primary);
     border: none;
-    border-radius: 8px 0px 0px 8px;
     color: var(--content-text);
+    padding: 0 0px 0 12px;
   }
   .preset {
     position: relative;
     .button {
-      background: var(--background-tertiary);
+      background: var(--background-primary);
       border: none;
       color: var(--content-text);
       font-size: 23px;
       display: flex;
-      border-radius: 0px 8px 8px 0px;
       .icon {
       }
     }
@@ -93,5 +100,7 @@ const showPresetsList = ref(false);
       }
     }
   }
+  }
+
 }
 </style>

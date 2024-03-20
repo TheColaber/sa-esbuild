@@ -12,14 +12,37 @@ import Content from "./content.vue";
 import Header from "./components/header.vue";
 import { syncStorage } from "../../background/storage";
 import pageStorage from "../storage";
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
+import { updateAll } from "./store";
 
-const { hash } = window.location;
-let hashTab = hash ? hash.slice(1) : "explore";
-if (hashTab !== "explore" && hashTab !== "enabled" && hashTab !== "themes") {
-  hashTab = "explore";
+function getTabFromHash() {
+  const { hash } = window.location;
+let hashValue = hash ? hash.slice(1) : "explore";
+let tab: "explore" | "enabled" | "themes" = hashValue;
+if (hashValue.startsWith("addon-")) {
+  tab = "enabled";
 }
-const tab = ref<"explore" | "enabled" | "themes">(hashTab);
+if (tab !== "explore" && tab !== "enabled" && tab !== "themes") {
+  tab = "explore";
+}
+return tab;
+}
+
+const tab = ref<"explore" | "enabled" | "themes">(getTabFromHash());
+
+
+onMounted(() => {
+  setTimeout(() => {
+    const hash = window.location.hash;
+    window.location.hash = "";
+    window.location.hash = hash;
+    window.addEventListener("hashchange", () => {
+      updateAll()
+      tab.value = getTabFromHash();
+    });
+  }, 100)
+})
+
 const searchFilter = ref("");
 
 const lightTheme = ref(pageStorage.get("lightTheme") === true);

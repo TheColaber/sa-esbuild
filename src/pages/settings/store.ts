@@ -8,7 +8,7 @@ import {
 
 const { addonsStates } = await syncStorage.get("addonsStates");
 
-const categories = objectArray(
+export const categories = ref(objectArray(
   allAddonStates.map((state) =>
     typedObject(
       state,
@@ -17,9 +17,9 @@ const categories = objectArray(
         .map((id) => addons[id]),
     ),
   ),
-);
+));
 
-const enabledStates = ref(
+export const enabledStates = ref(
   Object.fromEntries(
     Object.entries(addonsStates).map(([id, state]) => [
       id,
@@ -28,20 +28,30 @@ const enabledStates = ref(
   ),
 );
 
-export const store = reactive({
-  categories,
-  enabledStates,
-  toggleAddon(id: string) {
-    enabledStates.value[id] = !enabledStates.value[id];
-    // const addon = categories[addonsStates[id]].find(((addon) => id === addon.id))
-    addonsStates[id] = enabledStates.value[id]
-      ? addons[id].mode === "dev"
-        ? "dev"
-        : "enabled"
-      : "disabled";
-    syncStorage.set({ addonsStates });
-  },
-});
+let reqUpdate = [];
+
+export function updateAll() {  
+  for (const update of reqUpdate) {
+    const oldCategory = categories.value[update.old]
+    const index = oldCategory.findIndex(((addon) => update.id === addon.id));
+    oldCategory.splice(index, 1)
+  }
+  reqUpdate = [];
+}
+
+export function toggleAddon(id: string) {
+  enabledStates.value[id] = !enabledStates.value[id];
+  reqUpdate.push({ id, old: addonsStates[id] });
+  addonsStates[id] = enabledStates.value[id]
+    ? addons[id].mode === "dev"
+      ? "dev"
+      : "enabled"
+    : "disabled";
+  syncStorage.set({ addonsStates });
+  const newCategory = categories.value[addonsStates[id]]
+  newCategory.push(addons[id])
+
+}
 
 function typedObject<T extends string, U>(key: T, value: U) {
   return { [key]: value } as { [K in T]: U };

@@ -32,10 +32,10 @@
 
 <script setup lang="ts">
 import * as addons from "#addons";
-import { toRefs, watch } from "vue";
+import { computed, toRefs, watch } from "vue";
 import { Port } from "../../background/messaging";
 import ListItem from "./addon/list-item.vue";
-import { store } from "./store";
+import { categories } from "./store";
 import Search from "./components/search.vue";
 
 const props = defineProps<{ searchFilter: string }>();
@@ -44,9 +44,9 @@ watch(searchFilter, (search) => {
   console.log(search);
 });
 
-const { categories } = store;
-const productionAddons = [...categories.enabled, ...categories.defaultEnabled];
-const sections = [
+// watch(categories, console.log, {deep: true})
+const productionAddons =computed(() => [...categories.value.enabled, ...categories.value.defaultEnabled]);
+const sections =computed(() =>  [
   {
     id: "running",
     name: "Running on tab",
@@ -56,19 +56,19 @@ const sections = [
   {
     id: "development",
     name: "In Development",
-    addons: categories.dev,
+    addons: categories.value.dev,
   },
   {
     id: "editor",
     name: "Editor Addons",
-    addons: productionAddons.filter((addon) =>
+    addons: productionAddons.value.filter((addon) =>
       addon.category.includes("editor"),
     ),
   },
   {
     id: "popup",
     name: "Popup Addons",
-    addons: productionAddons.filter((addon) =>
+    addons: productionAddons.value.filter((addon) =>
       addon.category.includes("popup"),
     ),
   },
@@ -78,17 +78,17 @@ const sections = [
     addons: [],
     hidden: true,
   },
-];
+]);
 
 const port = new Port();
 const addonsOnTab = await port.send<string[]>("getRunningAddons");
 if (addonsOnTab) {
-  for (const section of sections) {
+  for (const section of sections.value) {
     section.addons = section.addons.filter(
       ({ id }) => !addonsOnTab.includes(id),
     );
   }
-  const runningSection = sections.find(({ id }) => id === "running");
+  const runningSection = sections.value.find(({ id }) => id === "running");
   (runningSection.addons = addonsOnTab.map((id) => addons[id])),
     (runningSection.hidden = false);
 }
