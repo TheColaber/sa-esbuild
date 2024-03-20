@@ -1,5 +1,8 @@
 <template>
   <div :class="$style.container">
+    <div :class="$style['top-bar']">
+      <Search :hide-small="true" v-model:value="searchFilter" />
+    </div>
     <div :class="$style.sections">
       <div
         :class="$style.section"
@@ -19,7 +22,7 @@
       </div>
     </div>
     <div :class="$style['extended-list']">
-      <template v-for="section of sections">
+      <template v-for="section of sections" v-show="section.hidden">
         <div v-if="section.addons.length > 0">{{ section.name }}</div>
         <ListItem v-for="addon of section.addons" :addon="addon"></ListItem>
       </template>
@@ -29,28 +32,51 @@
 
 <script setup lang="ts">
 import * as addons from "#addons";
+import { toRefs, watch } from "vue";
 import { Port } from "../../background/messaging";
 import ListItem from "./addon/list-item.vue";
 import { store } from "./store";
+import Search from "./search.vue";
 const { categories } = store;
+
+const props = defineProps<{ searchFilter: string }>();
+const { searchFilter } = toRefs(props);
+watch(searchFilter, (search) => {
+  console.log(search);
+});
 
 const productionAddons = [...categories.enabled, ...categories.defaultEnabled];
 const sections = [
   {
+    id: "running",
+    name: "Running on tab",
+    addons: [],
+    hidden: true,
+  },
+  {
+    id: "development",
     name: "In Development",
     addons: categories.dev,
   },
   {
+    id: "editor",
     name: "Editor Addons",
     addons: productionAddons.filter((addon) =>
       addon.category.includes("editor"),
     ),
   },
   {
+    id: "popup",
     name: "Popup Addons",
     addons: productionAddons.filter((addon) =>
       addon.category.includes("popup"),
     ),
+  },
+  {
+    id: "disabled",
+    name: "Disabled",
+    addons: [],
+    hidden: true,
   },
 ];
 
@@ -62,10 +88,9 @@ if (addonsOnTab) {
       ({ id }) => !addonsOnTab.includes(id),
     );
   }
-  sections.unshift({
-    name: "Running on tab",
-    addons: addonsOnTab.map((id) => addons[id]),
-  });
+  const runningSection = sections.find(({ id }) => id === "running");
+  (runningSection.addons = addonsOnTab.map((id) => addons[id])),
+    (runningSection.hidden = false);
 }
 
 function scrollToAddon(id: string) {
@@ -77,6 +102,10 @@ function scrollToAddon(id: string) {
 .container {
   display: flex;
   height: calc(100vh - 60px);
+
+  .top-bar {
+    margin: 10px;
+  }
 
   .sections {
     display: flex;
@@ -131,11 +160,13 @@ function scrollToAddon(id: string) {
     gap: 10px;
     overflow-y: auto;
     scroll-behavior: smooth;
+    box-sizing: border-box;
   }
 }
 
 @media only screen and (max-width: 520px) {
   .container {
+    flex-direction: column;
     .sections {
       display: none;
     }

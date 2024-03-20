@@ -70,7 +70,7 @@ export default (opts = {}) => ({
         .toString("hex")
         .substring(0, 8);
 
-      const { descriptor } = sfc.parse(source, {
+      const { descriptor, errors } = sfc.parse(source, {
         filename,
       });
 

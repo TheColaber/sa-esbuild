@@ -1,8 +1,8 @@
 <template>
   <div :class="[$style.container, { theme: true, lightTheme }]">
-    <Header v-model:tab="tab"></Header>
+    <Header v-model:tab="tab" v-model:search-filter="searchFilter"></Header>
     <Suspense>
-      <Content :tab="tab"></Content>
+      <Content :tab="tab" :searchFilter="searchFilter"></Content>
     </Suspense>
   </div>
 </template>
@@ -20,6 +20,7 @@ if (hashTab !== "explore" && hashTab !== "enabled" && hashTab !== "themes") {
   hashTab = "explore";
 }
 const tab = ref<"explore" | "enabled" | "themes">(hashTab);
+const searchFilter = ref("");
 
 const lightTheme = ref(pageStorage.get("lightTheme") === true);
 syncStorage.watch(({ lightTheme: newLightTheme }) => {

@@ -76,6 +76,7 @@ watch(
 
     .name {
       flex: 1;
+      font-size: 15px;
     }
 
     .switch-background {

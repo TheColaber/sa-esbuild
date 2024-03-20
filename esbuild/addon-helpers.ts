@@ -119,7 +119,7 @@ export interface AddonManifest {
   mode?: "dev" | "prod";
   enabledByDefault?: boolean;
   settings?: AddonSetting[];
-  presetNames: {
+  presetNames?: {
     [id: string]: string;
   };
   // hotkeys?: {

@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div v-if="show">{{ messageCount }}</div>
+  <div v-if="show">
+    <div>{{ messageCount }}</div>
   </div>
 </template>
 

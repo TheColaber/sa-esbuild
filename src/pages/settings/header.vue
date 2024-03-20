@@ -31,9 +31,7 @@
         </a>
         <div :class="$style.selectDisplay"></div>
       </div>
-      <div :class="$style.search">
-        <input :class="$style.input" type="text" />
-      </div>
+      <Search v-model:value="searchInput" />
       <div :class="$style.buttons">
         <button :class="$style.button">More Settings</button>
       </div>
@@ -42,10 +40,18 @@
 </template>
 
 <script setup lang="ts">
+import { ref, watch } from "vue";
+import Search from "./search.vue";
 const msg = chrome.i18n.getMessage;
-
-const { tab } = defineProps<{ tab: "explore" | "enabled" | "themes" }>();
-defineEmits(["update:tab"]);
+const { tab, searchFilter } = defineProps<{
+  tab: "explore" | "enabled" | "themes";
+  searchFilter: string;
+}>();
+const emit = defineEmits(["update:tab", "update:searchFilter"]);
+const searchInput = ref(searchFilter);
+watch(searchInput, (val) => {
+  emit("update:searchFilter", val);
+});
 </script>
 
 <style lang="scss" module>
@@ -76,6 +82,7 @@ defineEmits(["update:tab"]);
     display: flex;
     flex: 1;
     gap: 20px;
+    align-items: center;
 
     .tabs {
       display: flex;
@@ -113,6 +120,7 @@ defineEmits(["update:tab"]);
         &:hover,
         &:focus-visible {
           font-weight: bold;
+          outline: none;
           &::before {
             opacity: 1;
           }
@@ -128,22 +136,7 @@ defineEmits(["update:tab"]);
         background: #fff;
         align-self: flex-end;
         border-radius: 4px 4px 0px 0px;
-      }
-    }
-
-    .search {
-      flex: 1;
-      display: flex;
-      align-items: center;
-
-      .input {
-        background: #00000020;
-        border: none;
-        height: 40px;
-        width: 100%;
-        max-width: 500px;
-        min-width: 250px;
-        border-radius: 6px;
+        top: 54px;
       }
     }
 
