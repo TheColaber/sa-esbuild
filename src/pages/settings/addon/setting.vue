@@ -4,6 +4,7 @@
     <input
       v-if="setting.type === 'integer'"
       :class="$style.input"
+      name="addon-setting"
       type="number"
       v-model="inputValue"
     />

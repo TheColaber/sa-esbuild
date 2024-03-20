@@ -36,8 +36,7 @@ import { toRefs, watch } from "vue";
 import { Port } from "../../background/messaging";
 import ListItem from "./addon/list-item.vue";
 import { store } from "./store";
-import Search from "./search.vue";
-const { categories } = store;
+import Search from "./components/search.vue";
 
 const props = defineProps<{ searchFilter: string }>();
 const { searchFilter } = toRefs(props);
@@ -45,6 +44,7 @@ watch(searchFilter, (search) => {
   console.log(search);
 });
 
+const { categories } = store;
 const productionAddons = [...categories.enabled, ...categories.defaultEnabled];
 const sections = [
   {

@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import Content from "./content.vue";
-import Header from "./header.vue";
+import Header from "./components/header.vue";
 import { syncStorage } from "../../background/storage";
 import pageStorage from "../storage";
 import { ref, watch } from "vue";

@@ -33,6 +33,7 @@ export const store = reactive({
   enabledStates,
   toggleAddon(id: string) {
     enabledStates.value[id] = !enabledStates.value[id];
+    // const addon = categories[addonsStates[id]].find(((addon) => id === addon.id))
     addonsStates[id] = enabledStates.value[id]
       ? addons[id].mode === "dev"
         ? "dev"
