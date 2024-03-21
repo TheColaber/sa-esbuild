@@ -25,7 +25,7 @@ const { id } = defineProps<{
   color: inherit;
   padding: 0px;
   min-width: 40px;
-    height: 20px;
+  height: 20px;
 
   &:focus-visible {
     outline: none;

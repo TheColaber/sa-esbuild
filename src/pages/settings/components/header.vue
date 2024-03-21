@@ -9,21 +9,21 @@
     <div :class="$style['top-bar']">
       <div :class="$style.tabs">
         <a
-          @click="$emit('update:tab', 'explore')"
+          @click="tab = 'explore'"
           href="#explore"
           :class="[$style.tab, { [$style.selected]: tab === 'explore' }]"
         >
           Explore Addons
         </a>
         <a
-          @click="$emit('update:tab', 'enabled')"
+          @click="tab = 'enabled'"
           href="#enabled"
           :class="[$style.tab, { [$style.selected]: tab === 'enabled' }]"
         >
           My Addons
         </a>
         <a
-          @click="$emit('update:tab', 'themes')"
+          @click="tab = 'themes'"
           href="#themes"
           :class="[$style.tab, { [$style.selected]: tab === 'themes' }]"
         >
@@ -31,7 +31,7 @@
         </a>
         <div :class="$style.selectDisplay"></div>
       </div>
-      <Search v-model:value="searchInput" />
+      <Search />
       <div :class="$style.buttons">
         <button :class="$style.button">More Settings</button>
       </div>
@@ -40,18 +40,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
 import Search from "./search.vue";
+import { searchFilter, tab } from "../store";
 const msg = chrome.i18n.getMessage;
-const { tab, searchFilter } = defineProps<{
-  tab: "explore" | "enabled" | "themes";
-  searchFilter: string;
-}>();
-const emit = defineEmits(["update:tab", "update:searchFilter"]);
-const searchInput = ref(searchFilter);
-watch(searchInput, (val) => {
-  emit("update:searchFilter", val);
-});
 </script>
 
 <style lang="scss" module>

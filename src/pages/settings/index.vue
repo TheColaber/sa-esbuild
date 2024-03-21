@@ -1,8 +1,8 @@
 <template>
   <div :class="[$style.container, { theme: true, lightTheme }]">
-    <Header v-model:tab="tab" v-model:search-filter="searchFilter"></Header>
+    <Header v-model:tab="tab"></Header>
     <Suspense>
-      <Content :tab="tab" :searchFilter="searchFilter"></Content>
+      <Content :tab="tab"></Content>
     </Suspense>
   </div>
 </template>
@@ -13,23 +13,25 @@ import Header from "./components/header.vue";
 import { syncStorage } from "../../background/storage";
 import pageStorage from "../storage";
 import { onMounted, ref, watch } from "vue";
-import { updateAll } from "./store";
+import { updateAll, tab, searchFilter } from "./store";
 
 function getTabFromHash() {
   const { hash } = window.location;
-let hashValue = hash ? hash.slice(1) : "explore";
-let tab: "explore" | "enabled" | "themes" = hashValue;
-if (hashValue.startsWith("addon-")) {
-  tab = "enabled";
-}
-if (tab !== "explore" && tab !== "enabled" && tab !== "themes") {
-  tab = "explore";
-}
-return tab;
+  let hashValue = hash ? hash.slice(1) : "explore";
+  if (hashValue.startsWith("addon-")) {
+    return (tab.value = "enabled");
+  }
+  if (
+    hashValue !== "explore" &&
+    hashValue !== "enabled" &&
+    hashValue !== "themes"
+  ) {
+    return (tab.value = "explore");
+  }
+  tab.value = hashValue;
 }
 
-const tab = ref<"explore" | "enabled" | "themes">(getTabFromHash());
-
+tab.value = getTabFromHash();
 
 onMounted(() => {
   setTimeout(() => {
@@ -37,13 +39,11 @@ onMounted(() => {
     window.location.hash = "";
     window.location.hash = hash;
     window.addEventListener("hashchange", () => {
-      updateAll()
+      updateAll();
       tab.value = getTabFromHash();
     });
-  }, 100)
-})
-
-const searchFilter = ref("");
+  }, 100);
+});
 
 const lightTheme = ref(pageStorage.get("lightTheme") === true);
 syncStorage.watch(({ lightTheme: newLightTheme }) => {

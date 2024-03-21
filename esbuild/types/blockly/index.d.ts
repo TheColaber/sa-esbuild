@@ -1,12 +1,46 @@
 declare global {
   namespace ScratchBlocks {
-    let mainWorkspace: Blockly.WorkspaceSvg | null;
+    /**
+     * The main workspace most recently used.
+     * Set by Blockly.WorkspaceSvg.prototype.markFocused
+     * @see {@link https://github.com/scratchfoundation/scratch-blocks/blob/develop/core/blockly.js#L79}
+     */
+    let mainWorkspace: Workspace | null;
+    /**
+     * Currently selected block.
+     * @see {@link https://github.com/scratchfoundation/scratch-blocks/blob/develop/core/blockly.js#L85}
+     */
     let selected: Block | null;
+    /**
+     * All of the connections on blocks that are currently being dragged.
+     * @see {@link https://github.com/scratchfoundation/scratch-blocks/blob/develop/core/blockly.js#L92}
+     * @private
+     */
     let draggingConnections_: Connection[];
+    /**
+     * Contents of the local clipboard.
+     * @see {@link https://github.com/scratchfoundation/scratch-blocks/blob/develop/core/blockly.js#L99}
+     * @private
+     */
     let clipboardXml_: Element | null;
+    /**
+     * Source of the local clipboard.
+     * @see {@link https://github.com/scratchfoundation/scratch-blocks/blob/develop/core/blockly.js#L106}
+     * @private
+     */
     let clipboardSource_: WorkspaceSvg | null;
+    /**
+     * Cached value for whether 3D is supported.
+     * @see {@link https://github.com/scratchfoundation/scratch-blocks/blob/develop/core/blockly.js#L113}
+     * @private
+     */
     let cache3dSupported_: boolean | null;
-
+    /**
+     * Convert a hue (HSV model) into an RGB hex triplet.
+     * @param {number} hue Hue on a colour wheel (0-360).
+     * @return {string} RGB code, e.g. '#5ba65b'.
+     * @see {@link https://github.com/scratchfoundation/scratch-blocks/blob/develop/core/blockly.js#L120}
+     */
     function hueToRgb(hue: number): string;
 
     function svgSize(svg: Element): { width: number; height: number };

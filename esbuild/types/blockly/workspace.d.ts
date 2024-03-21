@@ -6,16 +6,16 @@ declare global {
       RTL: boolean;
       horizontalLayout: boolean;
       toolboxPosition: any;
-      topBlocks_: Blockly.Block[];
-      topComments_: Blockly.WorkspaceComment[];
-      commentDB_: { [id: string]: Blockly.WorkspaceComment };
+      topBlocks_: Block[];
+      topComments_: WorkspaceComment[];
+      commentDB_: { [id: string]: WorkspaceComment };
       listeners_: Function[];
       tapListeners_: Function[];
-      undoStack_: Blockly.Events.Abstract[];
-      redoStack_: Blockly.Events.Abstract[];
-      blockDB_: { [id: string]: Blockly.Block };
-      variableMap_: Blockly.VariableMap;
-      potentialVariableMap_: Blockly.VariableMap | null;
+      undoStack_: Events.Abstract[];
+      redoStack_: Events.Abstract[];
+      blockDB_: { [id: string]: Block };
+      variableMap_: VariableMap;
+      potentialVariableMap_: VariableMap | null;
 
       rendered: boolean;
       isClearing: boolean;
@@ -23,25 +23,25 @@ declare global {
 
       static SCAN_ANGLE: number;
 
-      constructor(opt_options?: Blockly.Options);
+      constructor(opt_options?: Options);
 
       refreshToolboxSelection_(): void;
 
       dispose(): void;
 
-      addTopBlock(block: Blockly.Block): void;
+      addTopBlock(block: Block): void;
 
-      removeTopBlock(block: Blockly.Block): void;
+      removeTopBlock(block: Block): void;
 
-      getTopBlocks(ordered: boolean): Blockly.Block[];
+      getTopBlocks(ordered: boolean): Block[];
 
-      addTopComment(comment: Blockly.WorkspaceComment): void;
+      addTopComment(comment: WorkspaceComment): void;
 
-      removeTopComment(comment: Blockly.WorkspaceComment): void;
+      removeTopComment(comment: WorkspaceComment): void;
 
-      getTopComments(ordered: boolean): Blockly.WorkspaceComment[];
+      getTopComments(ordered: boolean): WorkspaceComment[];
 
-      getAllBlocks(ordered: boolean): Blockly.Block[];
+      getAllBlocks(ordered: boolean): Block[];
 
       clear(): void;
 
@@ -53,15 +53,15 @@ declare global {
         opt_id?: string,
         opt_isLocal?: boolean,
         opt_isCloud?: boolean,
-      ): Blockly.VariableMap | null;
+      ): VariableMap | null;
 
-      getVariableUsesById(id: string): Blockly.Block[];
+      getVariableUsesById(id: string): Block[];
 
       deleteVariableById(id: string): void;
 
       getWidth(): number;
 
-      newBlock(prototypeName: string | null, opt_id?: string): Blockly.Block;
+      newBlock(prototypeName: string | null, opt_id?: string): Block;
 
       undo(redo: boolean): void;
 
@@ -75,24 +75,25 @@ declare global {
 
       removeChangeListener(func: Function): void;
 
-      fireChangeListener(event: Blockly.Events.Abstract): void;
+      fireChangeListener(event: Events.Abstract): void;
 
-      getBlockById(id: string): Blockly.Block | null;
+      getBlockById(id: string): Block | null;
 
-      getCommentById(id: string): Blockly.WorkspaceComment | null;
+      getCommentById(id: string): WorkspaceComment | null;
 
-      getFlyout(): Blockly.Flyout | null;
+      getFlyout(): Flyout | null;
 
       allInputsFilled(opt_shadowBlocksAreFilled?: boolean): boolean;
 
-      getPotentialVariableMap(): Blockly.VariableMap | null;
+      getPotentialVariableMap(): VariableMap | null;
 
       createPotentialVariableMap(): void;
 
-      getVariableMap(): Blockly.VariableMap | null;
+      getVariableMap(): VariableMap | null;
 
-      static getById(id: string): Blockly.Workspace | null;
+      static getById(id: string): Workspace | null;
     }
   }
 }
+
 export {};

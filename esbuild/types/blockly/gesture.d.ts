@@ -3,12 +3,12 @@ declare global {
     class Gesture {
       mouseDownXY_: goog.math.Coordinate | null;
       currentDragDeltaXY_: goog.math.Coordinate | null;
-      startBubble_: Blockly.Bubble | null;
-      startField_: Blockly.Field | null;
-      startBlock_: Blockly.BlockSvg | null;
-      targetBlock_: Blockly.BlockSvg | null;
-      startWorkspace_: Blockly.WorkspaceSvg | null;
-      creatorWorkspace_: Blockly.WorkspaceSvg;
+      startBubble_: Bubble | null;
+      startField_: Field | null;
+      startBlock_: BlockSvg | null;
+      targetBlock_: BlockSvg | null;
+      startWorkspace_: WorkspaceSvg | null;
+      creatorWorkspace_: WorkspaceSvg;
       hasExceededDragRadius_: boolean;
       isDraggingWorkspace_: boolean;
       isDraggingBlock_: boolean;
@@ -16,16 +16,16 @@ declare global {
       mostRecentEvent_: Event;
       onMoveWrapper_: Array<Array<any>> | null;
       onUpWrapper_: Array<Array<any>> | null;
-      bubbleDragger_: Blockly.BubbleDragger | null;
-      blockDragger_: Blockly.BlockDragger | null;
-      workspaceDragger_: Blockly.WorkspaceDragger | null;
-      flyout_: Blockly.Flyout | null;
+      bubbleDragger_: BubbleDragger | null;
+      blockDragger_: BlockDragger | null;
+      workspaceDragger_: WorkspaceDragger | null;
+      flyout_: Flyout | null;
       calledUpdateIsDragging_: boolean;
       hasStarted_: boolean;
       isEnding_: boolean;
       shouldDuplicateOnDrag_: boolean;
 
-      constructor(e: Event, creatorWorkspace: Blockly.WorkspaceSvg);
+      constructor(e: Event, creatorWorkspace: WorkspaceSvg);
 
       dispose(): void;
 
@@ -63,13 +63,13 @@ declare global {
 
       handleRightClick(e: Event): void;
 
-      handleWsStart(e: Event, ws: Blockly.WorkspaceSvg): void;
+      handleWsStart(e: Event, ws: WorkspaceSvg): void;
 
-      handleFlyoutStart(e: Event, flyout: Blockly.Flyout): void;
+      handleFlyoutStart(e: Event, flyout: Flyout): void;
 
-      handleBlockStart(e: Event, block: Blockly.BlockSvg): void;
+      handleBlockStart(e: Event, block: BlockSvg): void;
 
-      handleBubbleStart(e: Event, bubble: Blockly.Bubble): void;
+      handleBubbleStart(e: Event, bubble: Bubble): void;
 
       doBubbleClick_(): void;
 
@@ -79,17 +79,17 @@ declare global {
 
       doWorkspaceClick_(): void;
 
-      setStartField(field: Blockly.Field): void;
+      setStartField(field: Field): void;
 
-      setStartBubble(bubble: Blockly.Bubble): void;
+      setStartBubble(bubble: Bubble): void;
 
-      setStartBlock(block: Blockly.BlockSvg): void;
+      setStartBlock(block: BlockSvg): void;
 
-      setTargetBlock_(block: Blockly.BlockSvg): void;
+      setTargetBlock_(block: BlockSvg): void;
 
-      setStartWorkspace_(ws: Blockly.WorkspaceSvg): void;
+      setStartWorkspace_(ws: WorkspaceSvg): void;
 
-      setStartFlyout_(flyout: Blockly.Flyout): void;
+      setStartFlyout_(flyout: Flyout): void;
 
       isBubbleClick_(): boolean;
 
@@ -103,7 +103,7 @@ declare global {
 
       isDragging(): boolean;
 
-      forceStartBlockDrag(fakeEvent: any, block: Blockly.BlockSvg): void;
+      forceStartBlockDrag(fakeEvent: any, block: BlockSvg): void;
 
       duplicateOnDrag_(): void;
     }

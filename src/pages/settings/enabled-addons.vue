@@ -1,7 +1,7 @@
 <template>
   <div :class="$style.container">
     <div :class="$style['top-bar']">
-      <Search :hide-small="true" v-model:value="searchFilter" />
+      <Search />
     </div>
     <div :class="$style.sections">
       <div
@@ -32,21 +32,17 @@
 
 <script setup lang="ts">
 import * as addons from "#addons";
-import { computed, toRefs, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { Port } from "../../background/messaging";
 import ListItem from "./addon/list-item.vue";
-import { categories } from "./store";
+import { categories, searchFilter } from "./store";
 import Search from "./components/search.vue";
 
-const props = defineProps<{ searchFilter: string }>();
-const { searchFilter } = toRefs(props);
-watch(searchFilter, (search) => {
-  console.log(search);
-});
-
-// watch(categories, console.log, {deep: true})
-const productionAddons =computed(() => [...categories.value.enabled, ...categories.value.defaultEnabled]);
-const sections =computed(() =>  [
+const productionAddons = computed(() => [
+  ...categories.value.enabled,
+  ...categories.value.defaultEnabled,
+]);
+const sections = computed(() => [
   {
     id: "running",
     name: "Running on tab",
@@ -105,6 +101,7 @@ function scrollToAddon(id: string) {
 
   .top-bar {
     margin: 10px;
+    display: none;
   }
 
   .sections {
@@ -114,6 +111,7 @@ function scrollToAddon(id: string) {
     flex-direction: column;
     gap: 10px;
     overflow-y: auto;
+    margin: 0px 12px;
 
     .section {
       display: flex;
@@ -147,6 +145,11 @@ function scrollToAddon(id: string) {
           background: var(--background-secondary);
           box-shadow: var(--content-shadow);
           padding: 6px;
+
+          &:focus-visible {
+            box-shadow: 0 0 0 3px #fff;
+            outline: none;
+          }
         }
       }
     }
@@ -167,6 +170,9 @@ function scrollToAddon(id: string) {
 @media only screen and (max-width: 520px) {
   .container {
     flex-direction: column;
+    .top-bar {
+      display: flex;
+    }
     .sections {
       display: none;
     }
