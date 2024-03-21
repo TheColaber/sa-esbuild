@@ -128,6 +128,7 @@ export interface AddonManifest {
   //   default: string[];
   // }[];
   image?: string;
+  userPreview: boolean;
 }
 
 export type ExtraAddonManifest = AddonManifest & {

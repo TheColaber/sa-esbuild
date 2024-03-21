@@ -1,8 +1,6 @@
 <template>
   <div :class="$style.container">
-    <div :class="$style['top-bar']">
-      <Search />
-    </div>
+    <Search :class="$style['top-bar']" />
     <div :class="$style.sections">
       <div
         :class="$style.section"
@@ -33,9 +31,8 @@
 <script setup lang="ts">
 import * as addons from "#addons";
 import { computed, ref, watch } from "vue";
-import { Port } from "../../background/messaging";
 import ListItem from "./addon/list-item.vue";
-import { categories, searchFilter } from "./store";
+import { categories, port } from "./store";
 import Search from "./components/search.vue";
 
 const productionAddons = computed(() => [
@@ -76,7 +73,6 @@ const sections = computed(() => [
   },
 ]);
 
-const port = new Port();
 const addonsOnTab = await port.send<string[]>("getRunningAddons");
 if (addonsOnTab) {
   for (const section of sections.value) {
@@ -102,6 +98,7 @@ function scrollToAddon(id: string) {
   .top-bar {
     margin: 10px;
     display: none;
+    justify-content: center;
   }
 
   .sections {
@@ -167,7 +164,7 @@ function scrollToAddon(id: string) {
   }
 }
 
-@media only screen and (max-width: 520px) {
+@media only screen and (max-width: 635px) {
   .container {
     flex-direction: column;
     .top-bar {

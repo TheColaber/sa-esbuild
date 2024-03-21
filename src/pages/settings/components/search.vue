@@ -2,6 +2,7 @@
   <div :class="$style.container">
     <div :class="$style.search">
       <input
+        ref="inputEl"
         v-model="searchFilter"
         :class="$style.input"
         id="search"
@@ -24,11 +25,21 @@
 import { Icon } from "@iconify/vue";
 import search from "@iconify-icons/tabler/search";
 import { searchFilter, suggestions } from "../store";
+import { ref } from "vue";
+const inputEl = ref<HTMLInputElement>();
+window.addEventListener("keydown", function (e) {
+  if ((e.ctrlKey && e.key === "f") || e.key === "/") {
+    e.preventDefault();
+    inputEl.value.focus();
+  } else if (e.key === "Escape" && document.activeElement === inputEl.value) {
+    e.preventDefault();
+    searchFilter.value = "";
+  }
+});
 </script>
 
 <style lang="scss" module>
 .container {
-  flex: 1;
   .search {
     min-height: 40px;
     display: flex;
@@ -56,6 +67,10 @@ import { searchFilter, suggestions } from "../store";
       color: inherit;
       font-family: inherit;
       height: 100%;
+
+      &::-webkit-calendar-picker-indicator {
+        display: none !important;
+      }
 
       &::placeholder {
         color: inherit;

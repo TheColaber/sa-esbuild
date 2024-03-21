@@ -1,6 +1,8 @@
 <template>
-  <div>
-    <GridItem :addon="addon" v-for="addon of disabledAddons" />
+  <div :class="$style.container">
+    <div :class="$style.grid">
+      <GridItem :addon="addon" v-for="addon of disabledAddons" />
+    </div>
   </div>
 </template>
 
@@ -14,4 +16,14 @@ const disabledAddons = computed(() => [
 ]);
 </script>
 
-<style lang="scss" module></style>
+<style lang="scss" module>
+.container {
+  display: flex;
+  justify-content: center;
+  .grid {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+</style>

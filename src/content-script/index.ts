@@ -9,6 +9,7 @@ import { AddonStorage } from "../background/storage";
 let enabledAddons: string[];
 let addonSettings: AddonStorage;
 let userLangs: string[];
+let previewAddon: string | null;
 
 const locales = {
   en: localeEN,
@@ -21,17 +22,24 @@ scratchAddons.events.addEventListener(
     enabledAddons: string[];
     addonSettings: AddonStorage;
     userLangs: string[];
+    previewAddon: string | null;
   }>) => {
     if (scratchAddons.addonsLoaded) return;
 
     enabledAddons = detail.enabledAddons;
     addonSettings = detail.addonSettings;
     userLangs = detail.userLangs;
+    previewAddon = detail.previewAddon;
 
     console.log("Addon data received from storage");
 
     for (const id of enabledAddons) {
       runAddon(id);
+    }
+    console.log(detail);
+
+    if (previewAddon) {
+      runAddon(previewAddon, { showPreview: true });
     }
 
     scratchAddons.addonsLoaded = true;
@@ -69,7 +77,7 @@ scratchAddons.events.addEventListener(
         (style: HTMLStyleElement) => (style.disabled = false),
       );
     } else {
-      runAddon(id, true);
+      runAddon(id, { enabledLate: true });
     }
   },
 );
@@ -85,7 +93,7 @@ scratchAddons.events.addEventListener(
   },
 );
 
-function runAddon(id, enabledLate = false) {
+function runAddon(id, { enabledLate = false, showPreview = false } = {}) {
   const addon = addons[id];
 
   if (!addon) return;
@@ -111,8 +119,8 @@ function runAddon(id, enabledLate = false) {
 
     const addonInstance = new UserscriptAddon(
       id,
+      { enabledLate, showPreview },
       addonLocales,
-      enabledLate,
       settings,
     );
     scratchAddons.addons[id] = addonInstance;

@@ -1,3 +1,4 @@
+import image from "./image.png";
 export default defineAddon({
   name: "Find bar",
   description:
@@ -6,6 +7,8 @@ export default defineAddon({
   versionAdded: "1.0.0",
   credits: ["TheColaber", "griffpatch"],
   enabledByDefault: true,
+  image,
+  userPreview: true,
   // hotkeys: [
   //   {
   //     id: "openFindBar",

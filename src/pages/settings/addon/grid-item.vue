@@ -5,6 +5,9 @@
     <div :class="$style.info">
       <span :class="$style.description">{{ addon.description }}</span>
       <!-- <Toggle :id="addon.id" /> -->
+    </div>
+    <div :class="$style.buttons">
+      <button @click="tryAddon" :class="$style.button">Try</button>
       <button @click="buttonClick" :class="$style.button">
         {{ enabledStates[addon.id] ? "Edit" : "Enable" }}
       </button>
@@ -15,7 +18,7 @@
 <script lang="ts" setup>
 import { ExtraAddonManifest } from "../../../../esbuild/addon-helpers";
 const { addon } = defineProps<{ addon: ExtraAddonManifest }>();
-import { enabledStates, toggleAddon } from "../store";
+import { enabledStates, toggleAddon, port } from "../store";
 
 function buttonClick() {
   if (enabledStates.value[addon.id] === true) {
@@ -23,6 +26,10 @@ function buttonClick() {
   } else {
     toggleAddon(addon.id);
   }
+}
+
+function tryAddon() {
+  port.send("openScratchEditor", { try: addon.id });
 }
 </script>
 
@@ -46,10 +53,15 @@ function buttonClick() {
   .info {
     display: flex;
     align-items: flex-end;
+    flex: 1;
 
     .description {
+      flex: 1;
     }
-
+  }
+  .buttons {
+    display: flex;
+    gap: 5px;
     .button {
       background: var(--background-primary);
       border: 1px solid var(--button-border);

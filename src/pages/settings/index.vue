@@ -13,7 +13,7 @@ import Header from "./components/header.vue";
 import { syncStorage } from "../../background/storage";
 import pageStorage from "../storage";
 import { onMounted, ref, watch } from "vue";
-import { updateAll, tab, searchFilter } from "./store";
+import { updateAll, tab } from "./store";
 
 function getTabFromHash() {
   const { hash } = window.location;
@@ -31,16 +31,17 @@ function getTabFromHash() {
   tab.value = hashValue;
 }
 
-tab.value = getTabFromHash();
+getTabFromHash();
 
 onMounted(() => {
   setTimeout(() => {
     const hash = window.location.hash;
     window.location.hash = "";
     window.location.hash = hash;
+
     window.addEventListener("hashchange", () => {
       updateAll();
-      tab.value = getTabFromHash();
+      getTabFromHash();
     });
   }, 100);
 });

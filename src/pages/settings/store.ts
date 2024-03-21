@@ -5,6 +5,8 @@ import {
   allAddonStates,
   addonEnabledStates,
 } from "../../background/storage";
+import { Port } from "../../background/messaging";
+export const port = new Port();
 
 const { addonsStates } = await syncStorage.get("addonsStates");
 
@@ -43,7 +45,7 @@ export function updateAll() {
     const index = oldCategory.findIndex((addon) => update.id === addon.id);
     oldCategory.splice(index, 1);
   }
-  reqUpdate = [];
+  console.log(categories);
 }
 
 export function toggleAddon(id: string) {
@@ -57,6 +59,7 @@ export function toggleAddon(id: string) {
   syncStorage.set({ addonsStates });
   const newCategory = categories.value[addonsStates[id]];
   newCategory.push(addons[id]);
+  console.log(reqUpdate);
 }
 
 function typedObject<T extends string, U>(key: T, value: U) {
@@ -71,7 +74,6 @@ export const searchFilter = ref("");
 export const suggestions = ref([]);
 
 import MiniSearch from "minisearch";
-const stopWords = new Set(["and", "or", "to", "in", "a", "the", "it", "its"]);
 const miniSearch = new MiniSearch({
   fields: ["id", "name", "description"],
   searchOptions: {
@@ -79,16 +81,17 @@ const miniSearch = new MiniSearch({
     fuzzy: 1,
     prefix: true,
   },
-  processTerm: (term, _fieldName) =>
-    stopWords.has(term) ? null : term.toLowerCase(),
 });
 
-let filteredAddons = ref([]);
+// const stopWords = new Set(["and", "or", "to", "in", "a", "the", "it", "its"]);
+const filteredAddons = ref([]);
 miniSearch.addAll(Object.values(addons));
 watch(searchFilter, (search) => {
-  console.log(search);
   filteredAddons.value = miniSearch.search(search);
   suggestions.value = miniSearch
-    .autoSuggest(search)
+    .autoSuggest(search, {
+      // processTerm: (term) =>
+      // stopWords.has(term) ? null : term.toLowerCase(),
+    })
     .flatMap((res) => res.terms);
 });

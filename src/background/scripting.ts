@@ -1,6 +1,7 @@
 import { onPortConnection } from "./messaging";
 import { syncStorage, addonEnabledStates, addonStorage } from "./storage";
 const tabIds = [];
+const previewTabs = {};
 // TODO: actually maybe what we should do is have the bg ping these tabs to check if sa is on them.
 chrome.tabs.query({}).then((tabs) => {
   tabIds.push(...tabs.filter((tab) => tab.url).map((tab) => tab.id));
@@ -25,7 +26,13 @@ chrome.tabs.query({}).then((tabs) => {
     const addonSettings = await addonStorage.get(...enabledAddons);
     const userLangs = await getUserLangs(tab.url);
 
-    dispatch("addonData", { enabledAddons, addonSettings, userLangs });
+    const previewAddon = previewTabs[tabId];
+    dispatch("addonData", {
+      enabledAddons,
+      addonSettings,
+      userLangs,
+      previewAddon,
+    });
   });
 
   syncStorage.watch(({ addonsStates: newAddonStates }) => {
@@ -65,6 +72,12 @@ onPortConnection((port) => {
       });
       return res.result;
     }
+  });
+  port.onMessage("openScratchEditor", async (data) => {
+    const tab = await chrome.tabs.create({
+      url: "https://scratch.mit.edu/projects/editor",
+    });
+    previewTabs[tab.id] = data.try;
   });
 });
 

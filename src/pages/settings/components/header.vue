@@ -31,7 +31,7 @@
         </a>
         <div :class="$style.selectDisplay"></div>
       </div>
-      <Search />
+      <Search :class="$style.search" />
       <div :class="$style.buttons">
         <button :class="$style.button">More Settings</button>
       </div>
@@ -41,7 +41,7 @@
 
 <script setup lang="ts">
 import Search from "./search.vue";
-import { searchFilter, tab } from "../store";
+import { tab } from "../store";
 const msg = chrome.i18n.getMessage;
 </script>
 
@@ -74,6 +74,10 @@ const msg = chrome.i18n.getMessage;
     flex: 1;
     gap: 20px;
     align-items: center;
+
+    .search {
+      flex: 1;
+    }
 
     .tabs {
       display: flex;
@@ -155,10 +159,25 @@ const msg = chrome.i18n.getMessage;
   }
 }
 
-@media only screen and (max-width: 760px) {
+@media only screen and (max-width: 845px) {
   .header {
     .title {
       display: none;
+    }
+  }
+}
+
+@media only screen and (max-width: 635px) {
+  .header {
+    .top-bar {
+      .search {
+        display: none;
+      }
+      .buttons {
+        display: flex;
+        flex: 1;
+        justify-content: flex-end;
+      }
     }
   }
 }

@@ -103,6 +103,9 @@ onUnmounted(() => {
 });
 
 const { Blockly, vm } = addon.tab;
+if (addon.showPreview) {
+  open();
+}
 
 function open(
   options: { showBlock?: ScratchBlocks.BlockSvg; showMore?: boolean } = {},
