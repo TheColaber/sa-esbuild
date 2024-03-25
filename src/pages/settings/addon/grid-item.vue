@@ -7,7 +7,9 @@
       <!-- <Toggle :id="addon.id" /> -->
     </div>
     <div :class="$style.buttons">
-      <button @click="tryAddon" :class="$style.button">Try</button>
+      <button @click="tryAddon" :class="$style.button" v-if="addon.userPreview">
+        Try
+      </button>
       <button @click="buttonClick" :class="$style.button">
         {{ enabledStates[addon.id] ? "Edit" : "Enable" }}
       </button>
@@ -29,7 +31,7 @@ function buttonClick() {
 }
 
 function tryAddon() {
-  port.send("openScratchEditor", { try: addon.id });
+  port.send("openScratchEditor", addon.id);
 }
 </script>
 
@@ -62,6 +64,7 @@ function tryAddon() {
   .buttons {
     display: flex;
     gap: 5px;
+    justify-content: flex-end;
     .button {
       background: var(--background-primary);
       border: 1px solid var(--button-border);

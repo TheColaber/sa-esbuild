@@ -63,5 +63,6 @@ watch(lightTheme, (newVal) => {
   flex-direction: column;
   background-color: var(--background-primary);
   color: var(--content-text);
+  min-height: 100vh;
 }
 </style>

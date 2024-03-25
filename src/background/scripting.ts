@@ -1,17 +1,12 @@
 import { onPortConnection } from "./messaging";
 import { syncStorage, addonEnabledStates, addonStorage } from "./storage";
-const tabIds = [];
+
 const previewTabs = {};
-// TODO: actually maybe what we should do is have the bg ping these tabs to check if sa is on them.
-chrome.tabs.query({}).then((tabs) => {
-  tabIds.push(...tabs.filter((tab) => tab.url).map((tab) => tab.id));
-});
 
 (async () => {
   let { addonsStates } = await syncStorage.get("addonsStates");
   chrome.tabs.onUpdated.addListener(async (tabId, { status }, tab) => {
     if (!tab.url || status !== "loading") return;
-    tabIds.push(tabId);
 
     const enabledAddons = [];
     for (const id in addonsStates) {
@@ -27,12 +22,16 @@ chrome.tabs.query({}).then((tabs) => {
     const userLangs = await getUserLangs(tab.url);
 
     const previewAddon = previewTabs[tabId];
-    dispatch("addonData", {
-      enabledAddons,
-      addonSettings,
-      userLangs,
-      previewAddon,
-    });
+    dispatch(
+      "addonData",
+      {
+        enabledAddons,
+        addonSettings,
+        userLangs,
+        previewAddon,
+      },
+      tabId,
+    );
   });
 
   syncStorage.watch(({ addonsStates: newAddonStates }) => {
@@ -66,7 +65,7 @@ onPortConnection((port) => {
         target: { tabId: tab.id },
         injectImmediately: process.env.MODE !== "development",
         world: "MAIN",
-        func: async () => {
+        func: () => {
           return Object.keys(scratchAddons.addons);
         },
       });
@@ -77,17 +76,23 @@ onPortConnection((port) => {
     const tab = await chrome.tabs.create({
       url: "https://scratch.mit.edu/projects/editor",
     });
-    previewTabs[tab.id] = data.try;
+    previewTabs[tab.id] = data;
   });
 });
 
-function dispatch(type: string, detail: any) {
+async function dispatch(type: string, detail: any, ...tabIds: number[]) {
+  if (tabIds.length === 0) {
+    await chrome.tabs.query({}).then((tabs) => {
+      tabIds = tabs.filter((tab) => tab.url).map((tab) => tab.id);
+    });
+  }
   for (const tabId of tabIds) {
     chrome.scripting.executeScript({
       target: { tabId },
       injectImmediately: process.env.MODE !== "development",
       world: "MAIN",
       func: async (type, detail: any) => {
+        if (!window.scratchAddons) return;
         scratchAddons.events.dispatchEvent(new CustomEvent(type, { detail }));
       },
       args: [type, detail],

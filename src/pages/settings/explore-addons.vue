@@ -11,8 +11,8 @@ import { computed } from "vue";
 import GridItem from "./addon/grid-item.vue";
 import { categories } from "./store";
 const disabledAddons = computed(() => [
-  ...categories.value.defaultDisabled,
-  ...categories.value.disabled,
+  ...categories.defaultDisabled,
+  ...categories.disabled,
 ]);
 </script>
 

@@ -37,6 +37,7 @@
           v-if="id === selectedTab"
           :is="popup.component"
           :addon="instances[id]"
+          :in-popup="true"
         />
       </Suspense>
     </template>

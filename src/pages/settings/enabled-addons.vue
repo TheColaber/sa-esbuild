@@ -2,27 +2,27 @@
   <div :class="$style.container">
     <Search :class="$style['top-bar']" />
     <div :class="$style.sections">
-      <div
-        :class="$style.section"
-        v-for="section of sections"
-        v-show="section.addons.length > 0"
-      >
-        <div :class="$style.name">{{ section.name }}</div>
-        <div :class="$style.addons">
-          <button
-            :class="$style.addon"
-            @click="scrollToAddon(addon.id)"
-            v-for="addon of section.addons"
-          >
-            {{ addon.name }}
-          </button>
-        </div>
+      <div :class="$style.section" v-for="section of sections">
+        <template v-if="!section.hidden && section.addons.length > 0">
+          <div :class="$style.name">{{ section.name }}</div>
+          <div :class="$style.addons">
+            <button
+              :class="$style.addon"
+              @click="scrollToAddon(addon.id)"
+              v-for="addon of section.addons"
+            >
+              {{ addon.name }}
+            </button>
+          </div>
+        </template>
       </div>
     </div>
     <div :class="$style['extended-list']">
-      <template v-for="section of sections" v-show="section.hidden">
-        <div v-if="section.addons.length > 0">{{ section.name }}</div>
-        <ListItem v-for="addon of section.addons" :addon="addon"></ListItem>
+      <template v-for="section of sections">
+        <template v-if="!section.hidden && section.addons.length > 0">
+          <div>{{ section.name }}</div>
+          <ListItem v-for="addon of section.addons" :addon="addon"></ListItem>
+        </template>
       </template>
     </div>
   </div>
@@ -30,14 +30,15 @@
 
 <script setup lang="ts">
 import * as addons from "#addons";
-import { computed, ref, watch } from "vue";
+import { computed } from "vue";
 import ListItem from "./addon/list-item.vue";
-import { categories, port } from "./store";
+import { categories, port, searchFilter } from "./store";
 import Search from "./components/search.vue";
+const { inPopup } = defineProps<{ inPopup?: boolean }>();
 
 const productionAddons = computed(() => [
-  ...categories.value.enabled,
-  ...categories.value.defaultEnabled,
+  ...categories.enabled,
+  ...categories.defaultEnabled,
 ]);
 const sections = computed(() => [
   {
@@ -49,7 +50,7 @@ const sections = computed(() => [
   {
     id: "development",
     name: "In Development",
-    addons: categories.value.dev,
+    addons: categories.dev,
   },
   {
     id: "editor",
@@ -68,8 +69,8 @@ const sections = computed(() => [
   {
     id: "disabled",
     name: "Disabled",
-    addons: [],
-    hidden: true,
+    addons: [...categories.defaultDisabled, ...categories.disabled],
+    hidden: !inPopup || searchFilter.value.length === 0,
   },
 ]);
 
@@ -93,8 +94,6 @@ function scrollToAddon(id: string) {
 <style lang="scss" module>
 .container {
   display: flex;
-  height: calc(100vh - 60px);
-
   .top-bar {
     margin: 10px;
     display: none;

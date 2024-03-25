@@ -35,9 +35,9 @@ import Toggle from "../components/toggle.vue";
 const { addon } = defineProps<{ addon: ExtraAddonManifest }>();
 // TODO
 const enabledAddons = [
-  ...categories.value.enabled,
-  ...categories.value.defaultEnabled,
-  ...categories.value.dev,
+  ...categories.enabled,
+  ...categories.defaultEnabled,
+  ...categories.dev,
 ];
 const settings = ref(
   await addonStorage.get(...enabledAddons.map((addon) => addon.id)),

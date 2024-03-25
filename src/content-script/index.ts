@@ -1,10 +1,12 @@
 import "./define";
 import "./redux";
-import * as addons from "#addon-scripts";
+import * as addonScripts from "#addon-scripts";
+import * as addonStyles from "#addon-styles";
 import * as localeEN from "#addon-en";
-import MATCH_PATTERNS from "./matches";
+import { MATCH_PATTERNS } from "./matches";
 import UserscriptAddon from "../addon-api/userscript";
 import { AddonStorage } from "../background/storage";
+import injectStyle from "./inject-style";
 
 let enabledAddons: string[];
 let addonSettings: AddonStorage;
@@ -36,7 +38,6 @@ scratchAddons.events.addEventListener(
     for (const id of enabledAddons) {
       runAddon(id);
     }
-    console.log(detail);
 
     if (previewAddon) {
       runAddon(previewAddon, { showPreview: true });
@@ -86,7 +87,6 @@ scratchAddons.events.addEventListener(
   ({ detail: { id, settings } }: CustomEvent) => {
     const addon = scratchAddons.addons[id];
     addonSettings[id] = settings;
-    console.log(id);
     addon.settings.dispatchEvent(
       new CustomEvent("change", { detail: settings }),
     );
@@ -94,16 +94,10 @@ scratchAddons.events.addEventListener(
 );
 
 function runAddon(id, { enabledLate = false, showPreview = false } = {}) {
-  const addon = addons[id];
+  const scripts = addonScripts[id] || [];
 
-  if (!addon) return;
-  for (const { script, matches } of addon) {
-    let urlMatches = false;
-    for (const match of matches) {
-      urlMatches = MATCH_PATTERNS[match].test(window.location.pathname);
-      if (urlMatches) break;
-    }
-    if (!urlMatches || !script) continue;
+  for (const { script, matches } of scripts) {
+    if (!testUrlMatches(matches)) continue;
     console.log(id, "is running");
 
     const addonLocales = {};
@@ -126,5 +120,19 @@ function runAddon(id, { enabledLate = false, showPreview = false } = {}) {
     scratchAddons.addons[id] = addonInstance;
     script().then((imported) => imported.default());
   }
-  // TODO: loop around addon.styles, which are styles that may be controlled by setting values.
+  const styles = addonStyles[id] || [];
+
+  for (const { style, matches } of styles) {
+    if (!testUrlMatches(matches)) continue;
+    injectStyle(style);
+  }
+}
+
+function testUrlMatches(matches: (keyof typeof MATCH_PATTERNS)[]) {
+  let urlMatches = false;
+  for (const match of matches) {
+    urlMatches = MATCH_PATTERNS[match].test(window.location.pathname);
+    if (urlMatches) break;
+  }
+  return urlMatches;
 }

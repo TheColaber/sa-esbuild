@@ -1,7 +1,7 @@
 import UserscriptAddon from "../src/addon-api/userscript";
 import { Component } from "vue";
 import { IconifyIcon } from "@iconify/vue";
-import MATCH_PATTERNS from "../src/content-script/matches";
+import { MATCH_PATTERNS } from "../src/content-script/matches";
 
 declare global {
   const defineAddon: typeof import("./addon-helpers").defineAddon;
@@ -128,7 +128,7 @@ export interface AddonManifest {
   //   default: string[];
   // }[];
   image?: string;
-  userPreview: boolean;
+  userPreview?: boolean;
 }
 
 export type ExtraAddonManifest = AddonManifest & {
@@ -167,7 +167,7 @@ export interface AddonScript {
 export interface AddonStyle {
   style: string;
   matches: (keyof typeof MATCH_PATTERNS)[];
-  attachedSetting: string;
+  attachedSetting?: string;
 }
 
 export interface AddonPopup {
