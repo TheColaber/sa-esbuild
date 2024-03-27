@@ -26,9 +26,11 @@ export default () => ({
     ];
     const entryPoints = [...manifestEntries].map((f) => dir + "/" + f);
     const assets = [...Object.values(manifest.icons), ...extraIcons];
+    
     const html = [
       manifest.action.default_popup,
       manifest.options_page,
+      manifest.devtools_page,
       ...extraPages,
     ].map((f) => dir + "/" + f);
 
@@ -37,11 +39,13 @@ export default () => ({
       const root = load(buffer).root();
 
       const scripts = root.find("script");
-      for (const script of scripts) {
+      for (const script of scripts) {        
+        if (!script.attribs.src) continue;
         entryPoints.push(path.join(path.dirname(file), script.attribs.src));
       }
 
       const htmlAssets = root.find("link");
+      
       for (const asset of htmlAssets) {
         assets.push(
           path.relative(dir, path.join(path.dirname(file), asset.attribs.href)),
@@ -74,9 +78,8 @@ export default () => ({
       //     console.log(await renderToString(createApp({render: () => h(descriptor)})));
       //   }
       // })
-
-      build.initialOptions.entryPoints = entryPoints;
     }
+    build.initialOptions.entryPoints = entryPoints;
 
     build.onStart(async () => {
       if (manifest.default_locale) {
@@ -104,7 +107,7 @@ export default () => ({
 
     build.onEnd(async (buildRes) => {
       if (!buildRes.metafile) return;
-      for (const distFile in buildRes.metafile.outputs) {
+      for (const distFile in buildRes.metafile.outputs) {        
         for (const entry of manifestEntries) {
           if (
             buildRes.metafile.outputs[distFile].entryPoint ===
@@ -165,6 +168,7 @@ export default () => ({
         if (!buildRes.metafile) return;
         for (const distFile in buildRes.metafile.outputs) {
           for (const script of scripts) {
+            if (!script.attribs.src) continue;
             const scriptEntry = path.join(
               path.dirname(file),
               script.attribs.src,

@@ -5,3 +5,11 @@ import "./transition";
 import "./commands";
 import "./context-menus";
 import "./scripting";
+
+// chrome.devtools.panels.create("SA Development",
+//     "images/icon.png",
+//     "Panel.html",
+//     function(panel) {
+//       // code invoked on panel creation
+//     }
+// );

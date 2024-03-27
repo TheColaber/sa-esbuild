@@ -16,13 +16,15 @@ class Storage<T> {
   }
 
   async get<K extends keyof T>(...keys: K[]) {
-    let prefixedKeys = keys.flatMap((key) => this.prefixKey(key));
+    let prefixedKeys = keys.flatMap((key) => this.prefixKey(key));    
+    if (prefixedKeys.length === 0) prefixedKeys = null;
     const storage = (await chrome.storage[this.type].get(
       prefixedKeys,
-    )) as Partial<T>;
+    )) as { [P in K]: T[P] };
+    keys = Object.keys(storage).map((key) => this.unprefixKey(key));
     const unprefixedStorage = keys
-      .map((key) => ({ [key]: storage[this.prefixKey(key)] as T[K] }))
-      .reduce((all, single) => ({ ...single, ...all }), {});
+    .map((key) => ({ [key]: storage[this.prefixKey(key)] }))
+    .reduce((all, single) => ({ ...single, ...all }), {}) as { [P in K]: T[P] };
 
     return unprefixedStorage;
   }
@@ -71,6 +73,7 @@ export interface SyncStorage {
     [addonId: string]: (typeof allAddonStates)[number];
   };
   lightTheme: boolean;
+  onboarded: boolean;
 }
 export const syncStorage = new Storage<SyncStorage>("sync", "syncstorage");
 
@@ -82,9 +85,7 @@ export interface AddonStorage {
 export const addonStorage = new Storage<AddonStorage>("sync", "addonstorage");
 
 export const addonDisabledStates = ["defaultDisabled", "disabled"] as const;
-
 export const addonEnabledStates = ["defaultEnabled", "dev", "enabled"] as const;
-
 export const allAddonStates = [
   ...addonDisabledStates,
   ...addonEnabledStates,

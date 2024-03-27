@@ -10,10 +10,16 @@
 import { computed } from "vue";
 import GridItem from "./addon/grid-item.vue";
 import { categories } from "./store";
-const disabledAddons = computed(() => [
-  ...categories.defaultDisabled,
-  ...categories.disabled,
-]);
+import { addonDisabledStates } from "../../background/storage";
+
+const disabledAddons = computed(() => addonDisabledStates.flatMap((state) => categories[state]));
+// const sections = computed(() => [
+//   {
+//     id: "development",
+//     name: "In Development",
+//     addons: disabledAddons.value.filter((addon) => addon.mode === "dev"),
+//   },
+// ]);
 </script>
 
 <style lang="scss" module>

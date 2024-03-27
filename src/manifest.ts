@@ -31,6 +31,10 @@ const PAGES = {
     INDEX: "pages/settings/index.html",
     // permissions page, etc.
   },
+  DEVTOOLS: {
+    INDEX: "pages/devtools/index.html",
+    PANNEL: "pages/devtools/pannel.html"
+  }
 };
 
 const isPrerelease = pkg.version.split("-")[1] === "prerelease";
@@ -73,6 +77,7 @@ const manifest: chrome.runtime.ManifestV3 = {
   },
   host_permissions: ["https://*.scratch.mit.edu/*"],
   permissions: ["storage", "contextMenus", "alarms", "scripting", "cookies"],
+  // devtools_page: PAGES.DEVTOOLS.INDEX,
 };
 
 const [, , ...args] = process.argv;
@@ -85,6 +90,9 @@ if (isFirefox) {
 }
 
 export const extraIcons = [ICONS.MUTED[16], ICONS.MUTED[32]];
-export const extraPages = [PAGES.POPUP.FULLSCREEN];
+export const extraPages = [
+  PAGES.POPUP.FULLSCREEN,
+  // PAGES.DEVTOOLS.PANNEL
+];
 
 export default manifest;
