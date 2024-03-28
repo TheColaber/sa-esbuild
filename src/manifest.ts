@@ -33,8 +33,8 @@ const PAGES = {
   },
   DEVTOOLS: {
     INDEX: "pages/devtools/index.html",
-    PANNEL: "pages/devtools/pannel.html"
-  }
+    PANNEL: "pages/devtools/pannel.html",
+  },
 };
 
 const isPrerelease = pkg.version.split("-")[1] === "prerelease";

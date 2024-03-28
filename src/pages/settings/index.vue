@@ -1,5 +1,8 @@
 <template>
-  <div v-if="!showOnboarding" :class="[$style.container, { theme: true, lightTheme }]">
+  <div
+    v-if="!showOnboarding"
+    :class="[$style.container, { theme: true, lightTheme }]"
+  >
     <Header v-model:tab="tab"></Header>
     <Suspense>
       <Content :tab="tab"></Content>
@@ -15,7 +18,7 @@ import { syncStorage } from "../../background/storage";
 import pageStorage from "../storage";
 import { onMounted, ref, watch } from "vue";
 import { updateAll, tab } from "./store";
-import Onboarding from "./onboarding.vue"
+import Onboarding from "./onboarding.vue";
 
 function getTabFromHash() {
   const { hash } = window.location;
@@ -58,9 +61,9 @@ watch(lightTheme, (newVal) => {
   syncStorage.set({ lightTheme: newVal });
 });
 
-const showOnboarding = ref(false)
-syncStorage.get("onboarded").then(({onboarded=false}) => {
-showOnboarding.value = !onboarded;
+const showOnboarding = ref(false);
+syncStorage.get("onboarded").then(({ onboarded = false }) => {
+  showOnboarding.value = !onboarded;
 });
 </script>
 

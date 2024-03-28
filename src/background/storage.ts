@@ -16,15 +16,17 @@ class Storage<T> {
   }
 
   async get<K extends keyof T>(...keys: K[]) {
-    let prefixedKeys = keys.flatMap((key) => this.prefixKey(key));    
+    let prefixedKeys = keys.flatMap((key) => this.prefixKey(key));
     if (prefixedKeys.length === 0) prefixedKeys = null;
-    const storage = (await chrome.storage[this.type].get(
-      prefixedKeys,
-    )) as { [P in K]: T[P] };
+    const storage = (await chrome.storage[this.type].get(prefixedKeys)) as {
+      [P in K]: T[P];
+    };
     keys = Object.keys(storage).map((key) => this.unprefixKey(key));
     const unprefixedStorage = keys
-    .map((key) => ({ [key]: storage[this.prefixKey(key)] }))
-    .reduce((all, single) => ({ ...single, ...all }), {}) as { [P in K]: T[P] };
+      .map((key) => ({ [key]: storage[this.prefixKey(key)] }))
+      .reduce((all, single) => ({ ...single, ...all }), {}) as {
+      [P in K]: T[P];
+    };
 
     return unprefixedStorage;
   }

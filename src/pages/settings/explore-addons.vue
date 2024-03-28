@@ -12,7 +12,9 @@ import GridItem from "./addon/grid-item.vue";
 import { categories } from "./store";
 import { addonDisabledStates } from "../../background/storage";
 
-const disabledAddons = computed(() => addonDisabledStates.flatMap((state) => categories[state]));
+const disabledAddons = computed(() =>
+  addonDisabledStates.flatMap((state) => categories[state]),
+);
 // const sections = computed(() => [
 //   {
 //     id: "development",

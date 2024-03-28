@@ -1,6 +1,4 @@
 import { load } from "cheerio";
-import esm from "esm";
-import { Module } from "module";
 import { readFile, mkdir, writeFile, cp } from "fs/promises";
 import path from "path";
 import {
@@ -26,26 +24,28 @@ export default () => ({
     ];
     const entryPoints = [...manifestEntries].map((f) => dir + "/" + f);
     const assets = [...Object.values(manifest.icons), ...extraIcons];
-    
+
     const html = [
       manifest.action.default_popup,
       manifest.options_page,
       manifest.devtools_page,
       ...extraPages,
-    ].map((f) => dir + "/" + f);
+    ]
+      .filter((page) => !!page)
+      .map((f) => dir + "/" + f);
 
     for (const file of html) {
       const buffer = await readFile(file);
       const root = load(buffer).root();
 
       const scripts = root.find("script");
-      for (const script of scripts) {        
+      for (const script of scripts) {
         if (!script.attribs.src) continue;
         entryPoints.push(path.join(path.dirname(file), script.attribs.src));
       }
 
       const htmlAssets = root.find("link");
-      
+
       for (const asset of htmlAssets) {
         assets.push(
           path.relative(dir, path.join(path.dirname(file), asset.attribs.href)),
@@ -107,7 +107,7 @@ export default () => ({
 
     build.onEnd(async (buildRes) => {
       if (!buildRes.metafile) return;
-      for (const distFile in buildRes.metafile.outputs) {        
+      for (const distFile in buildRes.metafile.outputs) {
         for (const entry of manifestEntries) {
           if (
             buildRes.metafile.outputs[distFile].entryPoint ===
