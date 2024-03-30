@@ -7,9 +7,6 @@
   // Hides directories/files from sidebar.
   // Excludes them from search by default, as well as from quick open.
   "files.exclude": {
-    // All languages but English
-    "src/_locales/[!e]*": true,
-    "src/_locales/*[!n]": true,
     "src/**/*.css.d.ts": true
   },
   "explorer.autoRevealExclude": {

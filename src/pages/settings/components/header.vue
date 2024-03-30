@@ -67,6 +67,7 @@ const msg = chrome.i18n.getMessage;
 
     .logo {
       height: 30px;
+      padding: 15px 20px;
     }
   }
   .top-bar {
@@ -160,7 +161,7 @@ const msg = chrome.i18n.getMessage;
   }
 }
 
-@media only screen and (max-width: 960px) {
+@media only screen and (max-width: 990px) {
   .header {
     .top-bar {
       .buttons {
@@ -170,15 +171,30 @@ const msg = chrome.i18n.getMessage;
   }
 }
 
-@media only screen and (max-width: 845px) {
+@media only screen and (max-width: 900px) {
   .header {
     .title {
-      display: none;
+      .text {
+        display: none;
+      }
+      .logo {
+        padding: 0px;
+      }
     }
   }
 }
 
-@media only screen and (max-width: 635px) {
+@media only screen and (max-width: 805px) {
+  .header {
+    .title {
+      .logo {
+        display: none;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 675px) {
   .header {
     .top-bar {
       .search {

@@ -20,5 +20,6 @@ export default async () => {
     } else {
       // animate in
     }
+    Blockly.svgResize(Blockly.getMainWorkspace());
   };
 };

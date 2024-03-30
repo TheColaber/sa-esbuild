@@ -75,7 +75,7 @@ window.addEventListener("keydown", function (e) {
 
       &::placeholder {
         color: inherit;
-        opacity: 0.4;
+        opacity: 0.6;
       }
 
       &:focus-visible {
