@@ -40,6 +40,9 @@ window.addEventListener("keydown", function (e) {
 
 <style lang="scss" module>
 .container {
+  display: flex;
+  justify-content: center;
+
   .search {
     min-height: 40px;
     display: flex;
@@ -47,8 +50,6 @@ window.addEventListener("keydown", function (e) {
     background: #00000020;
     height: 40px;
     width: 100%;
-    max-width: 500px;
-    min-width: 250px;
     border-radius: 6px;
     color: inherit;
     font-size: 18px;

@@ -3,6 +3,11 @@
     <div :class="$style.grid">
       <GridItem :addon="addon" v-for="addon of disabledAddons" />
     </div>
+    <div v-if="disabledAddons.length === 0">
+      You have all addons enabled. But that's not really a great thing...
+      Consider going through your addons and making sure you know what each one
+      does.
+    </div>
   </div>
 </template>
 
@@ -27,11 +32,13 @@ const disabledAddons = computed(() =>
 <style lang="scss" module>
 .container {
   display: flex;
-  justify-content: center;
+  padding: 30px;
   .grid {
+    flex: 1;
     display: grid;
     gap: 20px;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(min-content, 272px));
+    justify-content: center;
   }
 }
 </style>

@@ -7,6 +7,7 @@ import vue from "./plugins/vue.ts";
 import postcss from "./plugins/postcss.ts";
 import typedCss from "./plugins/typed-css.ts";
 import image from "esbuild-plugin-inline-image";
+import timestamp from "./plugins/timestamp.ts";
 process.env.MODE = "development";
 build();
 
@@ -34,6 +35,7 @@ async function build() {
       postcss(),
       typedCss(),
       image({ limit: 0 }),
+      timestamp(),
     ],
     treeShaking: true,
     logLevel: "debug",

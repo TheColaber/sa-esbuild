@@ -77,6 +77,7 @@ const msg = chrome.i18n.getMessage;
 
     .search {
       flex: 1;
+      margin: 0px 32px;
     }
 
     .tabs {
@@ -144,6 +145,16 @@ const msg = chrome.i18n.getMessage;
         font-family: inherit;
         font-size: inherit;
         padding: 0px;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 1065px) {
+  .header {
+    .top-bar {
+      .search {
+        margin: 0px;
       }
     }
   }

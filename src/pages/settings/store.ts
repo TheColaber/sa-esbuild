@@ -49,7 +49,8 @@ export const categories = reactive(
               !searchFilter.value ||
               filteredAddons.value.some((res) => res.id === id),
           )
-          .map((id) => addons[id]),
+          .map((id) => addons[id])
+          .sort((a, b) => a.name.localeCompare(b.name)),
       ),
     ),
   ),

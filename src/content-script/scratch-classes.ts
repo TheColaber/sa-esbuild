@@ -8,9 +8,9 @@ export default function loadClasses() {
     const todoComment =
       "/* DO NOT EDIT\n@todo This file is copied from GUI and should be pulled out into a shared library.";
 
-    return (
-      !(textContent.startsWith(todoComment) &&
-      excludedPrefixes.some((prefix) => textContent.includes(prefix)))
+    return !(
+      textContent.startsWith(todoComment) &&
+      excludedPrefixes.some((prefix) => textContent.includes(prefix))
     );
   };
 
