@@ -7,12 +7,12 @@ class Storage<T> {
   }
 
   prefixKey(key: keyof T) {
-    return this.name + "-" + key.toString();
+    return this.name + "--" + key.toString();
   }
 
-  unprefixKey(key: keyof T) {
+  splitKey(key: keyof T) {
     if (!(typeof key === "string")) return;
-    return key.split(this.name + "-")[1];
+    return key.split("--");
   }
 
   async get<K extends keyof T>(...keys: K[]) {
@@ -21,7 +21,7 @@ class Storage<T> {
     const storage = (await chrome.storage[this.type].get(prefixedKeys)) as {
       [P in K]: T[P];
     };
-    keys = Object.keys(storage).map((key) => this.unprefixKey(key));
+    keys = Object.keys(storage).map((key) => this.splitKey(key)[1]);
     const unprefixedStorage = keys
       .map((key) => ({ [key]: storage[this.prefixKey(key)] }))
       .reduce((all, single) => ({ ...single, ...all }), {}) as {
@@ -57,14 +57,18 @@ class Storage<T> {
         let prefixedKeys = Object.keys(changes) as Array<keyof T>;
         let unprefixedChanges = {};
         for (const prefixedKey of prefixedKeys) {
-          unprefixedChanges[this.unprefixKey(prefixedKey)] =
-            changes[prefixedKey].newValue;
+          const splitKey = this.splitKey(prefixedKey);
+          if (splitKey[0] !== this.name) continue;
+
+          unprefixedChanges[splitKey[1]] = changes[prefixedKey].newValue;
         }
-        cb(
-          unprefixedChanges as {
-            [key in keyof T]: T[key];
-          },
-        );
+        if (Object.keys(unprefixedChanges).length > 0) {
+          cb(
+            unprefixedChanges as {
+              [key in keyof T]: T[key];
+            },
+          );
+        }
       },
     );
   }

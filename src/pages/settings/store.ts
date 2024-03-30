@@ -86,7 +86,11 @@ export function toggleAddon(id: string) {
     : "disabled";
   syncStorage.set({ addonsStates });
   const newCategory = categories[addonsStates[id]];
+  if (newCategory.includes(addons[id])) return;
   newCategory.push(addons[id]);
+  categories[addonsStates[id]] = newCategory.sort((a, b) =>
+    a.name.localeCompare(b.name),
+  );
 }
 
 function typedObject<T extends string, U>(key: T, value: U) {

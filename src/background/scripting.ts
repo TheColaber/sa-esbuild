@@ -66,11 +66,12 @@ onPortConnection((port) => {
         injectImmediately: process.env.MODE !== "development",
         world: "MAIN",
         func: () => {
-          return Object.keys(scratchAddons.addons);
+          return scratchAddons.runningAddons;
         },
       });
       return res.result;
     }
+    return [];
   });
   port.onMessage("openScratchEditor", async (data) => {
     const tab = await chrome.tabs.create({

@@ -51,17 +51,17 @@ scratchAddons.events.addEventListener(
   "dynamicDisable",
   ({ detail: { id } }: CustomEvent) => {
     const addon = scratchAddons.addons[id];
-    addon.dispatchEvent(new CustomEvent("dynamicDisable"));
-    const style = document.createElement("style");
-    style.setAttribute("data-addon-disabled-style-" + id, "");
-    style.textContent = `[data-addon-${id}] { display: none !important; }`;
-    const injectedStyles = document.querySelectorAll(
-      `.scratch-addons-style[data-addon-id=${id}]`,
+    if (addon) {
+      addon.dispatchEvent(new CustomEvent("dynamicDisable"));
+      const style = document.createElement("style");
+      style.setAttribute("data-addon-disabled-style-" + id, "");
+      style.textContent = `[data-addon-${id}] { display: none !important; }`;
+      document.body.appendChild(style);
+    }
+    const injectedStyles = document.querySelectorAll<HTMLStyleElement>(
+      `.scratch-addons-style[data-addon-id='${id}']`,
     );
-    injectedStyles.forEach(
-      (style: HTMLStyleElement) => (style.disabled = true),
-    );
-    document.body.appendChild(style);
+    injectedStyles.forEach((style) => (style.disabled = true));
   },
 );
 scratchAddons.events.addEventListener(
@@ -93,12 +93,13 @@ scratchAddons.events.addEventListener(
   },
 );
 
-function runAddon(id, { enabledLate = false, showPreview = false } = {}) {
+function runAddon(
+  id: string,
+  { enabledLate = false, showPreview = false } = {},
+) {
   const scripts = addonScripts[id] || [];
-
-  for (const { script, matches } of scripts) {
-    if (!testUrlMatches(matches)) continue;
-    console.log(id, "is running");
+  if (scripts.length > 0) {
+    const settings = addonSettings[id];
 
     const addonLocales = {};
     for (const lang of userLangs) {
@@ -109,8 +110,6 @@ function runAddon(id, { enabledLate = false, showPreview = false } = {}) {
       }
     }
 
-    const settings = addonSettings[id];
-
     const addonInstance = new UserscriptAddon(
       id,
       { enabledLate, showPreview },
@@ -118,13 +117,19 @@ function runAddon(id, { enabledLate = false, showPreview = false } = {}) {
       settings,
     );
     scratchAddons.addons[id] = addonInstance;
-    script().then((imported) => imported.default());
+    for (const { script, matches } of scripts) {
+      if (!testUrlMatches(matches)) continue;
+      script().then((imported) => imported.default());
+      console.log(id, "is running");
+      scratchAddons.runningAddons.push(id);
+    }
   }
   const styles = addonStyles[id] || [];
 
   for (const { style, matches } of styles) {
     if (!testUrlMatches(matches)) continue;
-    injectStyle(style);
+    injectStyle(style, id);
+    scratchAddons.runningAddons.push(id);
   }
 }
 

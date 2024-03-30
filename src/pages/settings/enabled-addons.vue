@@ -36,21 +36,24 @@ import { categories, port, searchFilter } from "./store";
 import Search from "./components/search.vue";
 const { inPopup } = defineProps<{ inPopup?: boolean }>();
 
-const productionAddons = computed(() => [
-  ...categories.enabled,
-  ...categories.defaultEnabled,
-]);
+const addonsOnTab = await port.send<string[]>("getRunningAddons");
+
+const productionAddons = computed(() =>
+  [...categories.enabled, ...categories.defaultEnabled].filter(
+    ({ id }) => !addonsOnTab.includes(id),
+  ),
+);
 const sections = computed(() => [
   {
     id: "running",
     name: "Running on tab",
-    addons: [],
-    hidden: true,
+    addons: addonsOnTab.map((id) => addons[id]),
+    hidden: addonsOnTab.length === 0,
   },
   {
     id: "development",
     name: "In Development",
-    addons: categories.dev,
+    addons: categories.dev.filter(({ id }) => !addonsOnTab.includes(id)),
   },
   {
     id: "editor",
@@ -73,18 +76,6 @@ const sections = computed(() => [
     hidden: !inPopup || searchFilter.value.length === 0,
   },
 ]);
-
-const addonsOnTab = await port.send<string[]>("getRunningAddons");
-if (addonsOnTab) {
-  for (const section of sections.value) {
-    section.addons = section.addons.filter(
-      ({ id }) => !addonsOnTab.includes(id),
-    );
-  }
-  const runningSection = sections.value.find(({ id }) => id === "running");
-  (runningSection.addons = addonsOnTab.map((id) => addons[id])),
-    (runningSection.hidden = false);
-}
 
 function scrollToAddon(id: string) {
   window.location.hash = "#addon-" + id;

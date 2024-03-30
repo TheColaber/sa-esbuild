@@ -121,6 +121,7 @@ function switchTab(id) {
   flex-direction: column;
   /* overflow: hidden; */
   .sticky {
+    z-index: 1;
     padding: 10px 10px 0px 10px;
     position: sticky;
     top: 0;

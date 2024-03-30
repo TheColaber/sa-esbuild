@@ -18,6 +18,7 @@ globalThis.scratchAddons = {
     log: console.log.bind(console, "%csa", "color: #ff7b26;"),
   },
   events: new EventTarget(),
+  runningAddons: [],
   addons: {},
   cache: {
     BlocklyInstance: null,
@@ -42,6 +43,7 @@ declare global {
     events: EventTarget;
     redux: { target: EventTarget; state: any; dispatch: any };
     sharedObserver: import("./shared-observer").default;
+    runningAddons: string[];
     addons: { [id: string]: UserscriptAddon };
     cache: {
       BlocklyInstance: typeof import("../../esbuild/types/blockly/index").Blockly;

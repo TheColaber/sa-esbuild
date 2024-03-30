@@ -45,6 +45,8 @@ const settings = ref(
 watch(
   settings,
   (newSettings) => {
+    console.log("HAHAHAAH");
+
     addonStorage.set(newSettings);
   },
   { deep: true },

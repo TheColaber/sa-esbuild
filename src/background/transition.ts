@@ -38,6 +38,7 @@ chrome.management.getSelf().then(async ({ installType, homepageUrl }) => {
       const settings = (await addonStorage.get(id)) || {};
 
       for (const setting of manifest.settings) {
+        settings[id] = settings[id] || {};
         if (settings[id][setting.id] === undefined) {
           settings[id][setting.id] = setting.presets.default;
         }
