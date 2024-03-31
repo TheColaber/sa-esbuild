@@ -56,6 +56,7 @@ function tryAddon() {
     display: flex;
     align-items: flex-end;
     flex: 1;
+    font-size: 12px;
 
     .description {
       flex: 1;
