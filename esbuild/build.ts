@@ -7,16 +7,19 @@ import vue from "./plugins/vue.ts";
 import postcss from "./plugins/postcss.ts";
 import typedCss from "./plugins/typed-css.ts";
 import image from "esbuild-plugin-inline-image";
-import timestamp from "./plugins/timestamp.ts";
+import { writeFile } from "fs/promises";
 process.env.MODE = "development";
 build();
 
 async function build() {
   const base = "src";
+  const out = "dist";
+  let settings = new Date().getTime();
+
   const ctx = await esbuild.context({
     entryPoints: [base + "/manifest.ts"],
     outbase: base,
-    outdir: "dist",
+    outdir: out,
     entryNames: "[dir]/[name]",
     assetNames: "[dir]/[name]",
     chunkNames: "[dir]/[name]",
@@ -35,7 +38,6 @@ async function build() {
       postcss(),
       typedCss(),
       image({ limit: 0 }),
-      timestamp(),
     ],
     treeShaking: true,
     logLevel: "debug",
@@ -48,9 +50,16 @@ async function build() {
     if (promise) await promise;
     console.time("build");
     promise = ctx.rebuild().then(() => {
-      (promise = null), console.timeEnd("build");
-    });
+      promise = null;
+      console.timeEnd("build");
+      writeFile(out + "/timestamp.json", JSON.stringify({ settings }));
+    });    
   }
   rebuild();
-  chokidar.watch(base).on("change", rebuild);
+  chokidar.watch(base).on("change", async (path) => {
+    if (path.startsWith(base + "/pages/settings")) {
+      settings = new Date().getTime();
+    }
+    rebuild();
+  });
 }

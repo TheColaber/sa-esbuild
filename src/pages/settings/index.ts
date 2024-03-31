@@ -3,8 +3,8 @@ import component from "./index.vue";
 
 createApp(component).mount("body");
 
-const getBuildTimestamp = () => {
-  return fetch("/timestamp.json").then((v) => v.json());
+const getBuildTimestamp = async () => {
+  return fetch("/timestamp.json").then((v) => v.json()).then((stamps) => stamps.settings);
 };
 let buildStamp = await getBuildTimestamp();
 setInterval(async () => {
