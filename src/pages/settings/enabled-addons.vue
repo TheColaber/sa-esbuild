@@ -85,6 +85,8 @@ function scrollToAddon(id: string) {
 <style lang="scss" module>
 .container {
   display: flex;
+  // overflow: hidden;
+  overflow-y: auto;
   .top-bar {
     margin: 10px;
     display: none;

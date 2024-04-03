@@ -4,7 +4,9 @@ import component from "./index.vue";
 createApp(component).mount("body");
 
 const getBuildTimestamp = async () => {
-  return fetch("/timestamp.json").then((v) => v.json()).then((stamps) => stamps.settings);
+  return fetch("/timestamp.json")
+    .then((v) => v.json())
+    .then((stamps) => stamps.settings);
 };
 let buildStamp = await getBuildTimestamp();
 setInterval(async () => {

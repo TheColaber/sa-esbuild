@@ -73,6 +73,6 @@ syncStorage.get("onboarded").then(({ onboarded = false }) => {
   flex-direction: column;
   background-color: var(--background-primary);
   color: var(--content-text);
-  min-height: 100vh;
+  height: 100vh;
 }
 </style>

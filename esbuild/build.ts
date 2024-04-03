@@ -53,7 +53,7 @@ async function build() {
       promise = null;
       console.timeEnd("build");
       writeFile(out + "/timestamp.json", JSON.stringify({ settings }));
-    });    
+    });
   }
   rebuild();
   chokidar.watch(base).on("change", async (path) => {

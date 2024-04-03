@@ -24,7 +24,7 @@ const disabledAddons = computed(() =>
   addonDisabledStates.flatMap((state) => categories[state]),
 );
 const sections = computed(() => [
-{
+  {
     id: "development",
     name: "In Development",
     addons: disabledAddons.value.filter((addon) => addon.mode === "dev"),
@@ -52,11 +52,11 @@ const sections = computed(() => [
     gap: 5px;
 
     .grid {
-    flex: 1;
-    display: grid;
-    gap: 20px;
-    grid-template-columns: repeat(auto-fit, minmax(min-content, 272px));
-  }
+      flex: 1;
+      display: grid;
+      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(min-content, 272px));
+    }
   }
 }
 </style>
