@@ -11,11 +11,12 @@ body {
   --background-primary: #222;
   --background-secondary: #2a2a2a;
   --background-tertiary: #333;
+  --background-hover: #1a1a1a;
 
   --switch-background: #111;
-  --switch-inner-background: #aaa;
+  --disabled: #aaa;
 
-  --button-border: #000;
+  --border: #000;
 
   --content-text: #fff;
   --description-text: #ddd;
@@ -33,9 +34,9 @@ body {
   --background-tertiary: #cfcfcf;
 
   --switch-background: #888;
-  --switch-inner-background: #fff;
+  --disabled: #fff;
 
-  --button-border: #aaa;
+  --border: #aaa;
 
   --content-text: #000;
   --description-text: #444;

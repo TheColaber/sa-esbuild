@@ -55,7 +55,7 @@ const { id } = defineProps<{
       display: block;
       width: 10px;
       height: 10px;
-      background-color: var(--switch-inner-background);
+      background-color: var(--disabled);
       border-radius: 5px;
       top: 5px;
       left: 5px;

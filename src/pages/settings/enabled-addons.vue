@@ -2,8 +2,11 @@
   <div :class="$style.container">
     <Search :class="$style['top-bar']" />
     <div :class="$style.sections">
-      <template v-for="section of sections" >
-      <div :class="$style.section" v-if="!section.hidden && section.addons.length > 0">
+      <template v-for="section of sections">
+        <div
+          :class="$style.section"
+          v-if="!section.hidden && section.addons.length > 0"
+        >
           <div :class="$style.name">{{ section.name }}</div>
           <div :class="$style.addons">
             <button
@@ -14,8 +17,8 @@
               {{ addon.name }}
             </button>
           </div>
-      </div>
-    </template>
+        </div>
+      </template>
     </div>
     <div :class="$style['extended-list']">
       <template v-for="section of sections">

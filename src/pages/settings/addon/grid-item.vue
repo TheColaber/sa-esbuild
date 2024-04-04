@@ -68,7 +68,7 @@ function tryAddon() {
     justify-content: flex-end;
     .button {
       background: var(--background-primary);
-      border: 1px solid var(--button-border);
+      border: 1px solid var(--border);
       color: var(--content-text);
       padding: 7px 12px;
       border-radius: 4px;

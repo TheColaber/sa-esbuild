@@ -62,25 +62,40 @@ const showPresetsList = ref(false);
 
   .options {
     display: flex;
-    border: 1px solid var(--button-border);
+    border: 1px solid var(--border);
     border-radius: 12px;
     overflow: hidden;
+    height: 24px;
+
+    &:has(.input:focus-visible) {
+      box-shadow: 0 0 0 3px #fff;
+    }
     .input {
       width: 60px;
       background: var(--background-primary);
       border: none;
       color: var(--content-text);
       padding: 0 0px 0 12px;
+      outline: none;
     }
     .preset {
-      position: relative;
+      height: 100%;
       .button {
+        height: 100%;
         background: var(--background-primary);
         border: none;
         color: var(--content-text);
         font-size: 23px;
         display: flex;
+        align-items: center;
+        outline: none;
+        border-radius: 10px;
+
+        &:focus-visible {
+          box-shadow: 0 0 0 3px #fff;
+        }
         .icon {
+          font-size: 16px;
         }
       }
       .list {
@@ -91,11 +106,31 @@ const showPresetsList = ref(false);
           position: absolute;
           background: var(--background-primary);
           color: var(--content-text);
+          padding: 6px 0;
+          border-radius: 4px;
+          color: var(--content-text);
+          border: 1px solid var(--border);
           .item {
             background: none;
             border: none;
             color: inherit;
             padding: 6px 12px;
+            user-select: none;
+            transition: 0.2s ease;
+            border-radius: 2px;
+
+            &:focus-visible {
+              box-shadow: inset 0 0 0 3px #fff;
+            }
+
+            &:hover {
+              background: var(--background-hover);
+            }
+            .value {
+              margin-left: 12px;
+              color: var(--disabled);
+              font-weight: 600;
+            }
           }
         }
       }

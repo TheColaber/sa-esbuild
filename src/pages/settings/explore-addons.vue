@@ -1,13 +1,13 @@
 <template>
   <div :class="$style.container">
-    <template  v-for="section of sections">
-    <div v-if="section.addons.length > 0" :class="$style.section">
+    <template v-for="section of sections">
+      <div v-if="section.addons.length > 0" :class="$style.section">
         <span>{{ section.name }}</span>
         <div :class="$style.grid">
           <GridItem :addon="addon" v-for="addon of section.addons" />
         </div>
-    </div>
-  </template>
+      </div>
+    </template>
     <div v-if="disabledAddons.length === 0">
       You have all addons enabled. But that's not really a great thing...
       Consider going through your addons and making sure you know what each one

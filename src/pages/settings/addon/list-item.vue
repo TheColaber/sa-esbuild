@@ -6,7 +6,10 @@
     </div>
 
     <div :class="$style.description">{{ addon.description }}</div>
-    <div v-if="addon.credits && addon.credits.length > 0" :class="$style.credits">
+    <div
+      v-if="addon.credits && addon.credits.length > 0"
+      :class="$style.credits"
+    >
       <div v-for="user of addon.credits" :class="$style.credit">{{ user }}</div>
     </div>
 
@@ -85,7 +88,6 @@ watch(
     display: flex;
     gap: 10px;
     .credit {
-
     }
   }
 

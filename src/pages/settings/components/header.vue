@@ -33,6 +33,8 @@
       </div>
       <Search :class="$style.search" />
       <div :class="$style.buttons">
+        <!-- <button :class="$style.button">Hotkeys</button>
+        <button :class="$style.button">Superpresets</button> -->
         <button :class="$style.button">More Settings</button>
       </div>
     </div>
@@ -85,6 +87,7 @@ const msg = chrome.i18n.getMessage;
     .tabs {
       display: flex;
       gap: 15px;
+      height: 100%;
 
       .tab {
         color: inherit;
@@ -94,6 +97,7 @@ const msg = chrome.i18n.getMessage;
         justify-content: center;
         transition: font-weight 0.2s;
         text-decoration: none;
+        border-radius: 4px;
 
         @for $i from 1 through 3 {
           &.selected:nth-child(#{$i}) ~ .selectDisplay {
@@ -123,6 +127,10 @@ const msg = chrome.i18n.getMessage;
             opacity: 1;
           }
         }
+
+        &:focus-visible {
+          box-shadow: 0 0 0 3px #fff;
+        }
       }
 
       .selectDisplay {
@@ -140,6 +148,7 @@ const msg = chrome.i18n.getMessage;
 
     .buttons {
       display: flex;
+      gap: 5px;
       .button {
         border: none;
         background: none;

@@ -1,3 +1,4 @@
+import Editor from "./editor";
 import Redux from "./redux";
 
 export default class Tab {
@@ -7,11 +8,13 @@ export default class Tab {
   _blockly: typeof ScratchBlocks;
   _vm: any;
   redux: Redux;
+  editor: Editor;
 
   constructor(id: string) {
     this.id = id;
     this._waitForElementSet = new WeakSet();
     this.redux = new Redux();
+    this.editor = new Editor(this);
   }
 
   injectStyle(stylesheet: string) {
@@ -83,6 +86,7 @@ export default class Tab {
     return promise;
   }
 
+  /* TODO: Move the following into editor.ts */
   get editorMode() {
     const pathname = location.pathname.toLowerCase();
     const split = pathname.split("/").filter(Boolean);
