@@ -2,8 +2,8 @@
   <div :class="$style.container">
     <Search :class="$style['top-bar']" />
     <div :class="$style.sections">
-      <div :class="$style.section" v-for="section of sections">
-        <template v-if="!section.hidden && section.addons.length > 0">
+      <template v-for="section of sections" >
+      <div :class="$style.section" v-if="!section.hidden && section.addons.length > 0">
           <div :class="$style.name">{{ section.name }}</div>
           <div :class="$style.addons">
             <button
@@ -14,8 +14,8 @@
               {{ addon.name }}
             </button>
           </div>
-        </template>
       </div>
+    </template>
     </div>
     <div :class="$style['extended-list']">
       <template v-for="section of sections">
@@ -106,7 +106,7 @@ function scrollToAddon(id: string) {
       display: flex;
       flex-direction: column;
       width: 100%;
-      gap: 2px;
+      gap: 6px;
 
       .name {
         font-size: 16px;
@@ -149,10 +149,11 @@ function scrollToAddon(id: string) {
     flex-direction: column;
     width: 100%;
     padding: 10px;
-    gap: 10px;
+    gap: 6px;
     overflow-y: auto;
     scroll-behavior: smooth;
     box-sizing: border-box;
+    font-size: 16px;
   }
 }
 

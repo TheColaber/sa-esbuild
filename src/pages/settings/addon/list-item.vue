@@ -5,9 +5,9 @@
       <Toggle :id="addon.id" />
     </div>
 
-    <div>{{ addon.description }}</div>
-    <div v-if="addon.credits && addon.credits.length > 0">
-      <div v-for="user of addon.credits">{{ user }}</div>
+    <div :class="$style.description">{{ addon.description }}</div>
+    <div v-if="addon.credits && addon.credits.length > 0" :class="$style.credits">
+      <div v-for="user of addon.credits" :class="$style.credit">{{ user }}</div>
     </div>
 
     <div
@@ -73,6 +73,19 @@ watch(
     .name {
       flex: 1;
       font-size: 15px;
+    }
+  }
+
+  .description {
+    font-size: 12px;
+  }
+
+  .credits {
+    font-size: 12px;
+    display: flex;
+    gap: 10px;
+    .credit {
+
     }
   }
 

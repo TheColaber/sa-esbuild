@@ -56,8 +56,8 @@ async function build() {
     });
   }
   rebuild();
-  chokidar.watch(base).on("change", async (path) => {
-    if (path.startsWith(base + "/pages/settings")) {
+  chokidar.watch(base).on("change", async (path) => {    
+    if (path.startsWith(base + "\\pages\\settings")) {
       settings = new Date().getTime();
     }
     rebuild();

@@ -53,6 +53,7 @@ const msg = chrome.i18n.getMessage;
   display: flex;
   gap: 25px;
   height: 60px;
+  min-height: 60px;
   padding: 0px 20px;
 
   .title {
@@ -78,7 +79,7 @@ const msg = chrome.i18n.getMessage;
 
     .search {
       flex: 1;
-      margin: 0px 32px;
+      margin: 0px 20px;
     }
 
     .tabs {
