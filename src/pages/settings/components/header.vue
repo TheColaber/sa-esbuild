@@ -7,7 +7,6 @@
       </span>
     </div>
     <div :class="$style['top-bar']">
-      <div :class="$style.tabs">
         <a
           @click="tab = 'explore'"
           href="#explore"
@@ -30,13 +29,16 @@
           Themes
         </a>
         <div :class="$style.selectDisplay"></div>
-      </div>
       <Search :class="$style.search" />
-      <div :class="$style.buttons">
-        <!-- <button :class="$style.button">Hotkeys</button>
-        <button :class="$style.button">Superpresets</button> -->
-        <button :class="$style.button">More Settings</button>
-      </div>
+      <a           @click="tab = 'hotkeys'"
+          href="#hotkeys"
+          :class="[$style.tab, $style.right, { [$style.selected]: tab === 'hotkeys' }]">Hotkeys</a>
+          <a           @click="tab = 'superpresets'"
+          href="#superpresets"
+          :class="[$style.tab, $style.right, { [$style.selected]: tab === 'superpresets' }]">Superpresets</a>
+          <a           @click="tab = 'more'"
+          href="#more"
+          :class="[$style.tab, $style.right, { [$style.selected]: tab === 'more' }]">More Settings</a>
     </div>
   </div>
 </template>
@@ -76,20 +78,15 @@ const msg = chrome.i18n.getMessage;
   .top-bar {
     display: flex;
     flex: 1;
-    gap: 20px;
     align-items: center;
+      gap: 15px;
 
     .search {
       flex: 1;
       margin: 0px 20px;
     }
 
-    .tabs {
-      display: flex;
-      gap: 15px;
-      height: 100%;
-
-      .tab {
+    .tab {
         color: inherit;
         width: 100px;
         display: flex;
@@ -99,24 +96,34 @@ const msg = chrome.i18n.getMessage;
         text-decoration: none;
         border-radius: 4px;
 
-        @for $i from 1 through 3 {
-          &.selected:nth-child(#{$i}) ~ .selectDisplay {
-            transform: translateX(calc(20px + 115px * (#{$i} - 1)));
-          }
-        }
-
         &::before {
           content: "";
           transition: opacity 0.2s;
           opacity: 0;
           height: 60px;
-          width: 150px;
+          width: 140px;
           position: absolute;
           background: radial-gradient(
             ellipse farthest-corner at 50% 1500%,
             #ffffffb0,
             transparent
           );
+        }
+
+        &::after {
+          content: "";
+          opacity: 0;
+          transition: opacity 0.2s;
+    width: 60px;
+    height: 6px;
+    position: absolute;
+    background: #fff;
+    border-radius: 4px 4px 0px 0px;
+    top: 54px;
+        }
+
+        &.selected::after {
+          opacity: 1;
         }
 
         &:hover,
@@ -132,36 +139,10 @@ const msg = chrome.i18n.getMessage;
           box-shadow: 0 0 0 3px #fff;
         }
       }
-
-      .selectDisplay {
-        transition: 0.2s ease-out;
-        width: 60px;
-        display: block;
-        height: 6px;
-        position: absolute;
-        background: #fff;
-        align-self: flex-end;
-        border-radius: 4px 4px 0px 0px;
-        top: 54px;
-      }
-    }
-
-    .buttons {
-      display: flex;
-      gap: 5px;
-      .button {
-        border: none;
-        background: none;
-        color: inherit;
-        font-family: inherit;
-        font-size: inherit;
-        padding: 0px;
-      }
-    }
   }
 }
 
-@media only screen and (max-width: 1065px) {
+@media only screen and (max-width: 1320px) {
   .header {
     .top-bar {
       .search {
@@ -171,17 +152,7 @@ const msg = chrome.i18n.getMessage;
   }
 }
 
-@media only screen and (max-width: 990px) {
-  .header {
-    .top-bar {
-      .buttons {
-        display: none;
-      }
-    }
-  }
-}
-
-@media only screen and (max-width: 900px) {
+@media only screen and (max-width: 1230px) {
   .header {
     .title {
       .text {
@@ -194,7 +165,7 @@ const msg = chrome.i18n.getMessage;
   }
 }
 
-@media only screen and (max-width: 805px) {
+@media only screen and (max-width: 1050px) {
   .header {
     .title {
       .logo {
@@ -204,16 +175,23 @@ const msg = chrome.i18n.getMessage;
   }
 }
 
+
+@media only screen and (max-width: 1005px) {
+  .header {
+    .top-bar {
+      .right {
+        display: none;
+      }
+    }
+  }
+}
+
 @media only screen and (max-width: 675px) {
   .header {
     .top-bar {
+      justify-content: space-evenly;
       .search {
         display: none;
-      }
-      .buttons {
-        display: flex;
-        flex: 1;
-        justify-content: flex-end;
       }
     }
   }

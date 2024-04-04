@@ -160,7 +160,7 @@ function scrollToAddon(id: string) {
   }
 }
 
-@media only screen and (max-width: 635px) {
+@media only screen and (max-width: 675px) {
   .container {
     flex-direction: column;
     .top-bar {

@@ -59,40 +59,45 @@ const showPresetsList = ref(false);
 <style lang="scss" module>
 .setting {
   display: flex;
-
+  align-items: center;
+  gap: 10px;
+  
   .options {
     display: flex;
-    border: 1px solid var(--border);
-    border-radius: 12px;
     overflow: hidden;
-    height: 24px;
+    height: 32px;
 
-    &:has(.input:focus-visible) {
-      box-shadow: 0 0 0 3px #fff;
-    }
     .input {
-      width: 60px;
+      width: 80px;
       background: var(--background-primary);
-      border: none;
       color: var(--content-text);
-      padding: 0 0px 0 12px;
+      padding: 0 6px 0 12px;
       outline: none;
+      border-radius: 12px 0px 0px 12px;
+      border: 1px solid var(--border);
+      border-right: none;
+
+      &:focus-visible {
+      box-shadow: inset 0 0 0 3px #fff;
+    }
+
     }
     .preset {
       height: 100%;
       .button {
         height: 100%;
         background: var(--background-primary);
-        border: none;
         color: var(--content-text);
         font-size: 23px;
         display: flex;
         align-items: center;
         outline: none;
-        border-radius: 10px;
+        border-radius: 0px 12px 12px 0px;
+        border: 1px solid var(--border);
+        border-left: none;
 
         &:focus-visible {
-          box-shadow: 0 0 0 3px #fff;
+          box-shadow: inset 0 0 0 3px #fff;
         }
         .icon {
           font-size: 16px;

@@ -29,9 +29,12 @@ function getTabFromHash() {
   if (
     hashValue !== "explore" &&
     hashValue !== "enabled" &&
-    hashValue !== "themes"
+    hashValue !== "themes" &&
+    hashValue !== "hotkeys" &&
+    hashValue !== "superpresets" &&
+    hashValue !== "more"
   ) {
-    return (tab.value = "explore");
+    return tab.value = "explore";
   }
   tab.value = hashValue;
 }
