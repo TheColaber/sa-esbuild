@@ -6,6 +6,9 @@ import "./commands";
 import "./context-menus";
 import "./scripting";
 
+// Addon worker scripts
+import "./workers";
+
 // chrome.devtools.panels.create("SA Development",
 //     "images/icon.png",
 //     "Panel.html",

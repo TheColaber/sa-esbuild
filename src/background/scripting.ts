@@ -70,7 +70,9 @@ onPortConnection((port) => {
         injectImmediately: process.env.MODE !== "development",
         world: "MAIN",
         func: () => {
-          return scratchAddons.runningAddons;
+          return (
+            (window.scratchAddons && window.scratchAddons.runningAddons) || []
+          );
         },
       });
       return res.result;

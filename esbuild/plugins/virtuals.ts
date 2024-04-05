@@ -57,6 +57,7 @@ export default () => ({
       "#addon-scripts": exportAddons("scripts"),
       "#addon-styles": exportAddons("styles"),
       "#addon-popups": exportAddons("popup"),
+      "#addon-workers": exportAddons("worker"),
       "#addon-en": exportAddons("strings"),
     };
     const filter = new RegExp(

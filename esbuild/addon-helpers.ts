@@ -9,6 +9,7 @@ declare global {
   const defineStyles: typeof import("./addon-helpers").defineStyles;
   const definePopup: typeof import("./addon-helpers").definePopup;
   const defineStrings: typeof import("./addon-helpers").defineStrings;
+  const defineWorker: typeof import("./addon-helpers").defineWorker;
   const addon: UserscriptAddon;
 }
 
@@ -30,6 +31,10 @@ export function definePopup(popup: AddonPopup) {
 
 export function defineStrings(strings: AddonStrings) {
   return strings;
+}
+
+export function defineWorker(worker: Script) {
+  return worker;
 }
 
 export interface AddonManifest {
@@ -136,7 +141,7 @@ export type ExtraAddonManifest = AddonManifest & {
   category: ("editor" | "general" | "popup")[];
 };
 
-type AddonSetting = {
+export type AddonSetting = {
   id: string;
   name: string;
 } & (
@@ -164,8 +169,10 @@ type AddonSetting = {
     }
 );
 
+export type Script = () => Promise<{ default: () => any }>;
+
 export interface AddonScript {
-  script: () => Promise<{ default: () => any }>;
+  script: Script;
   matches: (keyof typeof MATCH_PATTERNS)[];
   runAtComplete?: boolean;
 }
