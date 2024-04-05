@@ -2,10 +2,13 @@ import { onPortConnection } from "./messaging";
 import { syncStorage, addonEnabledStates, addonStorage } from "./storage";
 
 const previewTabs = {};
+console.log("UHHHH");
 
 (async () => {
   let { addonsStates } = await syncStorage.get("addonsStates");
   chrome.tabs.onUpdated.addListener(async (tabId, { status }, tab) => {
+    console.log("tab!");
+
     if (!tab.url || status !== "loading") return;
 
     const enabledAddons = [];
@@ -32,6 +35,7 @@ const previewTabs = {};
       },
       tabId,
     );
+    console.log("send data");
   });
 
   syncStorage.watch(({ addonsStates: newAddonStates }) => {

@@ -34,7 +34,7 @@ function getTabFromHash() {
     hashValue !== "superpresets" &&
     hashValue !== "more"
   ) {
-    return tab.value = "explore";
+    return (tab.value = "explore");
   }
   tab.value = hashValue;
 }

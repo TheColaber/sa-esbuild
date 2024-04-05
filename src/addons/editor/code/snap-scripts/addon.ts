@@ -9,6 +9,7 @@ export default defineAddon({
       id: "grid",
       name: "Grid spacing",
       type: "integer",
+      min: 1,
       presets: {
         default: 40,
         wholeBlock: 48,

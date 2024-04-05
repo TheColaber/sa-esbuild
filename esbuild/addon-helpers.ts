@@ -156,6 +156,12 @@ type AddonSetting = {
         [preset: string]: string;
       };
     }
+  | {
+      type: "boolean";
+      presets: {
+        default: boolean;
+      };
+    }
 );
 
 export interface AddonScript {

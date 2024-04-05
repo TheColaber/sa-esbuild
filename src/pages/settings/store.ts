@@ -8,7 +8,9 @@ import {
 import { Port } from "../../background/messaging";
 export const port = new Port();
 
-export const tab = ref<"explore" | "enabled" | "themes" | "hotkeys" | "superpresets" | "more">();
+export const tab = ref<
+  "explore" | "enabled" | "themes" | "hotkeys" | "superpresets" | "more"
+>();
 export const searchFilter = ref("");
 export const suggestions = ref([]);
 

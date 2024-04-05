@@ -22,7 +22,3 @@ Scratch Addons unites various features and themes (called [addons](./src/addons/
 #### Addon API
 
 - API for previewing addons. Specifically editor addons. This api would allow you to create editor tooltips on elements and have a next and previous option to go to the next tooltip.
-
-#### Addons
-
-- Finish insert-blocks

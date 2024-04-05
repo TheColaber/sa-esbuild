@@ -7,6 +7,7 @@
         :class="$style.input"
         name="addon-setting"
         type="number"
+        :min="setting.min"
         v-model="inputValue"
       />
       <div
@@ -61,7 +62,7 @@ const showPresetsList = ref(false);
   display: flex;
   align-items: center;
   gap: 10px;
-  
+
   .options {
     display: flex;
     overflow: hidden;
@@ -78,9 +79,8 @@ const showPresetsList = ref(false);
       border-right: none;
 
       &:focus-visible {
-      box-shadow: inset 0 0 0 3px #fff;
-    }
-
+        box-shadow: inset 0 0 0 3px #fff;
+      }
     }
     .preset {
       height: 100%;

@@ -33,13 +33,13 @@ declare global {
 
       removeTopBlock(block: Block): void;
 
-      getTopBlocks(ordered: boolean): Block[];
+      getTopBlocks(ordered?: boolean): Block[];
 
       addTopComment(comment: WorkspaceComment): void;
 
       removeTopComment(comment: WorkspaceComment): void;
 
-      getTopComments(ordered: boolean): WorkspaceComment[];
+      getTopComments(ordered?: boolean): WorkspaceComment[];
 
       getAllBlocks(ordered: boolean): Block[];
 

@@ -515,7 +515,11 @@ document.addEventListener("keydown", (event) => {
 
   // F3 also opens
   if (event.key.toLowerCase() === "f" && ctrlKey && !event.shiftKey) {
-    open();
+    if (visible.value) {
+      open();
+    } else {
+      close();
+    }
     event.preventDefault();
   }
 

@@ -28,7 +28,7 @@ export default async () => {
     dx = Math.round(dx);
     dy = Math.round(dy);
     block.translate(dx, dy);
-    block.snapToGrid();
+    // block.snapToGrid();
   };
   const originalConnect =
     Blockly.InsertionMarkerManager.prototype.connectMarker_;
