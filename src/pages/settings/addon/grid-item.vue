@@ -7,12 +7,12 @@
       <!-- <Toggle :id="addon.id" /> -->
     </div>
     <div :class="$style.buttons">
-      <button @click="tryAddon" :class="$style.button" v-if="addon.userPreview">
+      <Button @click="tryAddon" v-if="addon.userPreview">
         Try
-      </button>
-      <button @click="buttonClick" :class="$style.button">
+      </Button>
+      <Button @click="buttonClick">
         {{ enabledStates[addon.id] ? "Edit" : "Enable" }}
-      </button>
+      </Button>
     </div>
   </div>
 </template>
@@ -21,6 +21,7 @@
 import { ExtraAddonManifest } from "../../../../esbuild/addon-helpers";
 const { addon } = defineProps<{ addon: ExtraAddonManifest }>();
 import { enabledStates, toggleAddon, port } from "../store";
+import Button from "../components/button.vue"
 
 function buttonClick() {
   if (enabledStates.value[addon.id] === true) {
@@ -66,15 +67,6 @@ function tryAddon() {
     display: flex;
     gap: 5px;
     justify-content: flex-end;
-    .button {
-      background: var(--background-primary);
-      border: 1px solid var(--border);
-      color: var(--content-text);
-      padding: 7px 12px;
-      border-radius: 4px;
-      font-family: inherit;
-      font-size: 12px;
-    }
   }
 }
 </style>

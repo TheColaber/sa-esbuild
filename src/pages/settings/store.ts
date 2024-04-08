@@ -11,6 +11,7 @@ export const port = new Port();
 export const tab = ref<
   "explore" | "enabled" | "themes" | "hotkeys" | "superpresets" | "more"
 >();
+export const showOnboarding = ref(true)
 export const searchFilter = ref("");
 export const suggestions = ref([]);
 

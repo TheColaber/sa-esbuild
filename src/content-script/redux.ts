@@ -29,7 +29,7 @@ class ReDucks {
   }
 }
 
-let newerCompose = globalThis.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
+let newerCompose = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
 function compose(...args) {
   const scratchAddonsRedux = scratchAddons.redux;
   const reduxTarget = (scratchAddonsRedux.target = new EventTarget());
@@ -58,9 +58,13 @@ function compose(...args) {
     : ReDucks.compose.apply(this, args);
 }
 
-Object.defineProperty(window, "__REDUX_DEVTOOLS_EXTENSION_COMPOSE__", {
-  get: () => compose,
-  set: (v) => {
-    newerCompose = v;
-  },
-});
+try {
+  Object.defineProperty(window, "__REDUX_DEVTOOLS_EXTENSION_COMPOSE__", {
+    get: () => compose,
+    set: (v) => {
+      newerCompose = v;
+    },
+  });
+} catch (error) {
+  scratchAddons.console.log("Could not edit __REDUX_DEVTOOLS_EXTENSION_COMPOSE__. Redux is not available.");
+}

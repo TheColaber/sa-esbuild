@@ -17,7 +17,7 @@ import Header from "./components/header.vue";
 import { syncStorage } from "../../background/storage";
 import pageStorage from "../storage";
 import { onMounted, ref, watch } from "vue";
-import { updateAll, tab } from "./store";
+import { updateAll, tab, showOnboarding } from "./store";
 import Onboarding from "./onboarding.vue";
 
 function getTabFromHash() {
@@ -64,9 +64,8 @@ watch(lightTheme, (newVal) => {
   syncStorage.set({ lightTheme: newVal });
 });
 
-const showOnboarding = ref(false);
 syncStorage.get("onboarded").then(({ onboarded = false }) => {
-  showOnboarding.value = !onboarded;
+  showOnboarding.value = true || !onboarded;
 });
 </script>
 
