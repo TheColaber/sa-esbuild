@@ -28,13 +28,14 @@
 </template>
 
 <script setup lang="ts">
-import { ExtraAddonManifest } from "../../../../esbuild/addon-helpers";
 import Setting from "./setting.vue";
 import { addonStorage } from "../../../background/storage";
 import { ref, watch } from "vue";
 import Toggle from "../components/toggle.vue";
+import * as addons from "#addons";
 
-const { addon } = defineProps<{ addon: ExtraAddonManifest }>();
+const { id } = defineProps<{ id: string }>();
+const addon = addons[id];
 
 const addonSettings = await addonStorage.get(addon.id);
 const settings = ref(addonSettings[addon.id]);

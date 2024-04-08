@@ -11,10 +11,10 @@
           <div :class="$style.addons">
             <button
               :class="$style.addon"
-              @click="scrollToAddon(addon.id)"
+              @click="scrollToAddon(addon)"
               v-for="addon of section.addons"
             >
-              {{ addon.name }}
+              {{ addons[addon].name }}
             </button>
           </div>
         </div>
@@ -24,7 +24,7 @@
       <template v-for="section of sections">
         <template v-if="!section.hidden && section.addons.length > 0">
           <div>{{ section.name }}</div>
-          <ListItem v-for="addon of section.addons" :addon="addon"></ListItem>
+          <ListItem v-for="addon of section.addons" :id="addon"></ListItem>
         </template>
       </template>
     </div>
@@ -32,44 +32,44 @@
 </template>
 
 <script setup lang="ts">
-import * as addons from "#addons";
 import { computed } from "vue";
 import ListItem from "./addon/list-item.vue";
 import { categories, port, searchFilter } from "./store";
 import Search from "./components/search.vue";
+import * as addons from "#addons";
 const { inPopup } = defineProps<{ inPopup?: boolean }>();
 
 const addonsOnTab = await port.send<string[]>("getRunningAddons");
 
 const productionAddons = computed(() =>
   [...categories.enabled.value, ...categories.defaultEnabled.value].filter(
-    ({ id }) => !addonsOnTab.includes(id),
+    (id) => !addonsOnTab.includes(id),
   ),
 );
 const sections = computed(() => [
   {
     id: "running",
     name: "Running on tab",
-    addons: addonsOnTab.map((id) => addons[id]),
+    addons: addonsOnTab,
     hidden: addonsOnTab.length === 0,
   },
   {
     id: "development",
     name: "In Development",
-    addons: categories.dev.value.filter(({ id }) => !addonsOnTab.includes(id)),
+    addons: categories.dev.value.filter((id) => !addonsOnTab.includes(id)),
   },
   {
     id: "editor",
     name: "Editor Addons",
-    addons: productionAddons.value.filter((addon) =>
-      addon.category.includes("editor"),
+    addons: productionAddons.value.filter((id) =>
+      addons[id].category.includes("editor"),
     ),
   },
   {
     id: "popup",
     name: "Popup Addons",
-    addons: productionAddons.value.filter((addon) =>
-      addon.category.includes("popup"),
+    addons: productionAddons.value.filter((id) =>
+      addons[id].category.includes("popup"),
     ),
   },
   {

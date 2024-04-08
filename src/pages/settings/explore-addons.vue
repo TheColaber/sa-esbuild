@@ -4,11 +4,7 @@
       <div v-if="section.addons.length > 0" :class="$style.section">
         <span>{{ section.name }}</span>
         <div :class="$style.grid">
-          <GridItem
-            v-for="addon of section.addons"
-            :key="addon.id"
-            :addon="addon"
-          />
+          <GridItem v-for="addon of section.addons" :key="addon" :id="addon" />
         </div>
       </div>
     </template>
@@ -32,6 +28,7 @@ import GridItem from "./addon/grid-item.vue";
 import { categories } from "./store";
 import { addonDisabledStates } from "../../background/storage";
 import { searchFilter } from "./store";
+import * as addons from "#addons";
 
 const disabledAddons = computed(() =>
   addonDisabledStates.flatMap((state) => categories[state].value),
@@ -40,12 +37,12 @@ const sections = computed(() => [
   {
     id: "development",
     name: "In Development",
-    addons: disabledAddons.value.filter((addon) => addon.mode === "dev"),
+    addons: disabledAddons.value.filter((id) => addons[id].mode === "dev"),
   },
   {
     id: "editor",
     name: "Editor Addons",
-    addons: disabledAddons.value.filter((addon) => addon.mode !== "dev"),
+    addons: disabledAddons.value.filter((id) => addons[id].mode !== "dev"),
   },
 ]);
 </script>

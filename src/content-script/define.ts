@@ -33,7 +33,7 @@ globalThis.scratchAddons = {
   getInternalKey,
   injectStyle,
 };
-scratchAddons.console.log("Running on page")
+scratchAddons.console.log("Running on page");
 declare global {
   var scratchAddons: {
     addonsLoaded: boolean;

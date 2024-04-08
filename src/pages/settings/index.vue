@@ -1,14 +1,13 @@
 <template>
-  <div
-    v-if="!showOnboarding"
-    :class="[$style.container, { theme: true, lightTheme }]"
-  >
-    <Header v-model:tab="tab"></Header>
-    <Suspense>
-      <Content :tab="tab"></Content>
-    </Suspense>
+  <div :class="[$style.container, { theme: true, lightTheme }]">
+    <template v-if="!showOnboarding">
+      <Header v-model:tab="tab"></Header>
+      <Suspense>
+        <Content :tab="tab"></Content>
+      </Suspense>
+    </template>
+    <Onboarding v-else />
   </div>
-  <Onboarding v-else />
 </template>
 
 <script setup lang="ts">
@@ -65,12 +64,13 @@ watch(lightTheme, (newVal) => {
 });
 
 syncStorage.get("onboarded").then(({ onboarded = false }) => {
-  showOnboarding.value = true || !onboarded;
+  showOnboarding.value = !onboarded;
 });
 </script>
 
 <style lang="scss" module>
 .container {
+  font-family: "Roboto", sans-serif;
   display: flex;
   flex-direction: column;
   background-color: var(--background-primary);

@@ -11,7 +11,7 @@ export const port = new Port();
 export const tab = ref<
   "explore" | "enabled" | "themes" | "hotkeys" | "superpresets" | "more"
 >();
-export const showOnboarding = ref(true)
+export const showOnboarding = ref(true);
 export const searchFilter = ref("");
 export const suggestions = ref([]);
 
@@ -44,19 +44,16 @@ export const categories = objectArray(
   allAddonStates.map((state) =>
     typedObject(
       state,
-      computed(
-        () => {
-          return Object.keys(addonStorage.value)
-            .filter((id) => addonStorage.value[id] === state)
-            .filter(
-              (id) =>
-                !searchFilter.value ||
-                filteredAddons.value.some((res) => res.id === id),
-            )
-            .map((id) => addons[id])
-            .sort((a, b) => a.name.localeCompare(b.name));
-        }
-      ),
+      computed(() => {
+        return Object.keys(addonStorage.value)
+          .filter((id) => addonStorage.value[id] === state)
+          .filter(
+            (id) =>
+              !searchFilter.value ||
+              filteredAddons.value.some((res) => res.id === id),
+          )
+          .sort((a, b) => addons[a].name.localeCompare(addons[b].name));
+      }),
     ),
   ),
 );

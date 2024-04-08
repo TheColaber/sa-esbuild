@@ -66,5 +66,7 @@ try {
     },
   });
 } catch (error) {
-  scratchAddons.console.log("Could not edit __REDUX_DEVTOOLS_EXTENSION_COMPOSE__. Redux is not available.");
+  scratchAddons.console.log(
+    "Could not edit __REDUX_DEVTOOLS_EXTENSION_COMPOSE__. Redux is not available.",
+  );
 }
