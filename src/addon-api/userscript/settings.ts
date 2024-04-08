@@ -9,7 +9,6 @@ export default class Settings extends EventTarget {
 
     this.addEventListener("change", (event: CustomEvent) => {
       this.settings = event.detail;
-      console.log(event.detail);
     });
   }
 

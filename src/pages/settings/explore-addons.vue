@@ -4,14 +4,24 @@
       <div v-if="section.addons.length > 0" :class="$style.section">
         <span>{{ section.name }}</span>
         <div :class="$style.grid">
-          <GridItem :addon="addon" v-for="addon of section.addons" />
+          <GridItem
+            v-for="addon of section.addons"
+            :key="addon.id"
+            :addon="addon"
+          />
         </div>
       </div>
     </template>
     <div v-if="disabledAddons.length === 0">
-      You have all addons enabled. But that's not really a great thing...
-      Consider going through your addons and making sure you know what each one
-      does.
+      <template v-if="searchFilter">
+        No search results found for '{{ searchFilter }}'. Consider using
+        different search terms.
+      </template>
+      <template v-else>
+        You have all addons enabled. But that's not really a great thing...
+        Consider going through your addons and making sure you know what each
+        one does.
+      </template>
     </div>
   </div>
 </template>
@@ -21,9 +31,10 @@ import { computed } from "vue";
 import GridItem from "./addon/grid-item.vue";
 import { categories } from "./store";
 import { addonDisabledStates } from "../../background/storage";
+import { searchFilter } from "./store";
 
 const disabledAddons = computed(() =>
-  addonDisabledStates.flatMap((state) => categories[state]),
+  addonDisabledStates.flatMap((state) => categories[state].value),
 );
 const sections = computed(() => [
   {
@@ -46,6 +57,7 @@ const sections = computed(() => [
   flex-direction: column;
   gap: 30px;
   font-size: 20px;
+  overflow-y: auto;
 
   .section {
     display: flex;

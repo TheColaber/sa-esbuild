@@ -1,4 +1,4 @@
-import { reactive, ref, toRefs, watch } from "vue";
+import { computed, reactive, ref, toRefs, watch } from "vue";
 import * as addons from "#addons";
 import {
   syncStorage,
@@ -39,21 +39,23 @@ watch(searchFilter, (search) => {
 });
 
 const { addonsStates } = await syncStorage.get("addonsStates");
-
-export const categories = reactive(
-  objectArray(
-    allAddonStates.map((state) =>
-      typedObject(
-        state,
-        Object.keys(addonsStates)
-          .filter((id) => addonsStates[id] === state)
-          .filter(
-            (id) =>
-              !searchFilter.value ||
-              filteredAddons.value.some((res) => res.id === id),
-          )
-          .map((id) => addons[id])
-          .sort((a, b) => a.name.localeCompare(b.name)),
+const addonStorage = ref(addonsStates);
+export const categories = objectArray(
+  allAddonStates.map((state) =>
+    typedObject(
+      state,
+      computed(
+        () => {
+          return Object.keys(addonStorage.value)
+            .filter((id) => addonStorage.value[id] === state)
+            .filter(
+              (id) =>
+                !searchFilter.value ||
+                filteredAddons.value.some((res) => res.id === id),
+            )
+            .map((id) => addons[id])
+            .sort((a, b) => a.name.localeCompare(b.name));
+        }
       ),
     ),
   ),
@@ -68,32 +70,29 @@ export const enabledStates = ref(
   ),
 );
 
-let reqUpdate: { id: string; old: keyof typeof categories }[] = [];
+let reqUpdate: { id: string; new: keyof typeof categories }[] = [];
 
 export function updateAll() {
+  console.log(reqUpdate);
+
   for (const update of reqUpdate) {
-    const oldCategory = categories[update.old];
-    const index = oldCategory.findIndex((addon) => update.id === addon.id);
-    oldCategory.splice(index, 1);
+    addonsStates[update.id] = update.new;
   }
+  addonStorage.value = addonsStates;
+  console.log(categories);
+
   reqUpdate = [];
 }
 
 export function toggleAddon(id: string) {
   enabledStates.value[id] = !enabledStates.value[id];
-  reqUpdate.push({ id, old: addonsStates[id] });
   addonsStates[id] = enabledStates.value[id]
     ? addons[id].mode === "dev"
       ? "dev"
       : "enabled"
     : "disabled";
+  reqUpdate.push({ id, new: addonsStates[id] });
   syncStorage.set({ addonsStates });
-  const newCategory = categories[addonsStates[id]];
-  if (newCategory.includes(addons[id])) return;
-  newCategory.push(addons[id]);
-  categories[addonsStates[id]] = newCategory.sort((a, b) =>
-    a.name.localeCompare(b.name),
-  );
 }
 
 function typedObject<T extends string, U>(key: T, value: U) {

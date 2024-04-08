@@ -21,14 +21,13 @@
         v-for="setting of addon.settings"
         :setting="setting"
         :preset-names="addon.presetNames"
-        v-model:value="settings[addon.id][setting.id]"
+        v-model:value="settings[setting.id]"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { categories } from "../store";
 import { ExtraAddonManifest } from "../../../../esbuild/addon-helpers";
 import Setting from "./setting.vue";
 import { addonStorage } from "../../../background/storage";
@@ -36,21 +35,13 @@ import { ref, watch } from "vue";
 import Toggle from "../components/toggle.vue";
 
 const { addon } = defineProps<{ addon: ExtraAddonManifest }>();
-// TODO
-const enabledAddons = [
-  ...categories.enabled,
-  ...categories.defaultEnabled,
-  ...categories.dev,
-];
-const settings = ref(
-  await addonStorage.get(...enabledAddons.map((addon) => addon.id)),
-);
+
+const addonSettings = await addonStorage.get(addon.id);
+const settings = ref(addonSettings[addon.id]);
 watch(
   settings,
   (newSettings) => {
-    console.log("HAHAHAAH");
-
-    addonStorage.set(newSettings);
+    addonStorage.set({ [addon.id]: newSettings });
   },
   { deep: true },
 );

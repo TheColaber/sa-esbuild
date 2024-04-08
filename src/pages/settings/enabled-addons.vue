@@ -42,7 +42,7 @@ const { inPopup } = defineProps<{ inPopup?: boolean }>();
 const addonsOnTab = await port.send<string[]>("getRunningAddons");
 
 const productionAddons = computed(() =>
-  [...categories.enabled, ...categories.defaultEnabled].filter(
+  [...categories.enabled.value, ...categories.defaultEnabled.value].filter(
     ({ id }) => !addonsOnTab.includes(id),
   ),
 );
@@ -56,7 +56,7 @@ const sections = computed(() => [
   {
     id: "development",
     name: "In Development",
-    addons: categories.dev.filter(({ id }) => !addonsOnTab.includes(id)),
+    addons: categories.dev.value.filter(({ id }) => !addonsOnTab.includes(id)),
   },
   {
     id: "editor",
@@ -75,7 +75,7 @@ const sections = computed(() => [
   {
     id: "disabled",
     name: "Disabled",
-    addons: [...categories.defaultDisabled, ...categories.disabled],
+    addons: [...categories.defaultDisabled.value, ...categories.disabled.value],
     hidden: !inPopup || searchFilter.value.length === 0,
   },
 ]);
