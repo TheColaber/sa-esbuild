@@ -49,8 +49,8 @@ export default async () => {
   setGrid(true);
 
   addon.settings.addEventListener("change", () => setGrid(true));
-  addon.addEventListener("dynamicDisable", () => setGrid(false));
-  addon.addEventListener("dynamicEnable", () => setGrid(true));
+  addon.addEventListener("disabled", () => setGrid(false));
+  addon.addEventListener("reenabled", () => setGrid(true));
 
   function setGrid(enabled) {
     workspace.grid_.snapToGrid_ = enabled;

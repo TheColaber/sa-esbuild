@@ -33,6 +33,8 @@ export default () => ({
     ]
       .filter((page) => !!page)
       .map((f) => dir + "/" + f);
+      console.log(html);
+      
 
     for (const file of html) {
       const buffer = await readFile(file);
@@ -78,7 +80,7 @@ export default () => ({
       //     console.log(await renderToString(createApp({render: () => h(descriptor)})));
       //   }
       // })
-    }
+    }    
     build.initialOptions.entryPoints = entryPoints;
 
     build.onStart(async () => {
@@ -154,7 +156,7 @@ export default () => ({
         build.initialOptions.outdir + "/manifest.json",
         manifestJSON,
       );
-
+      
       for (const file of html) {
         const buffer = await readFile(file);
         const outputFile =

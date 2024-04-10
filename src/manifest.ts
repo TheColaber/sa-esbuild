@@ -33,7 +33,7 @@ const PAGES = {
   },
   DEVTOOLS: {
     INDEX: "pages/devtools/index.html",
-    PANNEL: "pages/devtools/pannel.html",
+    PANEL: "pages/devtools/panel.html",
   },
 };
 
@@ -92,7 +92,7 @@ if (isFirefox) {
 export const extraIcons = [ICONS.MUTED[16], ICONS.MUTED[32]];
 export const extraPages = [
   PAGES.POPUP.FULLSCREEN,
-  // PAGES.DEVTOOLS.PANNEL
+  PAGES.DEVTOOLS.PANEL
 ];
 
 export default manifest;

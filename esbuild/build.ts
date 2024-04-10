@@ -48,12 +48,10 @@ let promise = null;
 async function rebuild() {
   if (promise) await promise;
   console.time("build");
-  promise = ctx.rebuild().then(() => {
-    promise = null;
-    console.timeEnd("build");
-    writeFile(out + "/timestamp.json", JSON.stringify({ settings }));
-  });
-  await promise;
+  await (promise = ctx.rebuild());
+  promise = null;
+  console.timeEnd("build");
+  writeFile(out + "/timestamp.json", JSON.stringify({ settings }));
 }
 await rebuild();
 

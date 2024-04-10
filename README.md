@@ -13,7 +13,7 @@ Scratch Addons unites various features and themes (called [addons](./src/addons)
 #### Settings Page
 
 - Onboarding
-- Fix search bar
+- Fix search bar for running on tab addons
 - More Settings - Maybe find a better name for it?
 - Superpresets - Presets of addons. Example: Scratch 2 Editor enables scratch 2 theme, category columns, etc.
 - User custom presets and superpresets. Basically setting profiles.

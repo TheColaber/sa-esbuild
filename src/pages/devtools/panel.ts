@@ -9,13 +9,13 @@ const { addonsStates, lightTheme, onboarded } = await syncStorage.get(
   "lightTheme",
   "onboarded",
 );
-const addonSettings = await addonStorage.get();
+// const addonSettings = await addonStorage.get();
 const { installedDetails, muted } = await localStorage.get(
   "installedDetails",
   "muted",
 );
 console.table({
-  addonSettings,
+  // addonSettings,
   lightTheme,
   onboarded,
   addonsStates,
