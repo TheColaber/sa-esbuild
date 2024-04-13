@@ -14,9 +14,6 @@ export class Port {
   }[];
   constructor(port?: chrome.runtime.Port) {
     this.port = port || chrome.runtime.connect();
-    this.port.onDisconnect.addListener(() => {
-      console.log("disconnected");
-    });
     this.connected = !!port;
     this.sendWaitlist = [];
     this.responseListeners = [];

@@ -11,7 +11,7 @@ export const port = new Port();
 export const tab = ref<
   "explore" | "enabled" | "themes" | "hotkeys" | "superpresets" | "more"
 >();
-export const showOnboarding = ref(true);
+export const showOnboarding = ref(false);
 export const searchFilter = ref("");
 export const suggestions = ref([]);
 
@@ -70,14 +70,10 @@ export const enabledStates = ref(
 let reqUpdate: { id: string; new: keyof typeof categories }[] = [];
 
 export function updateAll() {
-  console.log(reqUpdate);
-
   for (const update of reqUpdate) {
     addonsStates[update.id] = update.new;
   }
   addonStorage.value = addonsStates;
-  console.log(categories);
-
   reqUpdate = [];
 }
 

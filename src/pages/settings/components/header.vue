@@ -28,7 +28,7 @@
       >
         Themes
       </a>
-      <div :class="$style.selectDisplay"></div>
+      <!-- <div :class="$style.selectDisplay"></div> -->
       <Search :class="$style.search" />
       <a
         @click="tab = 'hotkeys'"
@@ -76,7 +76,7 @@ const msg = chrome.i18n.getMessage;
   background-image: var(--gradient);
   color: #fff;
   display: flex;
-  gap: 25px;
+  gap: 10px;
   height: 60px;
   min-height: 60px;
   padding: 0px 20px;
@@ -93,14 +93,13 @@ const msg = chrome.i18n.getMessage;
 
     .logo {
       height: 30px;
-      padding: 15px 20px;
+      padding: 15px 12px;
     }
   }
   .top-bar {
     display: flex;
     flex: 1;
     align-items: center;
-    gap: 15px;
 
     .search {
       flex: 1;
@@ -109,7 +108,7 @@ const msg = chrome.i18n.getMessage;
 
     .tab {
       color: inherit;
-      width: 100px;
+      margin: 16px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -122,7 +121,7 @@ const msg = chrome.i18n.getMessage;
         transition: opacity 0.2s;
         opacity: 0;
         height: 60px;
-        width: 140px;
+        width: 108px;
         position: absolute;
         background: radial-gradient(
           ellipse farthest-corner at 50% 1500%,
@@ -163,16 +162,6 @@ const msg = chrome.i18n.getMessage;
   }
 }
 
-@media only screen and (max-width: 1320px) {
-  .header {
-    .top-bar {
-      .search {
-        margin: 0px;
-      }
-    }
-  }
-}
-
 @media only screen and (max-width: 1230px) {
   .header {
     .title {
@@ -196,7 +185,7 @@ const msg = chrome.i18n.getMessage;
   }
 }
 
-@media only screen and (max-width: 1005px) {
+@media only screen and (max-width: 950px) {
   .header {
     .top-bar {
       .right {

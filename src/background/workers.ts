@@ -16,6 +16,6 @@ import { addonEnabledStates, syncStorage } from "./storage";
     }
   }
   syncStorage.watch(({ addonsStates }) => {
-    console.log(addonsStates);
+    // console.log(addonsStates);
   });
 })();
