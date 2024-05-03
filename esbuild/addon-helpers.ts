@@ -127,11 +127,13 @@ export interface AddonManifest {
   presetNames?: {
     [id: string]: string;
   };
-  // hotkeys?: {
-  //   id: string;
-  //   description: string;
-  //   default: string[];
-  // }[];
+  hotkeys?: {
+    id: string;
+    name: string;
+    description: string;
+    default: string[];
+    browserOverrides?: string[][];
+  }[];
   image?: string;
   userPreview?: boolean;
 }

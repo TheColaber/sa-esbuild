@@ -7,11 +7,11 @@
   "homepage": "https://scratchaddons.com",
   "type": "module",
   "scripts": {
-    "dev": "node --loader ts-node/esm esbuild/build.ts --dev",
-    "build": "node --loader ts-node/esm esbuild/build.ts",
-    "pull-translations": "node --loader ts-node/esm esbuild/pull-translations.ts",
-    "format": "prettier . -w",
-    "new-addon": "node --loader ts-node/esm cli/new-addon.ts"
+    "dev": "node --import=./esbuild/register.js esbuild/build.ts --dev",
+    "build": "node --import=./esbuild/register.js esbuild/build.ts",
+    "pull-translations": "node --import=./esbuild/register.js esbuild/pull-translations.ts",
+    "new-addon": "node --import=./esbuild/register.js cli/new-addon.ts",
+    "format": "prettier . -w"
   },
   "devDependencies": {
     "@iconify-icons/tabler": "^1.2.95",

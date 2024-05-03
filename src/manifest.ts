@@ -1,4 +1,4 @@
-import pkg from "../package.json" assert { type: "json" };
+import fs from "fs/promises";
 
 // Values that are "__MSG_text__" are localized based on the user's browser language.
 // All text that the user sees in the extension should be localized.
@@ -36,6 +36,8 @@ const PAGES = {
     PANEL: "pages/devtools/panel.html",
   },
 };
+
+const pkg = JSON.parse(await fs.readFile("./package.json", "utf-8"))
 
 const isPrerelease = pkg.version.split("-")[1] === "prerelease";
 const iconDisplay: keyof typeof ICONS = isPrerelease

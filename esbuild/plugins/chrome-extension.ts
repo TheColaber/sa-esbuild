@@ -32,9 +32,7 @@ export default () => ({
       ...extraPages,
     ]
       .filter((page) => !!page)
-      .map((f) => dir + "/" + f);
-      console.log(html);
-      
+      .map((f) => dir + "/" + f);      
 
     for (const file of html) {
       const buffer = await readFile(file);

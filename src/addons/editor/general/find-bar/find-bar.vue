@@ -598,17 +598,18 @@ Blockly.Gesture.prototype.doBlockClick_ = function () {
 
 <style lang="scss" module>
 .wrapper {
-  height: 2rem;
   width: 100%;
   z-index: 100;
-  margin-bottom: 6px;
+  height: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 
   .dropdown-out {
     width: 16em;
     display: flex;
     flex-direction: column;
     font-size: 0.75rem;
-    padding: 4px;
     border-radius: 4px;
     float: right;
     line-height: 1;
