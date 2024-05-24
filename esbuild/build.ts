@@ -43,16 +43,10 @@ const ctx = await esbuild.context({
   },
 });
 
-let settings = new Date().getTime();
+let time = new Date().getTime();
+let settings = time;
 let promise = null;
-async function rebuild() {
-  if (promise) await promise;
-  console.time("build");
-  await (promise = ctx.rebuild());
-  promise = null;
-  console.timeEnd("build");
-  writeFile(out + "/timestamp.json", JSON.stringify({ settings }));
-}
+
 await rebuild();
 
 if (isDev) {
@@ -64,4 +58,19 @@ if (isDev) {
   });
 } else {
   process.exit();
+}
+
+async function rebuild() {
+  if (promise) await promise;
+  time = new Date().getTime();
+  let error = false;
+  await (promise = ctx.rebuild().catch(() => error = true));
+  promise = null;
+  if (error) {
+    console.log("Failed to build.");
+  } else {
+    console.log("build: " + (new Date().getTime() - time) + 'ms');
+  }
+  
+  writeFile(out + "/timestamp.json", JSON.stringify({ settings }));
 }

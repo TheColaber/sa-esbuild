@@ -9,7 +9,7 @@ import PopupAddon from "../../../../src/addon-api/popup";
 
 const { addon } = defineProps<{ addon: PopupAddon }>();
 const session = await addon.auth.getSession();
-const show = !session.error && !!session.user;
+const show = !("error" in session) && !!session.user;
 
 const messageCount = await addon.auth.getMessageCount();
 </script>

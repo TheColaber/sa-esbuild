@@ -12,9 +12,9 @@
         v{{ version }}
       </a>
     </span>
-    <button :class="$style.settings" @click="openSettingsPage()">
-      <Icon :icon="settingsIcon" />
-    </button>
+    <a aria-label="settings-link" title="Settings Page" :href="settingsLink" :class="$style.settings" @click.prevent="openSettingsPage()">
+      <Icon :class="$style.icon" :icon="settingsIcon" />
+    </a>
   </div>
 </template>
 
@@ -23,6 +23,9 @@ import { Icon } from "@iconify/vue";
 import settingsIcon from "@iconify-icons/tabler/settings";
 
 const msg = chrome.i18n.getMessage;
+
+const settingsLink = (chrome.runtime.getURL(chrome.runtime.getManifest().options_page));
+
 const openSettingsPage = chrome.runtime.openOptionsPage;
 
 const version = chrome.runtime
@@ -39,6 +42,7 @@ const version = chrome.runtime
   display: flex;
   align-items: center;
   color: #fff;
+  user-select: none;
   .text {
     font-size: 18px;
     font-weight: 400;
@@ -71,9 +75,30 @@ const version = chrome.runtime
     border: none;
     background: none;
     color: inherit;
+    &::before {
+      transition: all 0.5s;
+      opacity: 0;
+      background: linear-gradient(270deg, #ffffff54, transparent);
+      content: "";
+      position: absolute;
+      height: -webkit-fill-available;
+      width: -webkit-fill-available;
+    }
     &:focus-visible {
       outline: none;
       box-shadow: inset 0 0 0 3px #fff;
+    }
+    .icon {
+        transition: all 0.5s;
+        rotate: 0deg;
+      }
+    &:hover {
+      &::before {
+      opacity: 1;
+    }
+      .icon {
+        rotate: 90deg;
+      }
     }
   }
 }

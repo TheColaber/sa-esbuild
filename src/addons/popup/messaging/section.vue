@@ -13,7 +13,7 @@
     </button>
     <div
       v-show="extended"
-      :class="[$style.list, { [$style.noRowGap]: noRowGap }]"
+      :class="[$style.list, { [$style.noRowGap]: noRowGap, [$style.comments]: comments }]"
     >
       <slot></slot>
     </div>
@@ -24,14 +24,15 @@
 // https://icon-sets.iconify.design/uil/
 import { Icon } from "@iconify/vue";
 import { ref } from "vue";
-defineProps<{
+const props = defineProps<{
   noRowGap?: boolean;
   length: number;
   icon: string;
   title: string;
+  comments?: boolean
 }>();
 
-const extended = ref(false);
+const extended = ref(props.comments);
 </script>
 
 <style module lang="scss">
@@ -42,7 +43,7 @@ const extended = ref(false);
   box-shadow: var(--content-shadow);
 
   .title {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--content-text);
     padding: 6px;
     padding-inline-end: 9px;
@@ -67,9 +68,9 @@ const extended = ref(false);
 
     .right {
       white-space: nowrap;
-      font-size: 12px;
+      font-size: 13px;
       .icon {
-        font-size: 14px;
+        font-size: 15px;
         vertical-align: text-bottom;
       }
     }
@@ -100,6 +101,9 @@ const extended = ref(false);
     gap: 10px;
     &.noRowGap {
       gap: 0px 10px;
+    }
+    &.comments {
+      padding: 0px 8px 8px 8px;
     }
   }
 }

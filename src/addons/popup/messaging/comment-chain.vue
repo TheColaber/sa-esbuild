@@ -1,19 +1,19 @@
 <template>
-  <div class="message-type-details" v-show="chain.length">
+  <div :class="$style.details" v-show="chain.length">
     <div
-      class="comment-chain"
       v-for="parentCommentId of chain"
-      :class="{ unread: isCommentUnread(parentCommentId) }"
+      :class="{ [$style.chain]: true, unread: isCommentUnread(parentCommentId) }"
     >
-      <comment
+      <Comment
         :comment-id="parentCommentId"
         :comments-obj="comments"
         :is-parent="true"
         :unread="false"
         resource-type="user"
         :resource-id="resourceId"
-      ></comment>
-      <comment
+        :username="username"
+      ></Comment>
+      <Comment
         v-for="childCommentId of comments[parentCommentId].children"
         :comment-id="childCommentId"
         :comments-obj="comments"
@@ -21,18 +21,22 @@
         :unread="isCommentUnread(childCommentId)"
         resource-type="user"
         :resource-id="resourceId"
-      ></comment>
+        :username="username"
+      ></Comment>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-const { comments, messages, msgCount } = defineProps<{
+import Comment from './comment.vue';
+
+const { comments, messages, msgCount, chain } = defineProps<{
   chain: any;
   messages: any;
   comments: any;
   msgCount: any;
   resourceId: any;
+  username: string;
 }>();
 
 function isCommentUnread(commentId: string) {
@@ -49,3 +53,11 @@ function isCommentUnread(commentId: string) {
   } else return false;
 }
 </script>
+
+<style lang="scss" module>
+.details, .chain {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+</style>

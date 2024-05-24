@@ -159,7 +159,7 @@ function switchTab(id) {
         }
         &:focus-visible {
           outline: none;
-          box-shadow: inset 0 0 0 3px var(--content-text);
+          box-shadow: 0 0 0 3px var(--content-text);
         }
         &.sel {
           background-image: var(--gradient);

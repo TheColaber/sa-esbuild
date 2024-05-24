@@ -154,20 +154,20 @@
       :title="
         profile.username === username
           ? 'Your profile'
-          : '{{ profile.username }}\'s profile'
+          : profile.username + '\'s profile'
       "
-      icon="arrow-random"
+      icon="comment-alt-message"
       v-for="profile of profilesOrdered"
       v-show="profile.unreadComments && profile.loadedComments"
+      :comments="true"
     >
-      {{ profile.unreadComments }}
-      {{ profile.loadedComments }}
       <CommentChain
         :chain="profile.commentChains"
         :messages="messages"
         :comments="comments"
         :msgCount="msgCount"
         :resource-id="profile.username"
+        :username="username"
       />
     </Section>
   </div>
@@ -246,11 +246,13 @@ async function loadMessages() {
     error.value = "notloggedin";
     return;
   }
+
   username.value = session.user.username;
   const messageCount = await addon.auth.getMessageCount();
   msgCount.value = messageCount;
-  const maxPages = Math.min(Math.ceil(msgCount.value / 40) + 1, 25);
-  for (let i = 0; i < maxPages; i++, loading.value = (100 * i) / maxPages) {
+  let seenMessages = 0;
+  let fetchPage = 0;
+  fetching: while (fetchPage < 25) {
     const page: (
       | followuser
       | curatorinvite
@@ -266,7 +268,7 @@ async function loadMessages() {
       await fetch(
         `https://api.scratch.mit.edu/users/${
           username.value
-        }/messages?limit=40&offset=${40 * i}`,
+        }/messages?limit=40&offset=${40 * fetchPage}`,
         {
           headers: {
             "x-token": session.user.token,
@@ -328,7 +330,7 @@ async function loadMessages() {
             });
           break;
         }
-        case "addcomment":
+        case "addcomment":          
           const resourceId =
             message.comment_type === 1
               ? message.comment_obj_title
@@ -351,15 +353,24 @@ async function loadMessages() {
             resourceObject = getProfile(message.comment_obj_title);
           else if (message.comment_type === 2)
             resourceObject = getStudio(resourceId, message.comment_obj_title);
+          
           resourceObject.unreadComments++;
           break;
         default:
           console.error("UNKNOWN MESSAGE! Please send to SA Devs:", message);
           break;
       }
+      seenMessages++;
+      loading.value = seenMessages / messageCount * 100
+      if (seenMessages === messageCount) {
+        break fetching;
+      }
     }
 
-    for (const profile of profilesOrdered.value) {
+    fetchPage++;
+  }
+
+  for (const profile of profilesOrdered.value) {
       const location = commentLocations[1].find(
         (obj) => obj.resourceId === profile.username,
       );
@@ -372,8 +383,7 @@ async function loadMessages() {
           profile,
         );
       }
-    }
-  }
+    }  
 }
 loadMessages();
 
@@ -407,7 +417,7 @@ function getProfile(username) {
 
   return obj;
 }
-function getStudio(studioId, title) {
+function getStudio(studioId, title?: string) {
   const search = studios.value.find((obj) => obj.id === studioId);
   if (search) return search;
   const obj = {
@@ -601,6 +611,9 @@ async function fetchLegacyComments({
       commentsObj,
     });
   // else {
+
+  return commentsObj;
+
   //   console.log(
   //     "Could not find all comments for ",
   //     resourceType,
