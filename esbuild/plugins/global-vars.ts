@@ -2,7 +2,7 @@ import path from "path";
 import { readFile } from "fs/promises";
 import { globby } from "globby";
 import * as addonHelpers from "../addon-helpers.ts";
-
+import { PluginBuild } from "esbuild";
 const addonScriptFiles = await globby("src/addons/**/addon.ts");
 const addons = {};
 for (const file of addonScriptFiles) {
@@ -13,9 +13,9 @@ for (const file of addonScriptFiles) {
 
 export default () => ({
   name: "glob-vars",
-  setup(build) {
+  setup(build: PluginBuild) {
     // TODO: less broad filter so we can be faster.
-    build.onLoad({ filter: /.*/ }, async (args) => {
+    build.onLoad({ filter: /addons\\.*\.ts/ }, async (args) => {
       for (const id in addons) {
         for (const file of addons[id]) {
           if (args.path === path.resolve(file)) {
@@ -31,10 +31,12 @@ export default () => ({
                   {
                     loader: "ts",
                     pure: Object.keys(addonHelpers),
-                    define: {
-                      console: `__addon.console`,
-                      addon: `__addon`,
-                    },
+                    define: args.path.includes("popup")
+                      ? undefined
+                      : {
+                          console: `__addon.console`,
+                          addon: `__addon`,
+                        },
                   },
                 )
               ).code;

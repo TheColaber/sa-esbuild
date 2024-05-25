@@ -1,6 +1,6 @@
 import Auth from "../common/auth";
 
-export default class PopupAddon extends EventTarget {
+export default class WorkerAddon extends EventTarget {
   id: string;
   auth: Auth;
 

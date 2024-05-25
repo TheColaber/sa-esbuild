@@ -2,6 +2,7 @@ import UserscriptAddon from "../src/addon-api/userscript";
 import { Component } from "vue";
 import { IconifyIcon } from "@iconify/vue";
 import { MATCH_PATTERNS } from "../src/content-script/matches";
+import WorkerAddon from "../src/addon-api/worker";
 
 declare global {
   const defineAddon: typeof import("./addon-helpers").defineAddon;
@@ -171,7 +172,7 @@ export type AddonSetting = {
     }
 );
 
-export type Script = () => Promise<{ default: () => any }>;
+export type Script = () => Promise<{ default: (addon: WorkerAddon) => any }>;
 
 export interface AddonScript {
   script: Script;

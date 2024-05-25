@@ -1,4 +1,5 @@
 import * as workers from "#addon-workers";
+import WorkerAddon from "../addon-api/worker";
 import { addonEnabledStates, syncStorage } from "./storage";
 
 (async () => {
@@ -12,7 +13,8 @@ import { addonEnabledStates, syncStorage } from "./storage";
         (enabledState) => enabledState === addonsStates[id],
       )
     ) {
-      worker().then((imported) => imported.default());
+      const addon = new WorkerAddon(id);
+      worker().then((imported) => imported.default(addon));
     }
   }
   syncStorage.watch(({ addonsStates }) => {
