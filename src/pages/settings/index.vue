@@ -19,7 +19,7 @@ import pageStorage from "../storage";
 import { onMounted, ref, watch } from "vue";
 import { updateAll, tab, showOnboarding } from "./store";
 import Onboarding from "./onboarding.vue";
-import Footer from "./footer.vue";
+import Footer from "./components/footer.vue";
 
 function getTabFromHash() {
   const { hash } = window.location;

@@ -88,6 +88,17 @@ export function toggleAddon(id: string) {
   syncStorage.set({ addonsStates });
 }
 
+syncStorage.watch(({ addonsStates: newStates }) => {
+  for (const id in newStates) {
+    const enabled = addonEnabledStates.some(
+      (enabledState) => enabledState === newStates[id],
+    );
+    enabledStates.value[id] = enabled;
+    addonsStates[id] = newStates[id];
+    reqUpdate.push({ id, new: addonsStates[id] });
+  }
+});
+
 function typedObject<T extends string, U>(key: T, value: U) {
   return { [key]: value } as { [K in T]: U };
 }

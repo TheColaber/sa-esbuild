@@ -49,7 +49,7 @@ window.addEventListener("keydown", function (e) {
     align-items: center;
     background: #00000020;
     height: 40px;
-    width: 100%;
+    width: min(100%, 650px);
     border-radius: 6px;
     color: inherit;
     font-size: 18px;

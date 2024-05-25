@@ -84,7 +84,7 @@ const version = chrome.runtime
     background: none;
     color: inherit;
     &::before {
-      transition: all 0.5s;
+      transition: all 0.3s;
       opacity: 0;
       background: linear-gradient(270deg, #ffffff54, transparent);
       content: "";
@@ -97,7 +97,7 @@ const version = chrome.runtime
       box-shadow: inset 0 0 0 3px #fff;
     }
     .icon {
-      transition: all 0.5s;
+      transition: all 0.3s;
       rotate: 0deg;
     }
     &:hover {
@@ -106,6 +106,7 @@ const version = chrome.runtime
       }
       .icon {
         rotate: 90deg;
+        scale: 1.2;
       }
     }
   }

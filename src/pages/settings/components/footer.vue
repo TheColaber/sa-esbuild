@@ -45,7 +45,7 @@
       background: none;
       border: none;
       color: inherit;
-      padding: 6px max(10px, 1%);
+      padding: 6px max(14px, 1.5%);
       font-family: inherit;
       cursor: pointer;
       text-decoration: none;
