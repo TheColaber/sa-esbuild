@@ -37,7 +37,7 @@ const PAGES = {
   },
 };
 
-const pkg = JSON.parse(await fs.readFile("./package.json", "utf-8"))
+const pkg = JSON.parse(await fs.readFile("./package.json", "utf-8"));
 
 const isPrerelease = pkg.version.split("-")[1] === "prerelease";
 const iconDisplay: keyof typeof ICONS = isPrerelease
@@ -92,9 +92,6 @@ if (isFirefox) {
 }
 
 export const extraIcons = [ICONS.MUTED[16], ICONS.MUTED[32]];
-export const extraPages = [
-  PAGES.POPUP.FULLSCREEN,
-  PAGES.DEVTOOLS.PANEL
-];
+export const extraPages = [PAGES.POPUP.FULLSCREEN, PAGES.DEVTOOLS.PANEL];
 
 export default manifest;

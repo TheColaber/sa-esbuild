@@ -1,62 +1,105 @@
 <template>
-  <div class="comment"
-    :class="{ 'child-comment': !isParent, 'unread': unread, 'comment-me': comment.author === username }">
-    <a class="comment-author nolink" rel="noopener noreferrer" target="_blank"
-      href="https://scratch.mit.edu/users/{{ comment.author }}/">{{ comment.author }}</a>{{
-      comment.scratchTeam ? "*" : "" }}
+  <div
+    class="comment"
+    :class="{
+      'child-comment': !isParent,
+      unread: unread,
+      'comment-me': comment.author === username,
+    }"
+  >
+    <a
+      class="comment-author nolink"
+      rel="noopener noreferrer"
+      target="_blank"
+      href="https://scratch.mit.edu/users/{{ comment.author }}/"
+      >{{ comment.author }}</a
+    >{{ comment.scratchTeam ? "*" : "" }}
     <span class="comment-time" v-show="deleteStep !== 1 && !deleted">
       · {{ commentTimeAgo }}
       <a rel="noopener noreferrer" target="_blank" :href="commentURL">
-        <Icon :icon="'uil:popout'" class="popout-comment" :title="'Open in new tab'" />
+        <Icon
+          :icon="'uil:popout'"
+          class="popout-comment"
+          :title="'Open in new tab'"
+        />
       </a>
     </span>
-    <a @click="deleteComment()" class="delete-btn" :class="{ 'bold': deleteStep === 1 }" v-show="!deleted"
-      v-if="canDeleteComment">{{ deleteStep === 0 ? "Delete" : "Confirm" }}
+    <a
+      @click="deleteComment()"
+      class="delete-btn"
+      :class="{ bold: deleteStep === 1 }"
+      v-show="!deleted"
+      v-if="canDeleteComment"
+      >{{ deleteStep === 0 ? "Delete" : "Confirm" }}
     </a>
     <bdo dir="ltr">
       <!-- prevents LTR comments from being messed up in RTL layout - not ideal, but consistent with Scratch -->
-      <div class="comment-content" :class="{ 'comment-self': comment.author === username }">
+      <div
+        class="comment-content"
+        :class="{ 'comment-self': comment.author === username }"
+      >
         <div class="comment-content-text">
           <span v-show="deleting">{{ "Deleting" }}</span>
           <span v-show="deleted && !deleting">{{ "Deleted" }}</span>
           {{ comment.content.innerText }}
           <!-- <dom-element-renderer :element="comment.content" v-show="!deleted"></dom-element-renderer> -->
         </div>
-        <a class="reply-button-comment" @click="replying = true" :class="{ 'replying': replying }"
-          :style="{ 'visibility': replying ? 'hidden' : 'visible' }" v-show="!deleted">{{ "Reply" }}</a>
+        <a
+          class="reply-button-comment"
+          @click="replying = true"
+          :class="{ replying: replying }"
+          :style="{ visibility: replying ? 'hidden' : 'visible' }"
+          v-show="!deleted"
+          >{{ "Reply" }}</a
+        >
       </div>
     </bdo>
     <div class="reply-box-comment" v-show="replying">
-      <textarea class="reply-textarea" maxlength="500" v-model="replyBoxValue"
-        @keyup.enter="($event.ctrlKey || $event.metaKey) && postComment()"></textarea>
+      <textarea
+        class="reply-textarea"
+        maxlength="500"
+        v-model="replyBoxValue"
+        @keyup.enter="($event.ctrlKey || $event.metaKey) && postComment()"
+      ></textarea>
       <div class="reply-box-buttons">
-        <button @click="postComment()" class="large-button post-button" :disabled="postingComment">
+        <button
+          @click="postComment()"
+          class="large-button post-button"
+          :disabled="postingComment"
+        >
           {{ postingComment ? "Posting" : "Post" }}
         </button>
-        <button @click="replying = false" v-show="!postingComment" class="large-button">
+        <button
+          @click="replying = false"
+          v-show="!postingComment"
+          class="large-button"
+        >
           {{ "Cancel" }}
         </button>
-        <span class="comment-chars"> {{ charactersLeft + " characters left" }}</span>
+        <span class="comment-chars">
+          {{ charactersLeft + " characters left" }}</span
+        >
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import PopupAddon from '../../../addon-api/popup';
-import { Icon } from '@iconify/vue';
+import { computed, ref } from "vue";
+import PopupAddon from "../../../addon-api/popup";
+import { Icon } from "@iconify/vue";
 
-const {commentsObj, commentId, resourceType, resourceId, username } = defineProps<{
-  // addon: PopupAddon
-  commentId: any;
-  commentsObj: any;
-  isParent: any;
-  unread: any;
-  resourceType: any;
-  resourceId: any;
-  username: string;
-}>();
+const { commentsObj, commentId, resourceType, resourceId, username } =
+  defineProps<{
+    // addon: PopupAddon
+    commentId: any;
+    commentsObj: any;
+    isParent: any;
+    unread: any;
+    resourceType: any;
+    resourceId: any;
+    username: string;
+  }>();
 
 const replying = ref(false);
 const replyBoxValue = ref("");
@@ -81,22 +124,28 @@ const commentTimeAgo = computed(() => {
   let options;
   if (timeDiffSeconds < 60) return timeFormatter.format(0, "second");
   else if (timeDiffSeconds < 3600) options = { unit: "minute", divideBy: 60 };
-  else if (timeDiffSeconds < 86400) options = { unit: "hour", divideBy: 60 * 60 };
+  else if (timeDiffSeconds < 86400)
+    options = { unit: "hour", divideBy: 60 * 60 };
   else options = { unit: "day", divideBy: 60 * 60 * 24 };
-  return timeFormatter.format(-Math.round(timeDiffSeconds / options.divideBy), options.unit);
+  return timeFormatter.format(
+    -Math.round(timeDiffSeconds / options.divideBy),
+    options.unit,
+  );
 });
 const urlPath =
-          resourceType === "user" ? "users" : resourceType === "gallery" ? "studios" : "projects";
-        const commentPath = resourceType === "gallery" ? "comments/" : "";
-const commentURL = `https://scratch.mit.edu/${urlPath}/${
-          resourceId
-        }/${commentPath}#comments-${commentId.substring(2)}`;
+  resourceType === "user"
+    ? "users"
+    : resourceType === "gallery"
+      ? "studios"
+      : "projects";
+const commentPath = resourceType === "gallery" ? "comments/" : "";
+const commentURL = `https://scratch.mit.edu/${urlPath}/${resourceId}/${commentPath}#comments-${commentId.substring(2)}`;
 
 let canDeleteComment = true;
 if (resourceType === "user") canDeleteComment = resourceId === username;
 if (resourceType === "project") canDeleteComment = comment.project === username;
 
-const charactersLeft = computed(() => 500 - replyBoxValue.value.length)
+const charactersLeft = computed(() => 500 - replyBoxValue.value.length);
 
 function deleteComment() {
   console.log("delete comment");

@@ -13,32 +13,30 @@ export default defineAddon({
     {
       id: "openFindBar",
       name: "Open find bar",
-      description:
-        "Use to open the find bar",
+      description: "Use to open the find bar",
       browserOverrides: [["Ctrl", "F"], ["F3"]],
       default: ["Ctrl", "F"],
     },
     {
       id: "carouselNext",
       name: "Next block",
-      description:
-        "Go to the next block.",
+      description: "Go to the next block.",
       default: ["F2"],
     },
     {
       id: "carouselPrevious",
       name: "Previous block",
-      description:
-        "Go to the previous block.",
+      description: "Go to the previous block.",
       default: ["Shift", "F2"],
     },
     {
       id: "blockLink",
       name: "Block link",
-      description: "Click block while using hotkey to open the find bar with the block selected",
+      description:
+        "Click block while using hotkey to open the find bar with the block selected",
       default: [["WheelButton"], ["Shift"]],
-      action: "block"
-    }
+      action: "block",
+    },
   ],
 });
 

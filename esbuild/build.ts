@@ -64,13 +64,13 @@ async function rebuild() {
   if (promise) await promise;
   time = new Date().getTime();
   let error = false;
-  await (promise = ctx.rebuild().catch(() => error = true));
+  await (promise = ctx.rebuild().catch(() => (error = true)));
   promise = null;
   if (error) {
     console.log("Failed to build.");
   } else {
-    console.log("build: " + (new Date().getTime() - time) + 'ms');
+    console.log("build: " + (new Date().getTime() - time) + "ms");
   }
-  
+
   writeFile(out + "/timestamp.json", JSON.stringify({ settings }));
 }

@@ -143,7 +143,7 @@ export default async () => {
     }
   };
 
-  function updateToolbox() {    
+  function updateToolbox() {
     const workspace = Blockly.getMainWorkspace();
     const toolbox = workspace.getToolbox();
     if (!toolbox) return;
@@ -158,7 +158,7 @@ export default async () => {
     // Repopulate the category menu since we've just disposed it.
     toolbox.populate_(workspace.options.languageTree);
     // Reposition the toolbox, since it's likely our addon moved it.
-    toolbox.position();   
+    toolbox.position();
   }
 
   function updateClass() {

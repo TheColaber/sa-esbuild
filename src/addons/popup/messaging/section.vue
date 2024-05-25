@@ -13,7 +13,10 @@
     </button>
     <div
       v-show="extended"
-      :class="[$style.list, { [$style.noRowGap]: noRowGap, [$style.comments]: comments }]"
+      :class="[
+        $style.list,
+        { [$style.noRowGap]: noRowGap, [$style.comments]: comments },
+      ]"
     >
       <slot></slot>
     </div>
@@ -29,7 +32,7 @@ const props = defineProps<{
   length: number;
   icon: string;
   title: string;
-  comments?: boolean
+  comments?: boolean;
 }>();
 
 const extended = ref(props.comments);

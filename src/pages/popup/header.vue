@@ -12,7 +12,13 @@
         v{{ version }}
       </a>
     </span>
-    <a aria-label="settings-link" title="Settings Page" :href="settingsLink" :class="$style.settings" @click.prevent="openSettingsPage()">
+    <a
+      aria-label="settings-link"
+      title="Settings Page"
+      :href="settingsLink"
+      :class="$style.settings"
+      @click.prevent="openSettingsPage()"
+    >
       <Icon :class="$style.icon" :icon="settingsIcon" />
     </a>
   </div>
@@ -24,7 +30,9 @@ import settingsIcon from "@iconify-icons/tabler/settings";
 
 const msg = chrome.i18n.getMessage;
 
-const settingsLink = (chrome.runtime.getURL(chrome.runtime.getManifest().options_page));
+const settingsLink = chrome.runtime.getURL(
+  chrome.runtime.getManifest().options_page,
+);
 
 const openSettingsPage = chrome.runtime.openOptionsPage;
 
@@ -89,13 +97,13 @@ const version = chrome.runtime
       box-shadow: inset 0 0 0 3px #fff;
     }
     .icon {
-        transition: all 0.5s;
-        rotate: 0deg;
-      }
+      transition: all 0.5s;
+      rotate: 0deg;
+    }
     &:hover {
       &::before {
-      opacity: 1;
-    }
+        opacity: 1;
+      }
       .icon {
         rotate: 90deg;
       }

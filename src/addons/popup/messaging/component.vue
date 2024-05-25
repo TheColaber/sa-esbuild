@@ -330,7 +330,7 @@ async function loadMessages() {
             });
           break;
         }
-        case "addcomment":          
+        case "addcomment":
           const resourceId =
             message.comment_type === 1
               ? message.comment_obj_title
@@ -353,7 +353,7 @@ async function loadMessages() {
             resourceObject = getProfile(message.comment_obj_title);
           else if (message.comment_type === 2)
             resourceObject = getStudio(resourceId, message.comment_obj_title);
-          
+
           resourceObject.unreadComments++;
           break;
         default:
@@ -361,7 +361,7 @@ async function loadMessages() {
           break;
       }
       seenMessages++;
-      loading.value = seenMessages / messageCount * 100
+      loading.value = (seenMessages / messageCount) * 100;
       if (seenMessages === messageCount) {
         break fetching;
       }
@@ -371,19 +371,19 @@ async function loadMessages() {
   }
 
   for (const profile of profilesOrdered.value) {
-      const location = commentLocations[1].find(
-        (obj) => obj.resourceId === profile.username,
-      );
+    const location = commentLocations[1].find(
+      (obj) => obj.resourceId === profile.username,
+    );
 
-      if (location) {
-        await checkCommentLocation(
-          "user",
-          location.resourceId,
-          location.commentIds,
-          profile,
-        );
-      }
-    }  
+    if (location) {
+      await checkCommentLocation(
+        "user",
+        location.resourceId,
+        location.commentIds,
+        profile,
+      );
+    }
+  }
 }
 loadMessages();
 

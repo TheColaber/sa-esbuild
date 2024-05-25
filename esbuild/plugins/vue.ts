@@ -259,7 +259,7 @@ export default (opts = {}) => ({
         scoped: style.scoped,
         modules: style.module,
       });
-            
+
       if (result.errors.length > 0) {
         const errors: any[] = result.errors;
 

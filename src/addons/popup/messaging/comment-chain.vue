@@ -2,7 +2,10 @@
   <div :class="$style.details" v-show="chain.length">
     <div
       v-for="parentCommentId of chain"
-      :class="{ [$style.chain]: true, unread: isCommentUnread(parentCommentId) }"
+      :class="{
+        [$style.chain]: true,
+        unread: isCommentUnread(parentCommentId),
+      }"
     >
       <Comment
         :comment-id="parentCommentId"
@@ -28,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import Comment from './comment.vue';
+import Comment from "./comment.vue";
 
 const { comments, messages, msgCount, chain } = defineProps<{
   chain: any;
@@ -55,7 +58,8 @@ function isCommentUnread(commentId: string) {
 </script>
 
 <style lang="scss" module>
-.details, .chain {
+.details,
+.chain {
   display: flex;
   flex-direction: column;
   gap: 8px;

@@ -5,6 +5,7 @@
       <Suspense>
         <Content :tab="tab"></Content>
       </Suspense>
+      <Footer></Footer>
     </template>
     <Onboarding v-else />
   </div>
@@ -18,6 +19,7 @@ import pageStorage from "../storage";
 import { onMounted, ref, watch } from "vue";
 import { updateAll, tab, showOnboarding } from "./store";
 import Onboarding from "./onboarding.vue";
+import Footer from "./footer.vue";
 
 function getTabFromHash() {
   const { hash } = window.location;
