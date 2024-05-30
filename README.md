@@ -2,6 +2,15 @@
 
 Scratch Addons unites various features and themes (called [addons](./src/addons)) for the Scratch website and project editor, offering them through a user-friendly and customizable browser extension. Our goal is to establish a centralized and constantly updated platform that fosters community development of innovative features and themes for Scratch.
 
+### How to Contribute
+
+1. Download the repo through your favorite git tool
+2. Run `yarn install` (or `npm install`)
+3. Run `yarn dev` (or `npm run dev`)
+4. Load the extention into chrome://extensions
+5. If you want to build an addon, use `yarn create-addon` to get started
+6. Run `yarn format` at the end and then create a PR!
+
 ### TODOS
 
 #### Translations
@@ -23,3 +32,20 @@ Scratch Addons unites various features and themes (called [addons](./src/addons)
 #### Addon API
 
 - API for previewing addons. Specifically editor addons. This api would allow you to create editor tooltips on elements and have a next and previous option to go to the next tooltip.
+
+#### Addon Prio List
+
+- find-bar - 100%
+- **jump-to-def - 0%**
+- copypaste-blocks - 100%
+- paste-drag - 100%
+- **delete-cut-blocks - 0%**
+- **enhanced-cleanup - 80%** (missing settings)
+- **make-space - 0%**
+- **type-block-name/insert-blocks - 0%**
+- **swap-variables - 0%**
+- category-columns - 100%_ish_
+- **hide-flyout - 0%**
+- hide-new-vars - 100% (**buggy??**)
+- snap-scripts - 100%
+- **zebra-striping - 50%**
