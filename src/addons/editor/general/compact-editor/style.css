@@ -296,7 +296,7 @@ button[class*="action-menu_more-button"] {
 }
 
 /* Code tab */
-body:not(.sa-columns-enabled)
+.blocklyToolboxDiv:not(.sa-columns-enabled)
   [class*="gui_tab-panel"]
   .scratchCategoryMenuItem {
   padding: 0.25rem 0;
@@ -307,18 +307,14 @@ body:not(.sa-columns-enabled)
   height: 1rem;
   background-size: 1rem 1rem;
 }
-body:not(.sa-columns-enabled) [class*="gui_tab-panel"] .blocklyToolboxDiv {
+.blocklyToolboxDiv:not(.sa-columns-enabled) {
   height: calc(100% - 2rem) !important;
   scrollbar-width: none;
 }
-body:not(.sa-columns-enabled)
-  [class*="gui_tab-panel"]
-  .blocklyToolboxDiv::-webkit-scrollbar {
+.blocklyToolboxDiv:not(.sa-columns-enabled)::-webkit-scrollbar {
   display: none;
 }
-body:not(.sa-columns-enabled)
-  [class*="gui_tab-panel"]
-  [class*="gui_extension-button-container_"] {
+[class*="gui_extension-button-container_"]:not(.sa-columns-enabled) {
   height: 2rem;
 }
 

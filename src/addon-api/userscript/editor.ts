@@ -8,7 +8,7 @@ export default class Editor extends EventTarget {
   }
 
   createBlockContextMenu(
-    callback: (items: any[], gesture: ScratchBlocks.Gesture) => any[],
+    callback: (items: any[], event: MouseEvent) => any[],
     {
       workspace = false,
       blocks = false,

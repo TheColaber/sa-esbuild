@@ -90,6 +90,7 @@ export default async () => {
         ? "scratchCategoryMenuHorizontal"
         : "scratchCategoryMenu");
     this.parentHtml_.appendChild(this.secondTable);
+    this.parentHtml_.classList.add("sa-columns-enabled");
   };
 
   const oParser = new DOMParser();
@@ -161,23 +162,13 @@ export default async () => {
     toolbox.position();
   }
 
-  function updateClass() {
-    // Add class to allow editor-compact to handle this addon
-    if (!addon.enabled) document.body.classList.remove("sa-columns-enabled");
-    else document.body.classList.add("sa-columns-enabled");
-  }
-
   updateToolbox();
   addon.addEventListener("disabled", updateToolbox);
   addon.addEventListener("reenabled", updateToolbox);
 
-  updateClass();
-  addon.addEventListener("disabled", updateClass);
-  addon.addEventListener("reenabled", updateClass);
-
   while (true) {
-    const addExtensionButton = await addon.tab.waitForElement(
-      "[class*='gui_extension-button_']",
+    const addExtensionContainer = await addon.tab.waitForElement(
+      "[class*='gui_extension-button-container']",
       {
         markAsSeen: true,
         reduxEvents: [
@@ -188,6 +179,8 @@ export default async () => {
         condition: () => !addon.tab.redux.state.scratchGui.mode.isPlayerOnly,
       },
     );
+    addExtensionContainer.classList.add("sa-columns-enabled");
+    const addExtensionButton = addExtensionContainer.firstElementChild;
     const addExtensionLabel = Object.assign(document.createElement("span"), {
       className: "sa-add-extension-label",
       innerText: addExtensionButton.getAttribute("title"),
