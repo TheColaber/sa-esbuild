@@ -602,8 +602,8 @@ Blockly.Gesture.prototype.doBlockClick_ = function () {
   z-index: 100;
   height: 100%;
   display: flex;
-  justify-content: flex-end;
-  align-items: center;
+  align-items: flex-end;
+  flex-direction: column;
 
   .dropdown-out {
     width: 16em;

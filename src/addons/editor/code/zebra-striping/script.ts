@@ -11,13 +11,20 @@ export default async () => {
       // parent).
       for (const block of this.getDescendants()) {
         const parent = block.getSurroundParent();
-        block.striped = parent && !block.isShadow() && parent.getCategory() === block.getCategory() && (block.nextConnection || (block.outputShape_ > 0 && block.outputShape_ === parent.outputShape_)) && !parent.striped;
+        block.striped =
+          parent &&
+          !block.isShadow() &&
+          parent.getCategory() === block.getCategory() &&
+          (block.nextConnection ||
+            (block.outputShape_ > 0 &&
+              block.outputShape_ === parent.outputShape_)) &&
+          !parent.striped;
         if (!block.striped && block.orginalColour_) {
           block.setColour(block.orginalColour_);
           block.orginalColour_ = null;
         } else if (block.striped && !block.orginalColour_) {
           block.orginalColour_ = block.colour_;
-          block.setColour(lighten(block.colour_, -20));          
+          block.setColour(lighten(block.colour_, -20));
         }
       }
     }
@@ -26,5 +33,15 @@ export default async () => {
 };
 
 function lighten(color, amount) {
-  return '#' + color.replace(/^#/, '').replace(/../g, color => ('0'+Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+  return (
+    "#" +
+    color
+      .replace(/^#/, "")
+      .replace(/../g, (color) =>
+        (
+          "0" +
+          Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)
+        ).substr(-2),
+      )
+  );
 }

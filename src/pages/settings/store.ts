@@ -6,6 +6,8 @@ import {
   addonEnabledStates,
 } from "../../background/storage";
 import { Port } from "../../background/messaging";
+import MiniSearch from "minisearch";
+
 export const port = new Port();
 
 export const tab = ref<
@@ -15,7 +17,6 @@ export const showOnboarding = ref(false);
 export const searchFilter = ref("");
 export const suggestions = ref([]);
 
-import MiniSearch from "minisearch";
 const miniSearch = new MiniSearch({
   fields: ["id", "name", "description"],
   searchOptions: {

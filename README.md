@@ -36,17 +36,23 @@ Scratch Addons unites various features and themes (called [addons](./src/addons)
 
 #### Addon Prio List
 
-- **jump-to-def - 0%**
-- **delete-cut-blocks - 0%**
-- **make-space - 0%**
-- **type-block-name/insert-blocks - 0%**
-- **swap-variables - 0%**
-- **hide-flyout - 0%**
+- delete-cut-blocks - 0%
+- make-space - 0%
+- custom-fps - 0%
+- block-cherry-picking - 0%
+- block-duplicate - 0%
+- block-count - 0%
+- swap-variables - 0%
+- hide-flyout - 0%
+- type-block-name/insert-blocks - 0%
 
-- category-columns - 100%_ish_
-- hide-new-vars - 100% (**buggy??**)
+- jump-to-def - 70%
+- category-columns - 100%ish
+- hide-new-vars - 100% (buggy??)
+- find-bar - 90% - uhhhhh
 
 - snap-scripts - 100%
-- find-bar - 100%
 - copypaste-blocks - 100%
 - paste-drag - 100%
+- enhanced-cleanup - 100%
+- zebra-striping - 100%
