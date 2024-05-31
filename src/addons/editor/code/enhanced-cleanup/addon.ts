@@ -11,7 +11,7 @@ export default defineAddon({
     },
     {
       id: "unusedVariablesPrompt",
-      name: "Ask to delete unused variables",
+      name: "Ask to delete unused variables and lists",
       presets: { default: true },
       type: "boolean",
     },

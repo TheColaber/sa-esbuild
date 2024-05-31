@@ -32,10 +32,10 @@ Scratch Addons unites various features and themes (called [addons](./src/addons)
 #### Addon API
 
 - API for previewing addons. Specifically editor addons. This api would allow you to create editor tooltips on elements and have a next and previous option to go to the next tooltip.
+- Type classes based on addon.ts, such as addon.settings.get(keys)
 
 #### Addon Prio List
 
-- **enhanced-cleanup - 80%** (missing settings)
 - **zebra-striping - 50%**
 - **jump-to-def - 0%**
 - **delete-cut-blocks - 0%**

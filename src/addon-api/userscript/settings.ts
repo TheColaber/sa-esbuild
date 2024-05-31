@@ -1,7 +1,7 @@
 import { AddonStorage } from "../../background/storage";
 
 export default class Settings extends EventTarget {
-  settings: AddonStorage[any];
+  private settings: AddonStorage[any];
   constructor(settings) {
     super();
 
