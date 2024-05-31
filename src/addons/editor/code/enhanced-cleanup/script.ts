@@ -7,11 +7,11 @@ export default async () => {
 
     const orphansPrompt = addon.settings.get("orphansPrompt");
     const unusedVariablesPrompt = addon.settings.get("unusedVariablesPrompt");
-    
+
     const topBlocks = this.getTopBlocks();
     const maxWidths = {};
     const orphans = [];
-    
+
     Blockly.Events.setGroup(true);
 
     const columns = [];
@@ -116,8 +116,12 @@ export default async () => {
       }
 
       if (unusedVariables.length > 0) {
-        const unusedVariableNames = unusedVariables.map((v) => v.name).join(", ")
-        if (confirm("Delete unused variables? They are:\n" + unusedVariableNames)) {
+        const unusedVariableNames = unusedVariables
+          .map((v) => v.name)
+          .join(", ");
+        if (
+          confirm("Delete unused variables? They are:\n" + unusedVariableNames)
+        ) {
           for (const variable of unusedVariables) {
             this.deleteVariableById(variable.getId());
           }
@@ -136,14 +140,13 @@ export default async () => {
       }
 
       if (unusedLists.length > 0) {
-        const unusedListNames = unusedLists.map((v) => v.name).join(", ")
+        const unusedListNames = unusedLists.map((v) => v.name).join(", ");
         if (confirm("Delete unused lists? They are:\n" + unusedListNames)) {
           for (const list of unusedLists) {
             this.deleteVariableById(list.getId());
           }
         }
       }
-
     }
   };
 };

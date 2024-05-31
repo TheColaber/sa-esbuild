@@ -36,7 +36,6 @@ Scratch Addons unites various features and themes (called [addons](./src/addons)
 
 #### Addon Prio List
 
-- **zebra-striping - 50%**
 - **jump-to-def - 0%**
 - **delete-cut-blocks - 0%**
 - **make-space - 0%**
