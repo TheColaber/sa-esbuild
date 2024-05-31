@@ -2,7 +2,7 @@
   <div :class="$style.addon" :id="'addon-' + addon.id">
     <div :class="$style['top-bar']">
       <div :class="$style.name">{{ addon.name }}</div>
-      <Toggle :id="addon.id" />
+      <Toggle :state="enabledStates[addon.id]" @click="toggleAddon(addon.id)" />
     </div>
 
     <div :class="$style.description">{{ addon.description }}</div>
@@ -33,6 +33,7 @@ import { addonStorage } from "../../../background/storage";
 import { ref, watch } from "vue";
 import Toggle from "../components/toggle.vue";
 import * as addons from "#addons";
+import { enabledStates, toggleAddon } from "../store";
 
 const { id } = defineProps<{ id: string }>();
 const addon = addons[id];

@@ -10,9 +10,14 @@
         :min="setting.min"
         v-model="inputValue"
       />
+      <Toggle
+        v-if="setting.type === 'boolean'"
+        :state="inputValue"
+        @click="inputValue = !inputValue"
+      />
       <div
         :class="$style.preset"
-        v-if="setting.presets"
+        v-if="hasExtraPresets"
         v-on-click-outside="() => (showPresetsList = false)"
       >
         <button
@@ -42,12 +47,17 @@ import chevronDown from "@iconify-icons/tabler/chevron-down";
 import { ExtraAddonManifest } from "../../../../esbuild/addon-helpers";
 import { ref, watch } from "vue";
 import { vOnClickOutside } from "@vueuse/components";
+import Toggle from "../components/toggle.vue";
 
 const { setting, presetNames, value } = defineProps<{
   setting: ExtraAddonManifest["settings"][number];
   presetNames: ExtraAddonManifest["presetNames"];
-  value: string | number;
+  value: string | number | boolean;
 }>();
+
+const keys = Object.keys(setting.presets);
+const hasExtraPresets = keys.length > 1 || !keys.includes("default");
+
 const inputValue = ref(value);
 const emit = defineEmits(["update:value"]);
 watch(inputValue, (val) => {

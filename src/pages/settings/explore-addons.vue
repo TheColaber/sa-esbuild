@@ -1,12 +1,10 @@
 <template>
   <div :class="$style.container">
     <template v-for="section of sections">
-      <div v-if="section.addons.length > 0" :class="$style.section">
-        <span>{{ section.name }}</span>
-        <div :class="$style.grid">
-          <GridItem v-for="addon of section.addons" :key="addon" :id="addon" />
-        </div>
-      </div>
+      <template v-if="section.addons.length > 0" :class="$style.section">
+        <span :class="$style.name">{{ section.name }}</span>
+        <GridItem v-for="addon of section.addons" :key="addon" :id="addon" />
+      </template>
     </template>
     <div v-if="disabledAddons.length === 0">
       <template v-if="searchFilter">
@@ -49,25 +47,14 @@ const sections = computed(() => [
 
 <style lang="scss" module>
 .container {
-  display: flex;
-  padding: 30px;
-  flex-direction: column;
-  gap: 30px;
+  display: grid;
+  justify-content: center;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(min-content, 272px));
+  padding: 15px;
   font-size: 20px;
-  overflow-y: auto;
-
-  .section {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    gap: 5px;
-
-    .grid {
-      flex: 1;
-      display: grid;
-      gap: 20px;
-      grid-template-columns: repeat(auto-fit, minmax(min-content, 272px));
-    }
+  .name {
+    grid-column: 1 / -1;
   }
 }
 </style>

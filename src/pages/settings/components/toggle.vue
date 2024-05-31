@@ -1,19 +1,10 @@
 <template>
-  <button
-    :class="$style['switch-background']"
-    @click="toggleAddon(id)"
-    :state="enabledStates[id]"
-  >
+  <button :class="$style['switch-background']">
     <div :class="$style.switch"></div>
   </button>
 </template>
 
-<script lang="ts" setup>
-import { enabledStates, toggleAddon } from "../store";
-const { id } = defineProps<{
-  id: string;
-}>();
-</script>
+<script lang="ts" setup></script>
 
 <style lang="scss" module>
 .switch-background {
