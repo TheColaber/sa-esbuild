@@ -17,10 +17,11 @@ import Header from "./components/header.vue";
 import { syncStorage } from "../../background/storage";
 import pageStorage from "../storage";
 import { onMounted, ref, watch } from "vue";
-import { updateAll, tab, showOnboarding } from "./store";
+import { tab, showOnboarding } from "./store";
 import Onboarding from "./onboarding.vue";
 import Footer from "./components/footer.vue";
 
+// TODO: Revist
 function getTabFromHash() {
   const { hash } = window.location;
   let hashValue = hash ? hash.slice(1) : "explore";
@@ -49,7 +50,6 @@ onMounted(() => {
     window.location.hash = hash;
 
     window.addEventListener("hashchange", () => {
-      updateAll();
       getTabFromHash();
     });
   }, 100);
