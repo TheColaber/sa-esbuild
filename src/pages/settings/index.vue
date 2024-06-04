@@ -78,5 +78,9 @@ syncStorage.get("onboarded").then(({ onboarded = false }) => {
   background-color: var(--background-primary);
   color: var(--content-text);
   height: 100vh;
+
+  .content {
+    overflow: auto;
+  }
 }
 </style>
