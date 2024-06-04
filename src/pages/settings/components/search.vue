@@ -3,7 +3,7 @@
     <div :class="$style.search">
       <input
         ref="inputEl"
-        v-model="searchFilter"
+        v-model="searchValue"
         :class="$style.input"
         id="search"
         type="text"
@@ -24,7 +24,7 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
 import search from "@iconify-icons/tabler/search";
-import { searchFilter, suggestions } from "../store";
+import { searchValue, suggestions } from "../store";
 import { ref } from "vue";
 const inputEl = ref<HTMLInputElement>();
 window.addEventListener("keydown", function (e) {
@@ -33,7 +33,7 @@ window.addEventListener("keydown", function (e) {
     inputEl.value.focus();
   } else if (e.key === "Escape" && document.activeElement === inputEl.value) {
     e.preventDefault();
-    searchFilter.value = "";
+    searchValue.value = "";
   }
 });
 </script>

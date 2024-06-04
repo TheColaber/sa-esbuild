@@ -16,7 +16,7 @@ export const tab = ref<
   "explore" | "enabled" | "themes" | "hotkeys" | "superpresets" | "more"
 >();
 export const showOnboarding = ref(false);
-export const searchFilter = ref("");
+export const searchValue = ref("");
 export const suggestions = ref([]);
 
 const miniSearch = new MiniSearch({
@@ -30,7 +30,7 @@ const miniSearch = new MiniSearch({
 
 const filteredAddons = ref([]);
 miniSearch.addAll(Object.values(addons));
-watch(searchFilter, (search) => {
+watch(searchValue, (search) => {
   filteredAddons.value = miniSearch.search(search);
   suggestions.value = miniSearch
     .autoSuggest(search)
@@ -41,14 +41,16 @@ const { addonsStates } = await syncStorage.get("addonsStates");
 const localAddonStorage = reactive({...addonsStates});
 const syncedAddonStorage = reactive({...addonsStates});
 
+const searchFilter = (id) => !searchValue.value ||
+filteredAddons.value.some((res) => res.id === id)
 export const enabledProductionAddons = computed(() =>
-Object.keys(addons).filter((id) => addonProductionStates.some((state) => state === localAddonStorage[id])),
+Object.keys(addons).filter(searchFilter).filter((id) => addonProductionStates.some((state) => state === localAddonStorage[id])),
 );
 export const enabledDevelopmentAddons = computed(() =>
-Object.keys(addons).filter((id) => addonDevelopmentStates.some((state) => state === localAddonStorage[id])),
+Object.keys(addons).filter(searchFilter).filter((id) => addonDevelopmentStates.some((state) => state === localAddonStorage[id])),
 );
 export const disabledAddons = computed(() =>
-Object.keys(addons).filter((id) => addonDisabledStates.some((state) => state === localAddonStorage[id])),
+Object.keys(addons).filter(searchFilter).filter((id) => addonDisabledStates.some((state) => state === localAddonStorage[id])),
 );
 
 export const enabledStates = computed(() =>

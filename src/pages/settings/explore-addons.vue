@@ -7,8 +7,8 @@
       </template>
     </template>
     <div v-if="disabledAddons.length === 0">
-      <template v-if="searchFilter">
-        No search results found for '{{ searchFilter }}'. Consider using
+      <template v-if="searchValue">
+        No search results found for '{{ searchValue }}'. Consider using
         different search terms.
       </template>
       <template v-else>
@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import GridItem from "./addon/grid-item.vue";
-import { searchFilter, disabledAddons } from "./store";
+import { searchValue, disabledAddons } from "./store";
 import * as addons from "#addons";
 
 const sections = computed(() => [

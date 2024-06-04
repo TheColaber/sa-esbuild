@@ -34,7 +34,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import ListItem from "./addon/list-item.vue";
-import { disabledAddons, enabledDevelopmentAddons, enabledProductionAddons, port, searchFilter } from "./store";
+import { disabledAddons, enabledDevelopmentAddons, enabledProductionAddons, port, searchValue } from "./store";
 import Search from "./components/search.vue";
 import * as addons from "#addons";
 const { inPopup } = defineProps<{ inPopup?: boolean }>();
@@ -71,7 +71,7 @@ const sections = computed(() => [
     id: "disabled",
     name: "Disabled",
     addons: disabledAddons.value,
-    hidden: !inPopup || searchFilter.value.length === 0,
+    hidden: !inPopup || searchValue.value.length === 0,
   },
 ]);
 
