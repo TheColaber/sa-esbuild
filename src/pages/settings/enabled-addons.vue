@@ -34,18 +34,13 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import ListItem from "./addon/list-item.vue";
-import { categories, port, searchFilter } from "./store";
+import { disabledAddons, enabledDevelopmentAddons, enabledProductionAddons, port, searchFilter } from "./store";
 import Search from "./components/search.vue";
 import * as addons from "#addons";
 const { inPopup } = defineProps<{ inPopup?: boolean }>();
 
 const addonsOnTab = await port.send<string[]>("getRunningAddons");
 
-const productionAddons = computed(() =>
-  [...categories.enabled.value, ...categories.defaultEnabled.value].filter(
-    (id) => !addonsOnTab.includes(id),
-  ),
-);
 const sections = computed(() => [
   {
     id: "running",
@@ -56,26 +51,26 @@ const sections = computed(() => [
   {
     id: "development",
     name: "In Development",
-    addons: categories.dev.value.filter((id) => !addonsOnTab.includes(id)),
+    addons: enabledDevelopmentAddons.value.filter((id) => !addonsOnTab.includes(id)),
   },
   {
     id: "editor",
     name: "Editor Addons",
-    addons: productionAddons.value.filter((id) =>
-      addons[id].category.includes("editor"),
+    addons: enabledProductionAddons.value.filter((id) =>
+    !addonsOnTab.includes(id) && addons[id].category.includes("editor"),
     ),
   },
   {
     id: "popup",
     name: "Popup Addons",
-    addons: productionAddons.value.filter((id) =>
-      addons[id].category.includes("popup"),
+    addons: enabledProductionAddons.value.filter((id) =>
+    !addonsOnTab.includes(id) && addons[id].category.includes("popup"),
     ),
   },
   {
     id: "disabled",
     name: "Disabled",
-    addons: [...categories.defaultDisabled.value, ...categories.disabled.value],
+    addons: disabledAddons.value,
     hidden: !inPopup || searchFilter.value.length === 0,
   },
 ]);

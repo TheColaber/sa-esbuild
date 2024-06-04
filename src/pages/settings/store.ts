@@ -4,6 +4,7 @@ import {
   syncStorage,
   allAddonStates,
   addonEnabledStates,
+  addonDisabledStates,
 } from "../../background/storage";
 import { Port } from "../../background/messaging";
 import MiniSearch from "minisearch";
@@ -46,24 +47,16 @@ watch(searchFilter, (search) => {
 
 const { addonsStates } = await syncStorage.get("addonsStates");
 const localAddonStorage = reactive({...addonsStates});
-export const syncedAddonStorage = reactive({...addonsStates});
+const syncedAddonStorage = reactive({...addonsStates});
 
-export const categories = objectArray(
-  allAddonStates.map((state) =>
-    typedObject(
-      state,
-      computed(() => {
-        return Object.keys(localAddonStorage)
-          .filter((id) => localAddonStorage[id] === state)
-          .filter(
-            (id) =>
-              !searchFilter.value ||
-              filteredAddons.value.some((res) => res.id === id),
-          )
-          .sort((a, b) => addons[a].name.localeCompare(addons[b].name));
-      }),
-    ),
-  ),
+export const enabledProductionAddons = computed(() =>
+Object.keys(addons).filter((id) => ["enabled", "defaultEnabled"].some((state) => state === localAddonStorage[id])),
+);
+export const enabledDevelopmentAddons = computed(() =>
+Object.keys(addons).filter((id) => ["dev"].some((state) => state === localAddonStorage[id])),
+);
+export const disabledAddons = computed(() =>
+Object.keys(addons).filter((id) => addonDisabledStates.some((state) => state === localAddonStorage[id])),
 );
 
 export const enabledStates = computed(() =>
@@ -75,7 +68,7 @@ export const enabledStates = computed(() =>
   ),
 );
 
-let reqUpdate: { id: string; new: keyof typeof categories }[] = [];
+let reqUpdate: { id: string; new: typeof addonsStates[string] }[] = [];
 
 export function updateAll() {
   for (const update of reqUpdate) {
