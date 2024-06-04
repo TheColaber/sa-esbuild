@@ -91,7 +91,12 @@ export interface AddonStorage {
 export const addonStorage = new Storage<AddonStorage>("sync", "addonstorage");
 
 export const addonDisabledStates = ["defaultDisabled", "disabled"] as const;
-export const addonEnabledStates = ["defaultEnabled", "dev", "enabled"] as const;
+export const addonProductionStates = ["defaultEnabled", "enabled"] as const;
+export const addonDevelopmentStates = ["dev"] as const;
+export const addonEnabledStates = [
+  ...addonProductionStates,
+  ...addonDevelopmentStates
+] as const;
 export const allAddonStates = [
   ...addonDisabledStates,
   ...addonEnabledStates,

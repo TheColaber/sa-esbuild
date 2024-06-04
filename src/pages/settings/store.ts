@@ -2,9 +2,10 @@ import { computed, reactive, ref, watch } from "vue";
 import * as addons from "#addons";
 import {
   syncStorage,
-  allAddonStates,
   addonEnabledStates,
   addonDisabledStates,
+  addonProductionStates,
+  addonDevelopmentStates,
 } from "../../background/storage";
 import { Port } from "../../background/messaging";
 import MiniSearch from "minisearch";
@@ -50,10 +51,10 @@ const localAddonStorage = reactive({...addonsStates});
 const syncedAddonStorage = reactive({...addonsStates});
 
 export const enabledProductionAddons = computed(() =>
-Object.keys(addons).filter((id) => ["enabled", "defaultEnabled"].some((state) => state === localAddonStorage[id])),
+Object.keys(addons).filter((id) => addonProductionStates.some((state) => state === localAddonStorage[id])),
 );
 export const enabledDevelopmentAddons = computed(() =>
-Object.keys(addons).filter((id) => ["dev"].some((state) => state === localAddonStorage[id])),
+Object.keys(addons).filter((id) => addonDevelopmentStates.some((state) => state === localAddonStorage[id])),
 );
 export const disabledAddons = computed(() =>
 Object.keys(addons).filter((id) => addonDisabledStates.some((state) => state === localAddonStorage[id])),
@@ -68,14 +69,10 @@ export const enabledStates = computed(() =>
   ),
 );
 
-let reqUpdate: { id: string; new: typeof addonsStates[string] }[] = [];
-
 export function updateAll() {
-  for (const update of reqUpdate) {
-    localAddonStorage[update.id] = update.new;
+  for (const id in syncedAddonStorage) {
+    localAddonStorage[id] = syncedAddonStorage[id];
   }
-  
-  reqUpdate = [];
 }
 
 export function toggleAddon(id: string) {
@@ -85,25 +82,11 @@ export function toggleAddon(id: string) {
       ? "dev"
       : "enabled"
     : "disabled";
-  
-  reqUpdate.push({ id, new: syncedAddonStorage[id] });
   syncStorage.set({ addonsStates: syncedAddonStorage });
 }
 
 syncStorage.watch(({ addonsStates: newStates }) => {
   for (const id in newStates) {
-    const enabled = addonEnabledStates.some(
-      (enabledState) => enabledState === newStates[id],
-    );
-    enabledStates.value[id] = enabled;
     syncedAddonStorage[id] = newStates[id];
-    reqUpdate.push({ id, new: syncedAddonStorage[id] });
   }
 });
-
-function typedObject<T extends string, U>(key: T, value: U) {
-  return { [key]: value } as { [K in T]: U };
-}
-function objectArray<T>(array: T[]) {
-  return array.reduce((all, single) => ({ ...single, ...all }), {} as T);
-}
