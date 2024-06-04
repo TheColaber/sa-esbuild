@@ -1,4 +1,4 @@
-import { computed, reactive, ref, toRefs, watch } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import * as addons from "#addons";
 import {
   syncStorage,
@@ -8,13 +8,18 @@ import {
 import { Port } from "../../background/messaging";
 import MiniSearch from "minisearch";
 
+// PORT: Used to send messages from page to BG.
 export const port = new Port();
 
+// TAB: Used by header and content to show current tab.
 export const tab = ref<
   "explore" | "enabled" | "themes" | "hotkeys" | "superpresets" | "more"
 >();
+// SHOWONBOARDING: Determines if onboarding component should show.
 export const showOnboarding = ref(false);
+// SEARCHFILTER: Used by search bar and content to filter page.
 export const searchFilter = ref("");
+// SUGGESTIONS: Used by search bar to show search suggestions
 export const suggestions = ref([]);
 
 const miniSearch = new MiniSearch({
@@ -40,14 +45,16 @@ watch(searchFilter, (search) => {
 });
 
 const { addonsStates } = await syncStorage.get("addonsStates");
-const addonStorage = ref(addonsStates);
+const localAddonStorage = reactive({...addonsStates});
+export const syncedAddonStorage = reactive({...addonsStates});
+
 export const categories = objectArray(
   allAddonStates.map((state) =>
     typedObject(
       state,
       computed(() => {
-        return Object.keys(addonStorage.value)
-          .filter((id) => addonStorage.value[id] === state)
+        return Object.keys(localAddonStorage)
+          .filter((id) => localAddonStorage[id] === state)
           .filter(
             (id) =>
               !searchFilter.value ||
@@ -59,9 +66,9 @@ export const categories = objectArray(
   ),
 );
 
-export const enabledStates = ref(
+export const enabledStates = computed(() =>
   Object.fromEntries(
-    Object.entries(addonsStates).map(([id, state]) => [
+    Object.entries(syncedAddonStorage).map(([id, state]) => [
       id,
       addonEnabledStates.some((enabledState) => enabledState === state),
     ]),
@@ -72,21 +79,22 @@ let reqUpdate: { id: string; new: keyof typeof categories }[] = [];
 
 export function updateAll() {
   for (const update of reqUpdate) {
-    addonsStates[update.id] = update.new;
+    localAddonStorage[update.id] = update.new;
   }
-  addonStorage.value = addonsStates;
+  
   reqUpdate = [];
 }
 
 export function toggleAddon(id: string) {
-  enabledStates.value[id] = !enabledStates.value[id];
-  addonsStates[id] = enabledStates.value[id]
+  const state = addonEnabledStates.some((enabledState) => enabledState === syncedAddonStorage[id])
+  syncedAddonStorage[id] = !state
     ? addons[id].mode === "dev"
       ? "dev"
       : "enabled"
     : "disabled";
-  reqUpdate.push({ id, new: addonsStates[id] });
-  syncStorage.set({ addonsStates });
+  
+  reqUpdate.push({ id, new: syncedAddonStorage[id] });
+  syncStorage.set({ addonsStates: syncedAddonStorage });
 }
 
 syncStorage.watch(({ addonsStates: newStates }) => {
@@ -95,8 +103,8 @@ syncStorage.watch(({ addonsStates: newStates }) => {
       (enabledState) => enabledState === newStates[id],
     );
     enabledStates.value[id] = enabled;
-    addonsStates[id] = newStates[id];
-    reqUpdate.push({ id, new: addonsStates[id] });
+    syncedAddonStorage[id] = newStates[id];
+    reqUpdate.push({ id, new: syncedAddonStorage[id] });
   }
 });
 

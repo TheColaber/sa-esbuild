@@ -1,13 +1,13 @@
 <template>
   <div :class="[$style.container, { theme: true, lightTheme }]">
-    <template v-if="!showOnboarding">
+    <Onboarding v-if="showOnboarding" />
+    <template v-else>
       <Header v-model:tab="tab"></Header>
       <Suspense>
         <Content :tab="tab"></Content>
       </Suspense>
       <Footer></Footer>
     </template>
-    <Onboarding v-else />
   </div>
 </template>
 

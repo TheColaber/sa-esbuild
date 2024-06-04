@@ -23,11 +23,17 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import GridItem from "./addon/grid-item.vue";
-import { categories } from "./store";
-import { addonDisabledStates } from "../../background/storage";
+import { addonDisabledStates, syncStorage } from "../../background/storage";
 import { searchFilter } from "./store";
 import * as addons from "#addons";
+import { categories } from "./store";
 
+// for (const id in addons) {
+//   const isDisabled = addonDisabledStates.some((state) => state === addonStorag[id])
+//   if (isDisabled) {
+
+//   }
+// }
 const disabledAddons = computed(() =>
   addonDisabledStates.flatMap((state) => categories[state].value),
 );

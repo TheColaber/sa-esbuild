@@ -6,7 +6,7 @@ const previewTabs = {};
 (async () => {
   let { addonsStates } = await syncStorage.get("addonsStates");
   chrome.tabs.onUpdated.addListener(async (tabId, { status }, tab) => {
-    console.log(tab);
+    // console.log(tab);
 
     if (!tab.url || status !== "loading") return;
 
