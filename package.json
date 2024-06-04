@@ -10,7 +10,7 @@
     "dev": "node --import=./esbuild/register.js esbuild/build.ts --dev",
     "build": "node --import=./esbuild/register.js esbuild/build.ts",
     "pull-translations": "node --import=./esbuild/register.js esbuild/pull-translations.ts",
-    "new-addon": "node --import=./esbuild/register.js cli/new-addon.ts",
+    "create-addon": "node --import=./esbuild/register.js cli/create-addon.ts",
     "format": "prettier . -w"
   },
   "devDependencies": {
