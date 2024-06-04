@@ -24,7 +24,7 @@
       <template v-for="section of sections">
         <template v-if="!section.hidden && section.addons.length > 0">
           <div>{{ section.name }}</div>
-          <ListItem v-for="addon of section.addons" :id="addon"></ListItem>
+          <ListItem v-for="addon of section.addons" :key="addon" :id="addon"></ListItem>
         </template>
       </template>
     </div>
