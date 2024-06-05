@@ -17,5 +17,6 @@
   border-radius: 4px;
   font-family: inherit;
   font-size: 12px;
+  cursor: pointer;
 }
 </style>

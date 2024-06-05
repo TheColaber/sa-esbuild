@@ -8,7 +8,7 @@ export default () => ({
   setup(build: PluginBuild) {
     const regex = /src\\addons\\(.*)\\(.*)\\(.*)\.ts/;
     build.onLoad({ filter: regex }, async (args) => {
-      const [full, categories, id, file] = (args.path.match(regex));
+      const [full, categories, id, file] = args.path.match(regex);
       const code = await readFile(args.path, "utf-8");
       const contents =
         `import { ${Object.keys(addonHelpers).join(",")} } from "${path
@@ -30,7 +30,7 @@ export default () => ({
             },
           )
         ).code;
-        
+
       return { contents };
     });
   },

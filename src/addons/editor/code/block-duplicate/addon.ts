@@ -1,6 +1,6 @@
 export default defineAddon({
-  name: "Custom block colors",
-  description: "todo",
+  name: "Block duplicate",
+  description: "tod",
   versionAdded: "2.0.0",
   mode: "dev",
 });

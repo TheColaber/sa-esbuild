@@ -1,5 +1,5 @@
 export default defineAddon({
-  name: "Custom block colors",
+  name: "Block cherry picking",
   description: "todo",
   versionAdded: "2.0.0",
   mode: "dev",

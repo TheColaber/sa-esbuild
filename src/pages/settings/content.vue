@@ -9,7 +9,7 @@
 <script setup lang="ts">
 import EnabledAddons from "./enabled-addons.vue";
 import ExploreAddons from "./explore-addons.vue";
-import Superpresets from "./superpresets.vue"
+import Superpresets from "./superpresets.vue";
 import { tab } from "./store";
 </script>
 

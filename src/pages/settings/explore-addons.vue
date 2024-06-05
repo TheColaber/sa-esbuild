@@ -48,6 +48,7 @@ const sections = computed(() => [
   grid-template-columns: repeat(auto-fit, minmax(min-content, 272px));
   padding: 15px;
   font-size: 20px;
+  font-weight: 500;
   .name {
     grid-column: 1 / -1;
   }

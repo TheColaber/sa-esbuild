@@ -38,19 +38,31 @@ watch(searchValue, (search) => {
 });
 
 const { addonsStates } = await syncStorage.get("addonsStates");
-const localAddonStorage = reactive({...addonsStates});
-const syncedAddonStorage = reactive({...addonsStates});
+const localAddonStorage = reactive({ ...addonsStates });
+const syncedAddonStorage = reactive({ ...addonsStates });
 
-const searchFilter = (id) => !searchValue.value ||
-filteredAddons.value.some((res) => res.id === id)
+const filteredSortedAddons = computed(() =>
+  Object.keys(addons)
+    .filter(
+      (id) =>
+        !searchValue.value || filteredAddons.value.some((res) => res.id === id),
+    )
+    .sort((a, b) => addons[a].name.localeCompare(addons[b].name)),
+);
 export const enabledProductionAddons = computed(() =>
-Object.keys(addons).filter(searchFilter).filter((id) => addonProductionStates.some((state) => state === localAddonStorage[id])),
+  filteredSortedAddons.value.filter((id) =>
+    addonProductionStates.some((state) => state === localAddonStorage[id]),
+  ),
 );
 export const enabledDevelopmentAddons = computed(() =>
-Object.keys(addons).filter(searchFilter).filter((id) => addonDevelopmentStates.some((state) => state === localAddonStorage[id])),
+  filteredSortedAddons.value.filter((id) =>
+    addonDevelopmentStates.some((state) => state === localAddonStorage[id]),
+  ),
 );
 export const disabledAddons = computed(() =>
-Object.keys(addons).filter(searchFilter).filter((id) => addonDisabledStates.some((state) => state === localAddonStorage[id])),
+  filteredSortedAddons.value.filter((id) =>
+    addonDisabledStates.some((state) => state === localAddonStorage[id]),
+  ),
 );
 
 export const enabledStates = computed(() =>
@@ -63,7 +75,9 @@ export const enabledStates = computed(() =>
 );
 
 export function toggleAddon(id: string) {
-  const state = addonEnabledStates.some((enabledState) => enabledState === syncedAddonStorage[id])
+  const state = addonEnabledStates.some(
+    (enabledState) => enabledState === syncedAddonStorage[id],
+  );
   syncedAddonStorage[id] = !state
     ? addons[id].mode === "dev"
       ? "dev"
@@ -76,7 +90,7 @@ watch(tab, () => {
   for (const id in syncedAddonStorage) {
     localAddonStorage[id] = syncedAddonStorage[id];
   }
-})
+});
 
 syncStorage.watch(({ addonsStates: newStates }) => {
   for (const id in newStates) {

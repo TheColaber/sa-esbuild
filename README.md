@@ -44,23 +44,23 @@ Scratch Addons unites various features and themes (called [addons](./src/addons)
 - hide-flyout - 0%
 - type-block-name/insert-blocks - 0%
 - custom-block-colors - 0%
---
+
 - jump-to-def - 70%
 - category-columns - 100%ish
 - hide-new-vars - 100% (buggy??)
 - find-bar - 90% - uhhhhh
---
+
 - snap-scripts - 100%
 - copypaste-blocks - 100%
 - paste-drag - 100%
 - enhanced-cleanup - 100%
 - zebra-striping - 100%
 
-
 ### Others
 
 - https://github.com/ScratchAddons/ScratchAddons/issues/2505
 - https://github.com/ScratchAddons/ScratchAddons/issues/2670
 - https://github.com/ScratchAddons/ScratchAddons/issues/2739
+- https://docs.askorama.ai/open-source/
 
 - https://github.com/ScratchAddons/ScratchAddons/issues?page=19&q=is%3Aissue+is%3Aopen+-label%3A%22new+addon%22

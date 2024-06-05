@@ -24,7 +24,11 @@
       <template v-for="section of sections">
         <template v-if="!section.hidden && section.addons.length > 0">
           <div>{{ section.name }}</div>
-          <ListItem v-for="addon of section.addons" :key="addon" :id="addon"></ListItem>
+          <ListItem
+            v-for="addon of section.addons"
+            :key="addon"
+            :id="addon"
+          ></ListItem>
         </template>
       </template>
     </div>
@@ -34,7 +38,13 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import ListItem from "./addon/list-item.vue";
-import { disabledAddons, enabledDevelopmentAddons, enabledProductionAddons, port, searchValue } from "./store";
+import {
+  disabledAddons,
+  enabledDevelopmentAddons,
+  enabledProductionAddons,
+  port,
+  searchValue,
+} from "./store";
 import Search from "./components/search.vue";
 import * as addons from "#addons";
 const { inPopup } = defineProps<{ inPopup?: boolean }>();
@@ -51,20 +61,24 @@ const sections = computed(() => [
   {
     id: "development",
     name: "In Development",
-    addons: enabledDevelopmentAddons.value.filter((id) => !addonsOnTab.includes(id)),
+    addons: enabledDevelopmentAddons.value.filter(
+      (id) => !addonsOnTab.includes(id),
+    ),
   },
   {
     id: "editor",
     name: "Editor Addons",
-    addons: enabledProductionAddons.value.filter((id) =>
-    !addonsOnTab.includes(id) && addons[id].category.includes("editor"),
+    addons: enabledProductionAddons.value.filter(
+      (id) =>
+        !addonsOnTab.includes(id) && addons[id].category.includes("editor"),
     ),
   },
   {
     id: "popup",
     name: "Popup Addons",
-    addons: enabledProductionAddons.value.filter((id) =>
-    !addonsOnTab.includes(id) && addons[id].category.includes("popup"),
+    addons: enabledProductionAddons.value.filter(
+      (id) =>
+        !addonsOnTab.includes(id) && addons[id].category.includes("popup"),
     ),
   },
   {

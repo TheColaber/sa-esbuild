@@ -1,16 +1,22 @@
 <template>
   <div :class="$style.addon">
     <img :class="$style.thumbnail" :src="addon.image" />
-    <span :class="$style.name">{{ addon.name }}</span>
     <div :class="$style.info">
+      <span :class="$style.name">{{ addon.name }}</span>
       <span :class="$style.description">{{ addon.description }}</span>
-      <!-- <Toggle :id="addon.id" /> -->
-    </div>
-    <div :class="$style.buttons">
-      <Button @click="tryAddon" v-if="addon.userPreview"> Try </Button>
-      <Button @click="buttonClick">
-        {{ enabledStates[addon.id] ? "Edit" : "Enable" }}
-      </Button>
+
+      <div :class="$style.buttons">
+        <Button
+          :class="$style['try-button']"
+          @click="tryAddon"
+          v-if="addon.userPreview"
+        >
+          Try
+        </Button>
+        <Button :class="$style['enable-button']" @click="buttonClick">
+          {{ enabledStates[addon.id] ? "Edit" : "Enable" }}
+        </Button>
+      </div>
     </div>
   </div>
 </template>
@@ -39,33 +45,119 @@ function tryAddon() {
 .addon {
   display: flex;
   flex-direction: column;
-  width: 250px;
+  width: 270px;
   border-radius: 4px;
-  border: 1px solid var(--background-tertiary);
+  border: 2px solid #fff;
   background: var(--background-secondary);
   box-shadow: var(--content-shadow);
-  padding: 10px;
-  .thumbnail {
-    border-radius: 4px;
-  }
-  .name {
-    font-size: 18px;
-  }
+  overflow: hidden;
 
+  .thumbnail {
+    border-radius: 0px 0px 4px 4px;
+    box-shadow: 0 0 8px 0px black;
+  }
   .info {
-    display: flex;
-    align-items: flex-end;
     flex: 1;
-    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    gap: 6px;
+
+    .name {
+      font-size: 18px;
+      background-image: linear-gradient(
+        45deg,
+        var(--theme),
+        hsl(24 100% 80% / 1),
+        var(--theme) 80%
+      );
+      color: transparent;
+      font-weight: 900;
+      background-clip: text;
+      background-size: 200%;
+      animation: pulse 4.5s infinite;
+      animation-timing-function: linear;
+      user-select: none;
+
+      @keyframes pulse {
+        100% {
+          background-position: 200%;
+        }
+      }
+    }
 
     .description {
+      font-size: 12px;
       flex: 1;
+      color: #ddd;
     }
-  }
-  .buttons {
-    display: flex;
-    gap: 5px;
-    justify-content: flex-end;
+
+    .buttons {
+      display: flex;
+      gap: 5px;
+      justify-content: flex-end;
+
+      .try-button {
+        background: none;
+        border: hsl(24 100% 70% / 1) 2px solid;
+        color: hsl(24 100% 70% / 1);
+        transition: 0.3s all ease;
+        width: 50px;
+        &:hover {
+          box-shadow: inset 0 0 0 2em hsl(24 100% 70% / 1);
+          color: #fff;
+          font-weight: 700;
+        }
+      }
+
+      .enable-button {
+        background: none;
+        border: #fff 2px solid;
+        color: #fff;
+        transition: 0.3s all ease;
+        width: 70px;
+        &:hover {
+          box-shadow: inset 0 0 0 2em #fff;
+          color: var(--background-primary);
+          font-weight: 700;
+        }
+      }
+      //   background: var(--gradient);
+      //   transition: all 0.5s ease-in-out;
+      //   overflow: hidden;
+      //   position: relative;
+
+      //   &::before {
+      //     content: "";
+      //   }
+
+      //   &:hover {
+      //     animation: pulse 0.6s;
+      //     box-shadow: 0 0 0 10px transparent;
+
+      //     @keyframes pulse {
+      //       0% { box-shadow: 0 0 0 0 var(--theme) }
+      //     }
+
+      //     &:after {
+      //       left: 120%;
+      //       transition: all 550ms cubic-bezier(0.19, 1, 0.22, 1);
+      //     }
+      //   }
+      //   &:after {
+      //     background: #fff;
+      //     content: "";
+      //     height: 155px;
+      //     left: -75px;
+      //     opacity: 0.2;
+      //     position: absolute;
+      //     top: -50px;
+      //     transform: rotate(35deg);
+      //     transition: all 550ms cubic-bezier(0.19, 1, 0.22, 1);
+      //     width: 50px;
+      //   }
+      // }
+    }
   }
 }
 </style>

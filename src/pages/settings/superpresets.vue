@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import presets from './presets';
+import presets from "./presets";
 
 console.log(presets);
 </script>
@@ -16,9 +16,9 @@ console.log(presets);
 <style lang="scss" module>
 .presets {
   display: flex;
-        flex-direction: column;
-        gap: 6px;
-      }
+  flex-direction: column;
+  gap: 6px;
+}
 .preset {
   color: inherit;
   font-family: inherit;

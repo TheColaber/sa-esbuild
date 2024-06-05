@@ -95,7 +95,7 @@ export const addonProductionStates = ["defaultEnabled", "enabled"] as const;
 export const addonDevelopmentStates = ["dev"] as const;
 export const addonEnabledStates = [
   ...addonProductionStates,
-  ...addonDevelopmentStates
+  ...addonDevelopmentStates,
 ] as const;
 export const allAddonStates = [
   ...addonDisabledStates,
