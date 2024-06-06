@@ -7,59 +7,51 @@
       </span>
     </div>
     <div :class="$style['top-bar']">
-      <a
-        @click="tab = 'explore'"
-        href="#explore"
-        :class="[$style.tab, { [$style.selected]: tab === 'explore' }]"
-      >
-        Explore Addons
-      </a>
-      <a
-        @click="tab = 'enabled'"
-        href="#enabled"
-        :class="[$style.tab, { [$style.selected]: tab === 'enabled' }]"
-      >
-        My Addons
-      </a>
-      <a
-        @click="tab = 'themes'"
-        href="#themes"
-        :class="[$style.tab, { [$style.selected]: tab === 'themes' }]"
-      >
-        Themes
-      </a>
+      <div :class="$style.tabs">
+        <a
+          @click="tab = 'explore'"
+          href="#explore"
+          :class="[$style.tab, { [$style.selected]: tab === 'explore' }]"
+        >
+          Explore Addons
+        </a>
+        <a
+          @click="tab = 'enabled'"
+          href="#enabled"
+          :class="[$style.tab, { [$style.selected]: tab === 'enabled' }]"
+        >
+          My Addons
+        </a>
+        <a
+          @click="tab = 'themes'"
+          href="#themes"
+          :class="[$style.tab, { [$style.selected]: tab === 'themes' }]"
+        >
+          Themes
+        </a>
+      </div>
       <!-- <div :class="$style.selectDisplay"></div> -->
       <Search :class="$style.search" />
-      <a
-        @click="tab = 'hotkeys'"
-        href="#hotkeys"
-        :class="[
-          $style.tab,
-          $style.right,
-          { [$style.selected]: tab === 'hotkeys' },
-        ]"
-        >Hotkeys</a
-      >
-      <a
-        @click="tab = 'superpresets'"
-        href="#superpresets"
-        :class="[
-          $style.tab,
-          $style.right,
-          { [$style.selected]: tab === 'superpresets' },
-        ]"
-        >Superpresets</a
-      >
-      <a
-        @click="tab = 'more'"
-        href="#more"
-        :class="[
-          $style.tab,
-          $style.right,
-          { [$style.selected]: tab === 'more' },
-        ]"
-        >More Settings</a
-      >
+      <div :class="[$style.tabs, $style.right]">
+        <a
+          @click="tab = 'hotkeys'"
+          href="#hotkeys"
+          :class="[$style.tab, { [$style.selected]: tab === 'hotkeys' }]"
+          >Hotkeys</a
+        >
+        <a
+          @click="tab = 'superpresets'"
+          href="#superpresets"
+          :class="[$style.tab, { [$style.selected]: tab === 'superpresets' }]"
+          >Superpresets</a
+        >
+        <a
+          @click="tab = 'more'"
+          href="#more"
+          :class="[$style.tab, { [$style.selected]: tab === 'more' }]"
+          >More Settings</a
+        >
+      </div>
     </div>
   </div>
 </template>
@@ -106,57 +98,76 @@ const msg = chrome.i18n.getMessage;
       margin: 0px 20px;
     }
 
-    .tab {
-      color: inherit;
-      margin: 16px;
+    .tabs {
       display: flex;
-      align-items: center;
+      flex: 1;
       justify-content: center;
-      transition: font-weight 0.2s;
-      text-decoration: none;
-      border-radius: 4px;
 
-      &::before {
-        content: "";
-        transition: opacity 0.2s;
-        opacity: 0;
-        height: 60px;
-        width: 108px;
-        position: absolute;
-        background: radial-gradient(
-          ellipse farthest-corner at 50% 1500%,
-          #ffffffb0,
-          transparent
-        );
-      }
+      .tab {
+        color: inherit;
+        margin: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: font-weight 0.2s;
+        text-decoration: none;
+        border-radius: 4px;
+        width: 100px;
 
-      &::after {
-        content: "";
-        opacity: 0;
-        transition: opacity 0.2s;
-        width: 60px;
-        height: 6px;
-        position: absolute;
-        background: #fff;
-        border-radius: 4px 4px 0px 0px;
-        top: 54px;
-      }
-
-      &.selected::after {
-        opacity: 1;
-      }
-
-      &:hover,
-      &:focus-visible {
-        font-weight: bold;
-        outline: none;
         &::before {
+          content: "";
+          transition: opacity 0.2s;
+          opacity: 0;
+          height: 60px;
+          width: 108px;
+          position: absolute;
+          background: radial-gradient(
+            ellipse farthest-corner at 50% 1500%,
+            #ffffffb0,
+            transparent
+          );
+        }
+
+        &::after {
+          content: "";
+          opacity: 0;
+          transition: opacity 0.2s;
+          width: 60px;
+          height: 6px;
+          position: absolute;
+          background: #fff;
+          border-radius: 4px 4px 0px 0px;
+          top: 54px;
+        }
+
+        &.selected::after {
           opacity: 1;
         }
-      }
 
-      &:focus-visible {
-        box-shadow: 0 0 0 3px #fff;
+        &:hover,
+        &:focus-visible {
+          font-weight: bold;
+          outline: none;
+          &::before {
+            opacity: 1;
+          }
+        }
+
+        &:focus-visible {
+          box-shadow: 0 0 0 3px #fff;
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 1400px) {
+  .header {
+    .top-bar {
+      .tabs {
+        .tab {
+          width: max-content;
+        }
       }
     }
   }
@@ -170,6 +181,13 @@ const msg = chrome.i18n.getMessage;
       }
       .logo {
         padding: 0px;
+      }
+    }
+    .top-bar {
+      .tabs {
+        .tab {
+          width: max-content;
+        }
       }
     }
   }
@@ -188,7 +206,7 @@ const msg = chrome.i18n.getMessage;
 @media only screen and (max-width: 950px) {
   .header {
     .top-bar {
-      .right {
+      .tabs.right {
         display: none;
       }
     }

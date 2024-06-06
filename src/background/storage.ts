@@ -54,6 +54,8 @@ class Storage<T> {
       (changes: {
         [key in keyof T]: { newValue: T[key]; oldValue: T[key] };
       }) => {
+        console.log(changes);
+
         let prefixedKeys = Object.keys(changes) as Array<keyof T>;
         let unprefixedChanges = {};
         for (const prefixedKey of prefixedKeys) {

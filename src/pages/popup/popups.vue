@@ -6,6 +6,7 @@
           :class="[$style.tab, { [$style.sel]: id === selectedTab }]"
           @click="switchTab(id)"
           v-for="id of ORDER"
+          :key="id"
           v-show="enabledPopups[id]"
         >
           <template v-if="enabledPopups[id]">
@@ -31,7 +32,7 @@
         </button>
       </div>
     </div>
-    <template v-for="(popup, id) in enabledPopups">
+    <template v-for="(popup, id) in enabledPopups" :key="id">
       <Suspense>
         <component
           v-if="id === selectedTab"
@@ -47,7 +48,7 @@
 <script setup lang="ts">
 import { syncStorage } from "../../background/storage";
 import pageStorage from "../storage";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 // TODO: Support other languages
 import * as addons from "#addon-popups";
 import settingsComponent from "../settings/enabled-addons.vue";
@@ -55,6 +56,7 @@ import PopupAddon from "../../addon-api/popup";
 import { Icon } from "@iconify/vue";
 import toolIcon from "@iconify-icons/tabler/tool";
 import externalLinkIcon from "@iconify-icons/tabler/external-link";
+import { enabledStates } from "../settings/store";
 
 // msg() is used in the component html above
 const msg = chrome.i18n.getMessage;
@@ -65,38 +67,41 @@ syncStorage.watch(({ lightTheme: newLightTheme }) => {
   lightTheme.value = newLightTheme;
 });
 
-const { addonsStates = {} } = await syncStorage.get("addonsStates");
+const enabledPopups = computed(() =>
+  Object.keys(addons)
+    .map((id) => ({ [id]: enabledStates.value[id] && addons[id] }))
+    .reduce((all, single) => ({ ...single, ...all }), {
+      "settings-page": {
+        name: "Addons",
+        icon: toolIcon,
+        component: settingsComponent,
+      },
+    }),
+);
 
-const enabledPopups = Object.keys(addons)
-  .filter((id) => addons[id])
-  .map((id) => ({ [id]: addonsStates[id] && addons[id] }))
-  .reduce((all, single) => ({ ...single, ...all }), {});
-
-// Add popup that shows the settings page.
-enabledPopups["settings-page"] = {
-  name: "Addons",
-  icon: toolIcon,
-  component: settingsComponent,
-};
-
-const instances = Object.keys(enabledPopups)
-  .map((id) => ({ [id]: new PopupAddon(id) }))
-  .reduce((single, all) => ({ ...single, ...all }), {});
+const instances = computed(() =>
+  Object.keys(enabledPopups.value)
+    .map((id) => ({ [id]: new PopupAddon(id) }))
+    .reduce((single, all) => ({ ...single, ...all }), {}),
+);
 
 // Set the selected tab to the first tab in the list, but if the user previously selected another one, select that instead.
-const ORDER = ["messaging", "settings-page"].filter(
-  (id) => id in enabledPopups,
-);
-for (const id in enabledPopups) {
-  if (!ORDER.includes(id)) {
-    ORDER.push(id);
+const ORDER = computed(() => {
+  let order = ["messaging", "settings-page"].filter(
+    (id) => id in enabledPopups.value,
+  );
+  for (const id in enabledPopups.value) {
+    if (!order.includes(id)) {
+      order.push(id);
+    }
   }
-}
-let selectedTab = ref(ORDER[0]);
+  return order;
+});
+let selectedTab = ref(ORDER.value[0]);
 
 const lastSelectedPopup = pageStorage.get("lastSelectedPopup");
 if (lastSelectedPopup) {
-  const selectedId = ORDER.find((id) => id === lastSelectedPopup);
+  const selectedId = ORDER.value.find((id) => id === lastSelectedPopup);
   if (selectedId) {
     selectedTab.value = selectedId;
   }

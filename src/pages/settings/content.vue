@@ -3,6 +3,7 @@
     <ExploreAddons v-show="tab === 'explore'" />
     <EnabledAddons v-show="tab === 'enabled'" />
     <Superpresets v-show="tab === 'superpresets'" />
+    <MoreSettings v-show="tab === 'more'" />
   </div>
 </template>
 
@@ -10,6 +11,7 @@
 import EnabledAddons from "./enabled-addons.vue";
 import ExploreAddons from "./explore-addons.vue";
 import Superpresets from "./superpresets.vue";
+import MoreSettings from "./more-settings.vue";
 import { tab } from "./store";
 </script>
 

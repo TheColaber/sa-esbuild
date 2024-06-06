@@ -1,4 +1,5 @@
-import image from "./image.png";
+import image from "./image2.png";
+import demo from "./demo.gif";
 export default defineAddon({
   name: "Snap scripts to grid",
   description:
@@ -22,6 +23,7 @@ export default defineAddon({
     halfBlock: "Half Block",
   },
   image,
+  demo,
 });
 
 export const scripts = defineScripts([

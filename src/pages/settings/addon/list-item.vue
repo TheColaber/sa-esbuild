@@ -54,7 +54,7 @@ watch(
   display: flex;
   flex-direction: column;
   border-radius: 4px;
-  border: 1px solid var(--background-tertiary);
+  border: 2px solid var(--content-text);
   background: var(--background-secondary);
   box-shadow: var(--content-shadow);
   padding: 8px;
@@ -68,7 +68,26 @@ watch(
 
     .name {
       flex: 1;
-      font-size: 15px;
+      font-size: 18px;
+      background-image: linear-gradient(
+        45deg,
+        var(--theme),
+        hsl(24 100% 80% / 1),
+        var(--theme) 80%
+      );
+      color: transparent;
+      font-weight: 900;
+      background-clip: text;
+      background-size: 200%;
+      animation: pulse 4.5s infinite;
+      animation-timing-function: linear;
+      user-select: none;
+
+      @keyframes pulse {
+        100% {
+          background-position: 200%;
+        }
+      }
     }
   }
 

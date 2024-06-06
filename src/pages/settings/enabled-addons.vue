@@ -165,7 +165,8 @@ function scrollToAddon(id: string) {
     overflow-y: auto;
     scroll-behavior: smooth;
     box-sizing: border-box;
-    font-size: 16px;
+    font-size: 20px;
+    font-weight: 500;
   }
 }
 

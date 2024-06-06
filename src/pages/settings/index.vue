@@ -56,13 +56,11 @@ onMounted(() => {
 });
 
 const lightTheme = ref(pageStorage.get("lightTheme") === true);
-syncStorage.watch(({ lightTheme: newLightTheme }) => {
-  lightTheme.value = newLightTheme;
-  pageStorage.set("lightTheme", lightTheme.value);
-});
-
-watch(lightTheme, (newVal) => {
-  syncStorage.set({ lightTheme: newVal });
+syncStorage.watch((storage) => {
+  if ("lightTheme" in storage) {
+    lightTheme.value = storage.lightTheme;
+    pageStorage.set("lightTheme", lightTheme.value);
+  }
 });
 
 syncStorage.get("onboarded").then(({ onboarded = false }) => {

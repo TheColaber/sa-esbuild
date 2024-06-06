@@ -1,6 +1,13 @@
 <template>
-  <div :class="$style.addon">
-    <img :class="$style.thumbnail" :src="addon.image" />
+  <div
+    :class="$style.addon"
+    @mouseenter="hovering = true"
+    @mouseleave="hovering = false"
+  >
+    <img
+      :class="$style.thumbnail"
+      :src="(hovering && addon.demo) || addon.image"
+    />
     <div :class="$style.info">
       <span :class="$style.name">{{ addon.name }}</span>
       <span :class="$style.description">{{ addon.description }}</span>
@@ -25,8 +32,11 @@
 import { enabledStates, toggleAddon, port } from "../store";
 import Button from "../components/button.vue";
 import * as addons from "#addons";
+import { ref } from "vue";
 const { id } = defineProps<{ id: string }>();
 const addon = addons[id];
+
+const hovering = ref(false);
 
 function buttonClick() {
   if (enabledStates.value[addon.id] === true) {
@@ -47,14 +57,18 @@ function tryAddon() {
   flex-direction: column;
   width: 270px;
   border-radius: 4px;
-  border: 2px solid #fff;
+  border: 2px solid var(--content-text);
   background: var(--background-secondary);
-  box-shadow: var(--content-shadow);
   overflow: hidden;
+  transition: all 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 0 10px 1px;
+  }
 
   .thumbnail {
     border-radius: 0px 0px 4px 4px;
-    box-shadow: 0 0 8px 0px black;
+    box-shadow: 0 0 8px 0px var(--content-shadow);
   }
   .info {
     flex: 1;
@@ -89,7 +103,7 @@ function tryAddon() {
     .description {
       font-size: 12px;
       flex: 1;
-      color: #ddd;
+      color: var(--description-text);
     }
 
     .buttons {
@@ -112,12 +126,12 @@ function tryAddon() {
 
       .enable-button {
         background: none;
-        border: #fff 2px solid;
-        color: #fff;
+        border: var(--content-text) 2px solid;
+        color: var(--content-text);
         transition: 0.3s all ease;
         width: 70px;
         &:hover {
-          box-shadow: inset 0 0 0 2em #fff;
+          box-shadow: inset 0 0 0 2em var(--content-text);
           color: var(--background-primary);
           font-weight: 700;
         }
