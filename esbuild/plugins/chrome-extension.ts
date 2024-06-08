@@ -11,7 +11,7 @@ import {
 // import { createApp, createSSRApp, h } from "vue";
 export default () => ({
   name: "chrome-extension",
-  setup(build) {
+  async setup(build) {
     build.initialOptions.metafile = true;
     const manifestPath = build.initialOptions.entryPoints[0];
     if (!manifestPath) return;
@@ -24,7 +24,6 @@ export default () => ({
     ];
 
     const entryPoints = [...manifestEntries].map((f) => dir + "/" + f);
-    build.initialOptions.entryPoints = entryPoints;
 
     const html = [
       manifest.action.default_popup,
@@ -34,18 +33,10 @@ export default () => ({
     ]
       .filter((page) => !!page)
       .map((f) => dir + "/" + f);
+    const assets = [...Object.values(manifest.icons), ...extraIcons];
 
-    build.onStart(() => {
-      if (manifest.default_locale) {
-        cp(
-          build.initialOptions.outbase + "/_locales",
-          build.initialOptions.outdir + "/_locales",
-          { force: true, recursive: true },
-        );
-      }
-
-      // TODO: should we make sure this is promised.all by onEnd? it should be but
-      html.forEach(async (file) => {
+    await Promise.all(
+      html.map(async (file) => {
         const buffer = await readFile(file);
         const root = load(buffer).root();
 
@@ -57,7 +48,6 @@ export default () => ({
 
         const htmlAssets = root.find("link");
 
-        const assets = [...Object.values(manifest.icons), ...extraIcons];
         for (const asset of htmlAssets) {
           assets.push(
             path.relative(
@@ -67,23 +57,37 @@ export default () => ({
           );
         }
 
-        assets.forEach(async (asset) => {
-          const buffer = await readFile(
-            build.initialOptions.outbase + "/" + asset,
-          );
-          const outputFile =
-            build.initialOptions.outdir +
-            "/" +
-            asset.replace(build.initialOptions.outbase + "/", "");
-          try {
-            await access(path.dirname(outputFile));
-          } catch (errer) {
-            await mkdir(path.dirname(outputFile), {
-              recursive: true,
-            });
-          }
-          await writeFile(outputFile, buffer);
-        });
+        build.initialOptions.entryPoints = entryPoints;
+      }),
+    );
+
+    build.onStart(() => {
+      if (manifest.default_locale) {
+        cp(
+          build.initialOptions.outbase + "/_locales",
+          build.initialOptions.outdir + "/_locales",
+          { force: true, recursive: true },
+        );
+      }
+
+      // TODO: should we make sure this is promised.all by onEnd? it should be but
+
+      assets.forEach(async (asset) => {
+        const buffer = await readFile(
+          build.initialOptions.outbase + "/" + asset,
+        );
+        const outputFile =
+          build.initialOptions.outdir +
+          "/" +
+          asset.replace(build.initialOptions.outbase + "/", "");
+        try {
+          await access(path.dirname(outputFile));
+        } catch (errer) {
+          await mkdir(path.dirname(outputFile), {
+            recursive: true,
+          });
+        }
+        await writeFile(outputFile, buffer);
 
         // root.find("body").contents().map(async (i, el) => {
         //   if (el.type === 'comment') {
