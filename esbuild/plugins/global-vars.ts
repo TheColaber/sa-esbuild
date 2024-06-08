@@ -31,7 +31,7 @@ export default () => ({
           )
         ).code;
 
-      return { contents };
+        return { contents };
     });
   },
 });

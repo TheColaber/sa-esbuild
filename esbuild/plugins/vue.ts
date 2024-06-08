@@ -5,13 +5,13 @@ import * as sfc from "@vue/compiler-sfc";
 
 export default (opts = {}) => ({
   name: "vue",
-  async setup({ initialOptions, ...build }) {
+  setup({ initialOptions, ...build }) {
     initialOptions.define = initialOptions.define || {};
     initialOptions.define["__VUE_OPTIONS_API__"] = "true";
     initialOptions.define["__VUE_PROD_DEVTOOLS__"] = "false";
 
     // Resolve main ".vue" import
-    build.onResolve({ filter: /\.vue/ }, async (args) => {
+    build.onResolve({ filter: /\.vue/ }, (args) => {
       let hashes = args.path.slice(args.path.indexOf("?") + 1).split("&");
       const params = hashes.reduce((params, hash) => {
         let [key, val] = hash.split("=");
@@ -37,7 +37,7 @@ export default (opts = {}) => ({
       };
     });
 
-    build.onResolve({ filter: /\.svg/ }, async (args) => {
+    build.onResolve({ filter: /\.svg/ }, (args) => {
       let hashes = args.path.slice(args.path.indexOf("?") + 1).split("&");
       const params = hashes.reduce((params, hash) => {
         let [key, val] = hash.split("=");
@@ -126,7 +126,7 @@ export default (opts = {}) => ({
       };
     });
 
-    build.onLoad({ filter: /.*/, namespace: "svg-loader" }, async (args) => {
+    build.onLoad({ filter: /.*/, namespace: "svg-loader" }, (args) => {
       const result = sfc.compileTemplate({
         id: args.pluginData.id,
         source: args.pluginData.source,
@@ -171,7 +171,7 @@ export default (opts = {}) => ({
       };
     });
 
-    build.onLoad({ filter: /.*/, namespace: "sfc-script" }, async (args) => {
+    build.onLoad({ filter: /.*/, namespace: "sfc-script" }, (args) => {
       const { script } = args.pluginData;
 
       if (script) {
@@ -194,7 +194,7 @@ export default (opts = {}) => ({
       }
     });
 
-    build.onLoad({ filter: /.*/, namespace: "sfc-template" }, async (args) => {
+    build.onLoad({ filter: /.*/, namespace: "sfc-template" }, (args) => {
       const { descriptor, id, script } = args.pluginData;
       if (!descriptor.template) {
         throw new Error("Missing template");

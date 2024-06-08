@@ -1,5 +1,5 @@
 import { load } from "cheerio";
-import { readFile, mkdir, writeFile, cp } from "fs/promises";
+import { readFile, mkdir, writeFile, cp, access } from "fs/promises";
 import path from "path";
 import {
   default as manifest,
@@ -11,7 +11,7 @@ import {
 // import { createApp, createSSRApp, h } from "vue";
 export default () => ({
   name: "chrome-extension",
-  async setup(build) {
+  setup(build) {
     build.initialOptions.metafile = true;
     const manifestPath = build.initialOptions.entryPoints[0];
     if (!manifestPath) return;
@@ -22,8 +22,9 @@ export default () => ({
       manifest.background.service_worker,
       ...(manifest.content_scripts || []).flatMap((cs) => cs.js),
     ];
+
     const entryPoints = [...manifestEntries].map((f) => dir + "/" + f);
-    const assets = [...Object.values(manifest.icons), ...extraIcons];
+    build.initialOptions.entryPoints = entryPoints;
 
     const html = [
       manifest.action.default_popup,
@@ -34,54 +35,7 @@ export default () => ({
       .filter((page) => !!page)
       .map((f) => dir + "/" + f);
 
-    for (const file of html) {
-      const buffer = await readFile(file);
-      const root = load(buffer).root();
-
-      const scripts = root.find("script");
-      for (const script of scripts) {
-        if (!script.attribs.src) continue;
-        entryPoints.push(path.join(path.dirname(file), script.attribs.src));
-      }
-
-      const htmlAssets = root.find("link");
-
-      for (const asset of htmlAssets) {
-        assets.push(
-          path.relative(dir, path.join(path.dirname(file), asset.attribs.href)),
-        );
-      }
-
-      // root.find("body").contents().map(async (i, el) => {
-      //   if (el.type === 'comment') {
-      //     const preload = "Header.vue" || el.data.match(/preload: `(.*)`/)[1];
-      //     const filename = path.resolve(path.dirname(file), preload)
-      //     const source = await readFile(filename, "utf8");
-      //     const { descriptor } = sfc.parse(source, {
-      //       filename,
-      //     });
-      //     const app = createSSRApp(descriptor);
-      //     // console.log(sfc.compileScript(descriptor, { id: "test" }));
-      //     // console.log(sfc.compileTemplate({
-      //     //   source,
-      //     //   filename,
-      //     //   id: "test"
-      //     // }));
-
-      //     // app._component.name = "Test"
-      //     // console.log(app._component);
-      //     // app._component.template= app._component.template.content
-      //     // const ahshed = h(app._component)
-      //     // sfc.
-      //     // console.log(ahshed);
-      //     console.log(h(descriptor));
-      //     console.log(await renderToString(createApp({render: () => h(descriptor)})));
-      //   }
-      // })
-    }
-    build.initialOptions.entryPoints = entryPoints;
-
-    build.onStart(async () => {
+    build.onStart(() => {
       if (manifest.default_locale) {
         cp(
           build.initialOptions.outbase + "/_locales",
@@ -90,23 +44,79 @@ export default () => ({
         );
       }
 
-      for (const asset of assets) {
-        const buffer = await readFile(
-          build.initialOptions.outbase + "/" + asset,
-        );
-        const outputFile =
-          build.initialOptions.outdir +
-          "/" +
-          asset.replace(build.initialOptions.outbase + "/", "");
-        await mkdir(path.dirname(outputFile), {
-          recursive: true,
+      // TODO: should we make sure this is promised.all by onEnd? it should be but
+      html.forEach(async (file) => {
+        const buffer = await readFile(file);
+        const root = load(buffer).root();
+
+        const scripts = root.find("script");
+        for (const script of scripts) {
+          if (!script.attribs.src) continue;
+          entryPoints.push(path.join(path.dirname(file), script.attribs.src));
+        }
+
+        const htmlAssets = root.find("link");
+
+        const assets = [...Object.values(manifest.icons), ...extraIcons];
+        for (const asset of htmlAssets) {
+          assets.push(
+            path.relative(
+              dir,
+              path.join(path.dirname(file), asset.attribs.href),
+            ),
+          );
+        }
+
+        assets.forEach(async (asset) => {
+          const buffer = await readFile(
+            build.initialOptions.outbase + "/" + asset,
+          );
+          const outputFile =
+            build.initialOptions.outdir +
+            "/" +
+            asset.replace(build.initialOptions.outbase + "/", "");
+          try {
+            await access(path.dirname(outputFile));
+          } catch (errer) {
+            await mkdir(path.dirname(outputFile), {
+              recursive: true,
+            });
+          }
+          await writeFile(outputFile, buffer);
         });
-        await writeFile(outputFile, buffer);
-      }
+
+        // root.find("body").contents().map(async (i, el) => {
+        //   if (el.type === 'comment') {
+        //     const preload = "Header.vue" || el.data.match(/preload: `(.*)`/)[1];
+        //     const filename = path.resolve(path.dirname(file), preload)
+        //     const source = await readFile(filename, "utf8");
+        //     const { descriptor } = sfc.parse(source, {
+        //       filename,
+        //     });
+        //     const app = createSSRApp(descriptor);
+        //     // console.log(sfc.compileScript(descriptor, { id: "test" }));
+        //     // console.log(sfc.compileTemplate({
+        //     //   source,
+        //     //   filename,
+        //     //   id: "test"
+        //     // }));
+
+        //     // app._component.name = "Test"
+        //     // console.log(app._component);
+        //     // app._component.template= app._component.template.content
+        //     // const ahshed = h(app._component)
+        //     // sfc.
+        //     // console.log(ahshed);
+        //     console.log(h(descriptor));
+        //     console.log(await renderToString(createApp({render: () => h(descriptor)})));
+        //   }
+        // })
+      });
     });
 
     build.onEnd(async (buildRes) => {
       if (!buildRes.metafile) return;
+      const promises = [];
       for (const distFile in buildRes.metafile.outputs) {
         for (const entry of manifestEntries) {
           if (
@@ -121,75 +131,80 @@ export default () => ({
             );
           }
         }
-        for (const cs of manifest.content_scripts || []) {
-          if (
-            buildRes.metafile.outputs[distFile].entryPoint ===
-            dir + "/" + cs.js
-          ) {
-            const contents = await readFile(distFile, "utf-8");
-            const wrappedContents = `(() => {${contents}})();`;
-            const fileName = "/_" + path.basename(distFile);
-            if (process.env.MODE === "development") {
-              await writeFile(
-                path.dirname(distFile) + fileName,
-                wrappedContents,
-              );
-              await writeFile(distFile, `import(".${fileName}")`);
-              const manifestParsed = JSON.parse(manifestJSON);
-              manifestParsed.web_accessible_resources =
-                manifestParsed.web_accessible_resources || [];
-              manifestParsed.web_accessible_resources.push({
-                matches: cs.matches,
-                // TODO: unhardcode
-                resources: ["content-script" + fileName],
-              });
-              manifestJSON = JSON.stringify(manifestParsed);
-            } else {
-              await writeFile(distFile, wrappedContents);
-            }
-          }
-        }
-      }
-      await writeFile(
-        build.initialOptions.outdir + "/manifest.json",
-        manifestJSON,
-      );
-
-      for (const file of html) {
-        const buffer = await readFile(file);
-        const outputFile =
-          build.initialOptions.outdir +
-          "/" +
-          file.replace(build.initialOptions.outbase + "/", "");
-
-        const root = load(buffer).root();
-        const scripts = root.find("script");
-
-        if (!buildRes.metafile) return;
-        for (const distFile in buildRes.metafile.outputs) {
-          for (const script of scripts) {
-            if (!script.attribs.src) continue;
-            const scriptEntry = path.join(
-              path.dirname(file),
-              script.attribs.src,
-            );
+        promises.push(
+          ...(manifest.content_scripts || []).map(async (cs) => {
             if (
               buildRes.metafile.outputs[distFile].entryPoint ===
-              scriptEntry.replaceAll("\\", "/")
+              dir + "/" + cs.js
             ) {
-              script.attribs.src = path.relative(
-                path.dirname(outputFile),
-                distFile,
+              const contents = await readFile(distFile, "utf-8");
+              const wrappedContents = `(() => {${contents}})();`;
+              const fileName = "/_" + path.basename(distFile);
+              if (process.env.MODE === "development") {
+                await writeFile(
+                  path.dirname(distFile) + fileName,
+                  wrappedContents,
+                );
+                await writeFile(distFile, `import(".${fileName}")`);
+                const manifestParsed = JSON.parse(manifestJSON);
+                manifestParsed.web_accessible_resources =
+                  manifestParsed.web_accessible_resources || [];
+                manifestParsed.web_accessible_resources.push({
+                  matches: cs.matches,
+                  // TODO: unhardcode
+                  resources: ["content-script" + fileName],
+                });
+                manifestJSON = JSON.stringify(manifestParsed);
+              } else {
+                await writeFile(distFile, wrappedContents);
+              }
+            }
+          }),
+        );
+      }
+      promises.push(
+        writeFile(build.initialOptions.outdir + "/manifest.json", manifestJSON),
+      );
+
+      promises.push(
+        ...html.map(async (file) => {
+          const buffer = await readFile(file);
+          const outputFile =
+            build.initialOptions.outdir +
+            "/" +
+            file.replace(build.initialOptions.outbase + "/", "");
+
+          const root = load(buffer).root();
+          const scripts = root.find("script");
+
+          if (!buildRes.metafile) return;
+          for (const distFile in buildRes.metafile.outputs) {
+            for (const script of scripts) {
+              if (!script.attribs.src) continue;
+              const scriptEntry = path.join(
+                path.dirname(file),
+                script.attribs.src,
               );
+              if (
+                buildRes.metafile.outputs[distFile].entryPoint ===
+                scriptEntry.replaceAll("\\", "/")
+              ) {
+                script.attribs.src = path.relative(
+                  path.dirname(outputFile),
+                  distFile,
+                );
+              }
             }
           }
-        }
-        await mkdir(path.dirname(outputFile), {
-          recursive: true,
-        });
-        // TODO: allow for html minfication?
-        await writeFile(outputFile, root.html());
-      }
+          await mkdir(path.dirname(outputFile), {
+            recursive: true,
+          });
+          // TODO: allow for html minfication?
+          await writeFile(outputFile, root.html());
+        }),
+      );
+
+      await Promise.all(promises);
     });
   },
 });
