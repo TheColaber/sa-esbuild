@@ -11,6 +11,7 @@ export default (addon: WorkerAddon) => {
   async function updateBadge() {
     chrome.alarms.create("updateMessageCount", { delayInMinutes: 0.5 });
     const count = await addon.auth.getMessageCount();
+    if (count === 0) return;
     chrome.action.setBadgeText({ text: count.toString() });
   }
 };

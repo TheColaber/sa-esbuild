@@ -61,6 +61,5 @@ Scratch Addons unites various features and themes (called [addons](./src/addons)
 - https://github.com/ScratchAddons/ScratchAddons/issues/2505
 - https://github.com/ScratchAddons/ScratchAddons/issues/2670
 - https://github.com/ScratchAddons/ScratchAddons/issues/2739
-- https://docs.askorama.ai/open-source/
 
 - https://github.com/ScratchAddons/ScratchAddons/issues?page=19&q=is%3Aissue+is%3Aopen+-label%3A%22new+addon%22

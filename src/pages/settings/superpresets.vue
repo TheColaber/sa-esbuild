@@ -10,7 +10,6 @@
 <script setup lang="ts">
 import presets from "./presets";
 
-console.log(presets);
 </script>
 
 <style lang="scss" module>

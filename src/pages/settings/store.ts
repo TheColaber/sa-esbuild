@@ -28,14 +28,31 @@ const miniSearch = new MiniSearch({
   },
 });
 
+// import { create, search, insertMultiple } from '@orama/orama'
+// const db = await create({
+//   schema: {
+//     id: 'string',
+//     name: 'string',
+//     description: 'string',
+//   }
+// });
+
+// await insertMultiple(db, Object.values(addons));
+
 const filteredAddons = ref([]);
 miniSearch.addAll(Object.values(addons));
-watch(searchValue, (search) => {
-  filteredAddons.value = miniSearch.search(search);
+watch(searchValue, async (term) => {
   suggestions.value = miniSearch
-    .autoSuggest(search)
+    .autoSuggest(term)
     .flatMap((res) => res.terms);
-});
+  filteredAddons.value = miniSearch.search(term);
+    // const searchResult = await search(db, {
+    //   term,
+    // });
+    // console.log(searchResult);
+    
+    // filteredAddons.value = searchResult.hits.map(h => h.document)
+  });
 
 const { addonsStates } = await syncStorage.get("addonsStates");
 const localAddonStorage = reactive({ ...addonsStates });
@@ -47,7 +64,12 @@ const filteredSortedAddons = computed(() =>
       (id) =>
         !searchValue.value || filteredAddons.value.some((res) => res.id === id),
     )
-    .sort((a, b) => addons[a].name.localeCompare(addons[b].name)),
+    .sort((a, b) => {
+      if (searchValue.value.length > 0) {        
+        return filteredAddons.value.findIndex((addon) => addon.id === a) - filteredAddons.value.findIndex((addon) => addon.id === b)
+      }
+      return addons[a].name.localeCompare(addons[b].name)
+    }),
 );
 export const enabledProductionAddons = computed(() =>
   filteredSortedAddons.value.filter((id) =>

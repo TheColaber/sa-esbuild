@@ -11,7 +11,6 @@ import { syncStorage } from "../../background/storage";
 
 const theme = "test";
 const storage = await syncStorage.get("lightTheme");
-console.log(storage);
 
 const lightTheme = ref(storage.lightTheme);
 syncStorage.watch(({ lightTheme: newLightTheme }) => {
