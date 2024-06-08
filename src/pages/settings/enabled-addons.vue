@@ -42,6 +42,7 @@ import {
   disabledAddons,
   enabledDevelopmentAddons,
   enabledProductionAddons,
+  enabledStates,
   port,
   searchValue,
 } from "./store";
@@ -50,13 +51,20 @@ import * as addons from "#addons";
 const { inPopup } = defineProps<{ inPopup?: boolean }>();
 
 const addonsOnTab = await port.send<string[]>("getRunningAddons");
-
+const runningOnTab = addonsOnTab.filter((id) => enabledStates.value[id]);
+const disabledOnTab = addonsOnTab.filter((id) => !enabledStates.value[id]);
 const sections = computed(() => [
   {
     id: "running",
-    name: "Running on tab",
-    addons: addonsOnTab,
-    hidden: addonsOnTab.length === 0,
+    name: "Running on Tab",
+    addons: runningOnTab,
+    hidden: runningOnTab.length === 0,
+  },
+  {
+    id: "recentlyDisabled",
+    name: "Recently Disabled",
+    addons: disabledOnTab,
+    hidden: disabledOnTab.length === 0,
   },
   {
     id: "development",
