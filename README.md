@@ -37,8 +37,6 @@ Scratch Addons unites various features and themes (called [addons](./src/addons)
 - delete-cut-blocks - 0%
 - make-space - 0%
 - custom-fps - 0%
-- block-cherry-picking - 0%
-- block-duplicate - 0%
 - block-count - 0%
 - swap-variables - 0%
 - hide-flyout - 0%
@@ -55,6 +53,8 @@ Scratch Addons unites various features and themes (called [addons](./src/addons)
 - paste-drag - 100%
 - enhanced-cleanup - 100%
 - zebra-striping - 100%
+- block-cherry-picking - 100% (setting)
+- block-duplicate - 100%
 
 ### Others
 

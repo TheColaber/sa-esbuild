@@ -36,6 +36,8 @@ export default async () => {
       this.toolboxPosition_ === Blockly.TOOLBOX_AT_RIGHT
         ? targetWorkspaceMetrics.viewWidth - 3
         : 0;
+
+    // TODO: why does this height change depending on if the tab is focused?
     var y = this.parentToolbox_.HtmlDiv.offsetHeight;
 
     // Addon sets the width of the flyout to the width of the toolbox.
@@ -152,7 +154,7 @@ export default async () => {
     if (!categoryMenu) return;
 
     // Scratch may have already updated the toolbox for us, so no need to update it again.
-    if (categoryMenu.secondTable && !addon.enabled) return;
+    if (categoryMenu.secondTable && addon.enabled) return;
     // Must dispose and createDom the category menu so we can run our polluted commands.
     categoryMenu.dispose();
     categoryMenu.createDom();

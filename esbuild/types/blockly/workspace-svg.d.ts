@@ -9,6 +9,7 @@ declare global {
       cleanUp(this: this): void;
       getWorkspace(this: this): Workspace;
       getGrid(): Grid;
+      getToolbox(): Toolbox;
 
       createDom(this: this, opt_backgroundClass?: string): Element;
       pasteBlock_(xmlBlock: Element): void;

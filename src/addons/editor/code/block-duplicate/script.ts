@@ -1,44 +1,45 @@
 export default async () => {
-  const ScratchBlocks = await addon.tab.blocklyReady();
+  const Blockly = await addon.tab.blocklyReady();
 
-  const originalHandleBlockStart =
-    ScratchBlocks.Gesture.prototype.handleBlockStart;
-  ScratchBlocks.Gesture.prototype.handleBlockStart = function (e, block) {
-    let con = !!this.targetBlock_;
-    console.log(con);
-    originalHandleBlockStart.call(this, e, block);
-    if (con) return;
-
-    const isDuplicating =
-      e instanceof MouseEvent &&
-      e.altKey &&
+  const originalSetTarget = Blockly.Gesture.prototype.setTargetBlock_;
+  Blockly.Gesture.prototype.setTargetBlock_ = function (block) {
+    originalSetTarget.call(this, block);
+    if (!this.targetBlock_ || this.shouldDuplicateOnDrag_) return;
+    this.shouldDuplicateOnDrag_ =
+      this.mostRecentEvent_ instanceof MouseEvent &&
+      this.mostRecentEvent_.altKey &&
       !this.flyout_ &&
-      !this.shouldDuplicateOnDrag_ &&
       this.targetBlock_.type !== "procedures_definition";
-    const workspace = this.targetBlock_.workspace;
-    if (isDuplicating) {
-      workspace.setResizesEnabled(false);
-      ScratchBlocks.Events.disable();
-      let newBlock;
-      try {
-        const xmlBlock = ScratchBlocks.Xml.blockToDom(this.targetBlock_);
-        newBlock = ScratchBlocks.Xml.domToBlock(xmlBlock, workspace);
-        ScratchBlocks.scratchBlocksUtils.changeObscuredShadowIds(newBlock);
-        const xy = this.targetBlock_.getRelativeToSurfaceXY();
-        newBlock.moveBy(xy.x, xy.y);
-      } catch (e) {
-        console.error(e);
-      }
-      ScratchBlocks.Events.enable();
-
-      if (newBlock) {
-        this.targetBlock_ = newBlock;
-        if (ScratchBlocks.Events.isEnabled()) {
-          ScratchBlocks.Events.fire(
-            new ScratchBlocks.Events.BlockCreate(newBlock),
-          );
-        }
-      }
-    }
   };
+
+  // Blockly.Gesture.prototype.duplicateOnDrag_ = function() {
+  //   var newBlock = null;
+  //   Blockly.Events.disable();
+  //   try {
+  //     // Note: targetBlock_ should have no children.  If it has children we would
+  //     // need to update shadow block IDs to avoid problems in the VM.
+  //     // Resizes will be reenabled at the end of the drag.
+  //     this.startWorkspace_.setResizesEnabled(false);
+  //     var xmlBlock = Blockly.Xml.blockToDom(this.targetBlock_);
+  //     newBlock = Blockly.Xml.domToBlock(xmlBlock, this.startWorkspace_);
+  //     // Blockly.scratchBlocksUtils.changeObscuredShadowIds(newBlock);
+
+  //     // Move the duplicate to original position.
+  //     var xy = this.targetBlock_.getRelativeToSurfaceXY();
+  //     newBlock.moveBy(xy.x, xy.y);
+  //     newBlock.setShadow(false);
+  //   } finally {
+  //     Blockly.Events.enable();
+  //   }
+  //   if (!newBlock) {
+  //     // Something went wrong.
+  //     console.error('Something went wrong while duplicating a block.');
+  //     return;
+  //   }
+  //   if (Blockly.Events.isEnabled()) {
+  //     Blockly.Events.fire(new Blockly.Events.BlockCreate(newBlock));
+  //   }
+  //   newBlock.select();
+  //   this.targetBlock_ = newBlock;
+  // };
 };

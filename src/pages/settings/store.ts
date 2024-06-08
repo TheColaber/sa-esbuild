@@ -42,17 +42,15 @@ const miniSearch = new MiniSearch({
 const filteredAddons = ref([]);
 miniSearch.addAll(Object.values(addons));
 watch(searchValue, async (term) => {
-  suggestions.value = miniSearch
-    .autoSuggest(term)
-    .flatMap((res) => res.terms);
+  suggestions.value = miniSearch.autoSuggest(term).flatMap((res) => res.terms);
   filteredAddons.value = miniSearch.search(term);
-    // const searchResult = await search(db, {
-    //   term,
-    // });
-    // console.log(searchResult);
-    
-    // filteredAddons.value = searchResult.hits.map(h => h.document)
-  });
+  // const searchResult = await search(db, {
+  //   term,
+  // });
+  // console.log(searchResult);
+
+  // filteredAddons.value = searchResult.hits.map(h => h.document)
+});
 
 const { addonsStates } = await syncStorage.get("addonsStates");
 const localAddonStorage = reactive({ ...addonsStates });
@@ -65,10 +63,13 @@ const filteredSortedAddons = computed(() =>
         !searchValue.value || filteredAddons.value.some((res) => res.id === id),
     )
     .sort((a, b) => {
-      if (searchValue.value.length > 0) {        
-        return filteredAddons.value.findIndex((addon) => addon.id === a) - filteredAddons.value.findIndex((addon) => addon.id === b)
+      if (searchValue.value.length > 0) {
+        return (
+          filteredAddons.value.findIndex((addon) => addon.id === a) -
+          filteredAddons.value.findIndex((addon) => addon.id === b)
+        );
       }
-      return addons[a].name.localeCompare(addons[b].name)
+      return addons[a].name.localeCompare(addons[b].name);
     }),
 );
 export const enabledProductionAddons = computed(() =>
