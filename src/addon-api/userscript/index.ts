@@ -1,4 +1,5 @@
 import { AddonStorage } from "../../background/storage";
+import Preview from "./preview";
 import Settings from "./settings";
 import Tab from "./tab";
 
@@ -10,6 +11,7 @@ export default class UserscriptAddon extends EventTarget {
   tab: Tab;
   console: Console;
   settings: Settings;
+  preview: Preview;
   enabled = true;
 
   constructor(
@@ -35,6 +37,7 @@ export default class UserscriptAddon extends EventTarget {
       ),
     };
     this.settings = new Settings(settings);
+    this.preview = new Preview();
   }
 
   msg(msg: string, parameters?: { [param: string]: string }) {

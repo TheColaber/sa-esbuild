@@ -1,6 +1,7 @@
 <template>
   <div :class="$style.wrapper" ref="wrapper">
     <div
+      ref="dropdown"
       :class="[$style['dropdown-out'], { [$style.visible]: visible }]"
       :style="{ '--text-color': textColor }"
     >
@@ -94,18 +95,21 @@ const textColor = ref("");
 const selected = ref();
 
 const wrapper = ref<HTMLDivElement>();
+const dropdown = ref<HTMLDivElement>();
 const findInput = ref<HTMLInputElement>();
 onMounted(() => {
   addon.tab.displayNoneWhileDisabled(wrapper.value);
+
+  if (addon.showPreview) {
+    wrapper.value.appendChild(addon.preview.createEditorTooltip("Click on this search box!"));
+    document.querySelector(".blocklyFlyout").appendChild(addon.preview.createEditorTooltip("Start by placing blocks in the workspace. (Place hat blocks such as the 'when green flag clicked' block)", "right"))
+  }
 });
 onUnmounted(() => {
   mounted = false;
 });
 
 const { Blockly, vm } = addon.tab;
-if (addon.showPreview) {
-  open();
-}
 
 function open(
   options: { showBlock?: ScratchBlocks.BlockSvg; showMore?: boolean } = {},
