@@ -56,6 +56,7 @@ addonStorage.watch((changes) => {
   }
 });
 
+const SA_EDITOR_PROJECT = 1034606782;
 onPortConnection((port) => {
   port.onMessage("getRunningAddons", async () => {    
     const [tab] = await chrome.tabs.query({
@@ -79,7 +80,7 @@ onPortConnection((port) => {
   });
   port.onMessage("openScratchEditor", async (data) => {
     const tab = await chrome.tabs.create({
-      url: "https://scratch.mit.edu/projects/editor",
+      url: "https://scratch.mit.edu/projects/" + SA_EDITOR_PROJECT +"/editor",
     });
     previewTabs[tab.id] = data;
   });
