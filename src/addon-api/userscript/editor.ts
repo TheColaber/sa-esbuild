@@ -7,6 +7,7 @@ export default class Editor extends EventTarget {
     this.tab = tab;
   }
 
+  // TODO: instead of object, array of contexts.
   createBlockContextMenu(
     callback: (items: any[], event: MouseEvent) => any[],
     {

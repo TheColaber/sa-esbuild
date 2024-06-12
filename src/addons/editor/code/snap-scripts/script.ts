@@ -27,7 +27,7 @@ export default async () => {
     let dy = Math.round((xy.y - half) / spacing) * spacing + half;
     dx = Math.round(dx);
     dy = Math.round(dy);
-    block.translate(dx, dy);
+    block.translate(dx, dy);    
     // block.snapToGrid();
   };
   const originalConnect =

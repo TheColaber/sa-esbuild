@@ -1,3 +1,4 @@
+import { dispatch } from "./scripting";
 import { localStorage, syncStorage } from "./storage";
 
 const periods = [
@@ -13,30 +14,34 @@ const UNMUTE = "UNMUTE";
 const MUTE_MESSAGE = "mute";
 const UNMUTE_MESSAGE = "unmute";
 const MUTED_ALARM = "MUTED_ALARM";
-const DEV_GROUP = "DEV_GROUP";
+const DEV_POPUP_GROUP = "DEV_POPUP_GROUP";
 const DEV_RESET_SETTINGS = "DEV_RESET_SETTINGS";
+const DEV_TAB_GROUP = "DEV_TAB_GROUP";
+const DEV_SCREENSHOT = "DEV_SCREENSHOT";
 
 create();
 
 async function create() {
   await chrome.contextMenus.removeAll();
-  createContextMenu(UNMUTE, chrome.i18n.getMessage(UNMUTE_MESSAGE));
-  createContextMenu(MUTE, chrome.i18n.getMessage(MUTE_MESSAGE));
+  createContextMenu({id: UNMUTE, title: chrome.i18n.getMessage(UNMUTE_MESSAGE)});
+  createContextMenu({id: MUTE, title: chrome.i18n.getMessage(MUTE_MESSAGE)});
 
   for (const period of periods) {
-    createContextMenu(period.id, chrome.i18n.getMessage(period.id), MUTE);
+    createContextMenu({id: period.id, title: chrome.i18n.getMessage(period.id), parentId: MUTE});
   }
 
   update((await localStorage.get("muted")).muted);
 
   const { installType } = await chrome.management.getSelf();
   if (installType === "development") {
-    createContextMenu(DEV_GROUP, "Developer");
-    createContextMenu(DEV_RESET_SETTINGS, "Reset settings", DEV_GROUP);
+    createContextMenu({id: DEV_POPUP_GROUP, title: "Developer"});
+    createContextMenu({id: DEV_RESET_SETTINGS, title: "Reset settings", parentId: DEV_POPUP_GROUP});
+    createContextMenu({id: DEV_TAB_GROUP, title: "Developer", contexts: ["page"]});
+    createContextMenu({id: DEV_SCREENSHOT, title: "Screenshot", parentId: DEV_TAB_GROUP, contexts: ["page"]});
   }
 }
 
-chrome.contextMenus.onClicked.addListener((info) => {
+chrome.contextMenus.onClicked.addListener(async (info) => {
   const { parentMenuItemId, menuItemId } = info;
 
   if (parentMenuItemId === MUTE) {
@@ -54,6 +59,10 @@ chrome.contextMenus.onClicked.addListener((info) => {
     syncStorage.clear();
     localStorage.clear();
     chrome.runtime.reload();
+  } else if (menuItemId === DEV_SCREENSHOT) {
+    // console.log(await chrome.tabs.captureVisibleTab());
+    
+    // dispatch("screenshot", {},)
   }
 });
 
@@ -63,11 +72,11 @@ chrome.alarms.onAlarm.addListener((alarm) => {
   }
 });
 
-function createContextMenu(id: string, title: string, parentId?: string) {
+function createContextMenu({ id, title, parentId, contexts = ["action"] }: {id: string, title: string, parentId?: string, contexts?: chrome.contextMenus.ContextType[]}) {
   chrome.contextMenus.create({
     id,
     title,
-    contexts: ["action"],
+    contexts,
     parentId,
   });
 }

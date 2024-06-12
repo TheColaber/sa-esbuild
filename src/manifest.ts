@@ -44,6 +44,16 @@ const iconDisplay: keyof typeof ICONS = isPrerelease
   ? "DEVELOPMENT"
   : "PRODUCTION";
 
+const permissions: chrome.runtime.ManifestPermissions[] = [
+  "storage",
+  "contextMenus",
+  "alarms",
+  "scripting",
+  "cookies"
+];
+
+// if (isPrerelease) permissions.push("activeTab", "tabCapture")
+
 const manifest: chrome.runtime.ManifestV3 = {
   manifest_version: 3,
   name: "__MSG_name__",
@@ -67,7 +77,7 @@ const manifest: chrome.runtime.ManifestV3 = {
       world: "MAIN",
       run_at: "document_start",
       all_frames: true,
-    },
+    }
   ],
   commands: {
     open_settings_page: {
@@ -78,7 +88,7 @@ const manifest: chrome.runtime.ManifestV3 = {
     },
   },
   host_permissions: ["https://*.scratch.mit.edu/*"],
-  permissions: ["storage", "contextMenus", "alarms", "scripting", "cookies"],
+  permissions,
   // devtools_page: PAGES.DEVTOOLS.INDEX,
 };
 

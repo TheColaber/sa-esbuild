@@ -6,8 +6,6 @@ const previewTabs = {};
 (async () => {
   let { addonsStates } = await syncStorage.get("addonsStates");
   chrome.tabs.onUpdated.addListener(async (tabId, { status }, tab) => {
-    // console.log(tab);
-
     if (!tab.url || status !== "loading") return;
 
     const enabledAddons = [];
@@ -36,12 +34,13 @@ const previewTabs = {};
     );
   });
 
-  syncStorage.watch(({ addonsStates: newAddonStates }) => {
+  syncStorage.watch(async ({ addonsStates: newAddonStates }) => {
     if (!addonsStates) return;
     for (const id in newAddonStates) {
       if (addonsStates[id] !== newAddonStates[id]) {
         if (addonEnabledStates.some((state) => newAddonStates[id] === state)) {
-          dispatch("dynamicEnable", { id });
+          const settings = await addonStorage.get(id);
+          dispatch("dynamicEnable", { id, settings: settings[id] });
         } else {
           dispatch("dynamicDisable", { id });
         }
@@ -85,7 +84,7 @@ onPortConnection((port) => {
   });
 });
 
-async function dispatch(type: string, detail: any, ...tabIds: number[]) {
+export async function dispatch(type: string, detail: any, ...tabIds: number[]) {
   if (tabIds.length === 0) {
     await chrome.tabs.query({}).then((tabs) => {
       tabIds = tabs.filter((tab) => tab.url).map((tab) => tab.id);
