@@ -14,7 +14,7 @@ export default async () => {
 
   // TODO: See how we can insert changeObscuredShadowIds into this function
   // without rewriting it.
-  Blockly.Gesture.prototype.duplicateOnDrag_ = function() {
+  Blockly.Gesture.prototype.duplicateOnDrag_ = function () {
     var newBlock = null;
     Blockly.Events.disable();
     try {
@@ -35,7 +35,7 @@ export default async () => {
     }
     if (!newBlock) {
       // Something went wrong.
-      console.error('Something went wrong while duplicating a block.');
+      console.error("Something went wrong while duplicating a block.");
       return;
     }
     if (Blockly.Events.isEnabled()) {

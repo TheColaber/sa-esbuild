@@ -101,8 +101,17 @@ onMounted(() => {
   addon.tab.displayNoneWhileDisabled(wrapper.value);
 
   if (addon.showPreview) {
-    wrapper.value.appendChild(addon.preview.createEditorTooltip("Click on this search box!"));
-    document.querySelector(".blocklyFlyout").appendChild(addon.preview.createEditorTooltip("Start by placing blocks in the workspace. (Place hat blocks such as the 'when green flag clicked' block)", "right"))
+    wrapper.value.appendChild(
+      addon.preview.createEditorTooltip("Click on this search box!"),
+    );
+    document
+      .querySelector(".blocklyFlyout")
+      .appendChild(
+        addon.preview.createEditorTooltip(
+          "Start by placing blocks in the workspace. (Place hat blocks such as the 'when green flag clicked' block)",
+          "right",
+        ),
+      );
   }
 });
 onUnmounted(() => {

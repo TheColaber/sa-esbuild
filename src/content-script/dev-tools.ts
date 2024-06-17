@@ -20,7 +20,7 @@
 // button.addEventListener("click", async function () {
 //   el.style.display = "none";
 //   console.log(chrome);
-  
+
 //   // const stream = await navigator.mediaDevices.getDisplayMedia({
 //   //   preferCurrentTab: true,
 //   // });
@@ -32,7 +32,7 @@
 //   //   ctx.canvas.width = 400;
 //   //   ctx.canvas.height = 300;
 //   //   console.log(el.offsetLeft);
-    
+
 //   //   ctx.drawImage(vid, el.offsetLeft, el.offsetTop, vid.videoWidth, vid.videoHeight);
 
 //   //   stream.getVideoTracks()[0].stop();

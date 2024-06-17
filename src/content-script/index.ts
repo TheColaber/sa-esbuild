@@ -3,7 +3,7 @@ import "./redux";
 // import "./dev-tools"
 import * as addonScripts from "#addon-scripts";
 import * as addonStyles from "#addon-styles";
-import * as localeEN from "#addon-en";
+import * as localeEN from "!addon-en";
 import { MATCH_PATTERNS } from "./matches";
 import UserscriptAddon from "../addon-api/userscript";
 import { AddonStorage } from "../background/storage";
@@ -145,4 +145,3 @@ function testUrlMatches(matches: (keyof typeof MATCH_PATTERNS)[]) {
   }
   return urlMatches;
 }
-

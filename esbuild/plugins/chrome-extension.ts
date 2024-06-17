@@ -143,7 +143,7 @@ export default () => ({
             ) {
               const contents = await readFile(distFile, "utf-8");
               const wrappedContents = `(() => {${contents}})();`;
-              const fileName = "/_" + path.basename(distFile);
+              const fileName = "/copy." + path.basename(distFile);
               if (process.env.MODE === "development") {
                 await writeFile(
                   path.dirname(distFile) + fileName,

@@ -23,21 +23,41 @@ create();
 
 async function create() {
   await chrome.contextMenus.removeAll();
-  createContextMenu({id: UNMUTE, title: chrome.i18n.getMessage(UNMUTE_MESSAGE)});
-  createContextMenu({id: MUTE, title: chrome.i18n.getMessage(MUTE_MESSAGE)});
+  createContextMenu({
+    id: UNMUTE,
+    title: chrome.i18n.getMessage(UNMUTE_MESSAGE),
+  });
+  createContextMenu({ id: MUTE, title: chrome.i18n.getMessage(MUTE_MESSAGE) });
 
   for (const period of periods) {
-    createContextMenu({id: period.id, title: chrome.i18n.getMessage(period.id), parentId: MUTE});
+    createContextMenu({
+      id: period.id,
+      title: chrome.i18n.getMessage(period.id),
+      parentId: MUTE,
+    });
   }
 
   update((await localStorage.get("muted")).muted);
 
   const { installType } = await chrome.management.getSelf();
   if (installType === "development") {
-    createContextMenu({id: DEV_POPUP_GROUP, title: "Developer"});
-    createContextMenu({id: DEV_RESET_SETTINGS, title: "Reset settings", parentId: DEV_POPUP_GROUP});
-    createContextMenu({id: DEV_TAB_GROUP, title: "Developer", contexts: ["page"]});
-    createContextMenu({id: DEV_SCREENSHOT, title: "Screenshot", parentId: DEV_TAB_GROUP, contexts: ["page"]});
+    createContextMenu({ id: DEV_POPUP_GROUP, title: "Developer" });
+    createContextMenu({
+      id: DEV_RESET_SETTINGS,
+      title: "Reset settings",
+      parentId: DEV_POPUP_GROUP,
+    });
+    createContextMenu({
+      id: DEV_TAB_GROUP,
+      title: "Developer",
+      contexts: ["page"],
+    });
+    createContextMenu({
+      id: DEV_SCREENSHOT,
+      title: "Screenshot",
+      parentId: DEV_TAB_GROUP,
+      contexts: ["page"],
+    });
   }
 }
 
@@ -61,7 +81,6 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
     chrome.runtime.reload();
   } else if (menuItemId === DEV_SCREENSHOT) {
     // console.log(await chrome.tabs.captureVisibleTab());
-    
     // dispatch("screenshot", {},)
   }
 });
@@ -72,7 +91,17 @@ chrome.alarms.onAlarm.addListener((alarm) => {
   }
 });
 
-function createContextMenu({ id, title, parentId, contexts = ["action"] }: {id: string, title: string, parentId?: string, contexts?: chrome.contextMenus.ContextType[]}) {
+function createContextMenu({
+  id,
+  title,
+  parentId,
+  contexts = ["action"],
+}: {
+  id: string;
+  title: string;
+  parentId?: string;
+  contexts?: chrome.contextMenus.ContextType[];
+}) {
   chrome.contextMenus.create({
     id,
     title,

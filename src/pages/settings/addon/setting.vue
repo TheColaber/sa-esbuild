@@ -116,7 +116,7 @@ const showPresetsList = ref(false);
       .list {
         display: none;
         &.show {
-        z-index: 1;
+          z-index: 1;
           display: flex;
           flex-direction: column;
           position: absolute;

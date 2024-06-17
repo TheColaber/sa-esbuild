@@ -1,7 +1,3 @@
-import component from "./component.vue";
-import badge from "./badge.vue";
-import mailIcon from "@iconify-icons/tabler/mail";
-
 export default defineAddon({
   name: "Messaging",
   description:
@@ -14,7 +10,7 @@ export default defineAddon({
 
 export const popup = definePopup({
   name: "Messages",
-  component,
-  badge,
-  icon: mailIcon,
+  component: () => import("./component.vue"),
+  badge: () => import("./badge.vue"),
+  icon: () => import("@iconify-icons/tabler/mail"),
 });

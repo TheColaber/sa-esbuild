@@ -49,7 +49,7 @@ const permissions: chrome.runtime.ManifestPermissions[] = [
   "contextMenus",
   "alarms",
   "scripting",
-  "cookies"
+  "cookies",
 ];
 
 // if (isPrerelease) permissions.push("activeTab", "tabCapture")
@@ -77,7 +77,7 @@ const manifest: chrome.runtime.ManifestV3 = {
       world: "MAIN",
       run_at: "document_start",
       all_frames: true,
-    }
+    },
   ],
   commands: {
     open_settings_page: {

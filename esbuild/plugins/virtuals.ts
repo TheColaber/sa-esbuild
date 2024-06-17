@@ -1,6 +1,7 @@
 import path from "path";
 import { globby } from "globby";
 import { readFile, readdir } from "fs/promises";
+import { PluginBuild } from "esbuild";
 
 const addonManifests = await globby("src/addons/**/addon.ts");
 // const addonLocales = await (
@@ -18,7 +19,7 @@ const addonManifests = await globby("src/addons/**/addon.ts");
 
 export default () => ({
   name: "virtual",
-  setup(build) {
+  setup(build: PluginBuild) {
     const namespace = "virtual";
     function exportAddons(item) {
       const exports = [];
@@ -58,7 +59,7 @@ export default () => ({
       "#addon-styles": exportAddons("styles"),
       "#addon-popups": exportAddons("popup"),
       "#addon-workers": exportAddons("worker"),
-      "#addon-en": exportAddons("strings"),
+      "!addon-en": exportAddons("strings"),
     };
     const filter = new RegExp(
       Object.keys(options)

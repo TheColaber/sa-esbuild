@@ -1,4 +1,7 @@
 {
+  "ts-node": {
+    "transpileOnly": true
+  },
   "compilerOptions": {
     "target": "ES2022",
     "module": "ESNext",
@@ -14,7 +17,7 @@
       "#addon-styles": ["./esbuild/virtuals/addon-styles.d.ts"],
       "#addon-popups": ["./esbuild/virtuals/addon-popups.d.ts"],
       "#addon-workers": ["./esbuild/virtuals/addon-workers.d.ts"],
-      "#addon-en": ["./esbuild/virtuals/addon-en.d.ts"],
+      "!addon-en": ["./esbuild/virtuals/addon-en.d.ts"],
       "#addon-l10n": ["./esbuild/virtuals/addon-l10n.d.ts"]
     }
   }

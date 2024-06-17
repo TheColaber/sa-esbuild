@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "node --import=./esbuild/register.js esbuild/build.ts --dev",
     "build": "node --import=./esbuild/register.js esbuild/build.ts",
+    "push-translations": "node --import=./esbuild/register.js esbuild/push-translations.ts",
     "pull-translations": "node --import=./esbuild/register.js esbuild/pull-translations.ts",
     "create-addon": "node --import=./esbuild/register.js cli/create-addon.ts",
     "format": "prettier . -w"
@@ -28,8 +29,6 @@
     "download": "^8.0.0",
     "esbuild": "^0.20.2",
     "esbuild-plugin-inline-image": "^0.0.9",
-    "esbuild-runner": "^2.2.2",
-    "esm": "^3.2.25",
     "globby": "^14.0.1",
     "minisearch": "^6.3.0",
     "postcss": "^8.4.38",

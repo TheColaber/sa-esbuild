@@ -56,7 +56,7 @@ addonStorage.watch((changes) => {
 });
 
 onPortConnection((port) => {
-  port.onMessage("getRunningAddons", async () => {    
+  port.onMessage("getRunningAddons", async () => {
     const [tab] = await chrome.tabs.query({
       active: true,
       currentWindow: true,
