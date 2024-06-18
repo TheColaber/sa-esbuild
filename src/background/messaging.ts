@@ -43,8 +43,7 @@ export class Port {
     });
     this.port.onDisconnect.addListener(async (prt) => {
       console.log("disconnected", prt);
-      
-    })
+    });
   }
 
   send<R>(name: string, data?: any) {

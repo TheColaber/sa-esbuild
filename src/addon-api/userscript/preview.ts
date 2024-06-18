@@ -1,5 +1,9 @@
 export default class Preview extends EventTarget {
-  createEditorTooltip(content: string, attach: Element, place: "left"|"right"|"bottom"|"top" = "bottom") {
+  createEditorTooltip(
+    content: string,
+    attach: Element,
+    place: "left" | "right" | "bottom" | "top" = "bottom",
+  ) {
     const tooltipDiv = document.body.appendChild(document.createElement("div"));
     const list = [
       "__react_component_tooltip",
@@ -15,8 +19,8 @@ export default class Preview extends EventTarget {
     tooltipSpan.textContent = content;
     const rect = attach.getBoundingClientRect();
     let top = 0;
-    let left = 0
-    if (place === "bottom") {      
+    let left = 0;
+    if (place === "bottom") {
       top = rect.bottom;
       left = rect.left;
     } else if (place === "right") {

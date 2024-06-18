@@ -79,7 +79,7 @@ onPortConnection((port) => {
   });
   port.onMessage("openScratchEditor", async (data) => {
     const tab = await chrome.tabs.create({
-      url: "https://scratch.mit.edu/projects/" + SA_EDITOR_PROJECT +"/editor",
+      url: "https://scratch.mit.edu/projects/" + SA_EDITOR_PROJECT + "/editor",
     });
     previewTabs[tab.id] = data;
   });

@@ -102,8 +102,11 @@ onMounted(() => {
 
   if (addon.showPreview) {
     setTimeout(() => {
-      addon.preview.createEditorTooltip("Click on this search box!", dropdown.value);
-    }, 5000)
+      addon.preview.createEditorTooltip(
+        "Click on this search box!",
+        dropdown.value,
+      );
+    }, 5000);
   }
 });
 onUnmounted(() => {
