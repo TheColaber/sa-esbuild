@@ -8,7 +8,7 @@ export type Preset = {
   addons: {
     id: string;
     enabled: boolean;
-    settings?: { id: string, value: any }[]
+    settings?: { id: string; value: any }[];
   }[];
 };
 
@@ -20,7 +20,10 @@ const devtools = definePreset({
     {
       id: "find-bar",
       enabled: true,
-    }, {id: "copypaste-code", enabled: true}, {id:"insert-blocks", enabled: true}],
+    },
+    { id: "copypaste-code", enabled: true },
+    { id: "insert-blocks", enabled: true },
+  ],
 });
 
 export default { devtools };

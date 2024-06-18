@@ -3,6 +3,7 @@ import * as fs from "fs";
 import * as crypto from "crypto";
 import * as sfc from "@vue/compiler-sfc";
 
+const cache = new Map<string, { input: string; output: string }>();
 export default (opts = {}) => ({
   name: "vue",
   setup({ initialOptions, ...build }) {
@@ -249,38 +250,41 @@ export default (opts = {}) => ({
       const style = descriptor.styles[index];
       let includedFiles = [];
 
-      const result = await sfc.compileStyleAsync({
-        filename: args.path,
-        id,
-        source: style.content,
-        postcssOptions: {},
-        postcssPlugins: [],
-        preprocessLang: style.lang,
-        scoped: style.scoped,
-        modules: style.module,
-      });
+      let cachedContents = cache.get(args.path);
 
-      if (result.errors.length > 0) {
-        const errors: any[] = result.errors;
+      if (!cachedContents || cachedContents.input === style.content) {
+        const result = await sfc.compileStyleAsync({
+          filename: args.path,
+          id,
+          source: style.content,
+          postcssOptions: {},
+          postcssPlugins: [],
+          preprocessLang: style.lang,
+          scoped: style.scoped,
+          modules: style.module,
+        });
 
-        return {
-          errors: errors.map((o) => ({
-            text: o.message,
-            location: {
-              column: o.column,
-              line:
-                o.file === args.path
-                  ? style.loc.start.line + o.line - 1
-                  : o.line,
-              file: o.file.replace(/\?.*?$/, ""),
-              namespace: "file",
-            },
-          })),
-        };
-      }
+        if (result.errors.length > 0) {
+          const errors: any[] = result.errors;
 
-      const cssText = result.code;
-      let contents = `export default {
+          return {
+            errors: errors.map((o) => ({
+              text: o.message,
+              location: {
+                column: o.column,
+                line:
+                  o.file === args.path
+                    ? style.loc.start.line + o.line - 1
+                    : o.line,
+                file: o.file.replace(/\?.*?$/, ""),
+                namespace: "file",
+              },
+            })),
+          };
+        }
+
+        const cssText = result.code;
+        let contents = `export default {
                         "$style": /* @__PURE__ */ (() => {
                           const el = document.createElement("style");
                           el.textContent = ${JSON.stringify(cssText)};
@@ -290,8 +294,11 @@ export default (opts = {}) => ({
                           };
                         })()
                       };`;
+        cachedContents = { input: style.content, output: contents };
+        cache.set(args.path, cachedContents);
+      }
       return {
-        contents,
+        contents: cachedContents.output,
         loader: "js",
         resolveDir: path.dirname(args.path),
         watchFiles: includedFiles,

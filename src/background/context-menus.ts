@@ -1,4 +1,4 @@
-import { dispatch } from "./scripting";
+// import { dispatch } from "./scripting";
 import { localStorage, syncStorage } from "./storage";
 
 const periods = [
@@ -19,10 +19,7 @@ const DEV_RESET_SETTINGS = "DEV_RESET_SETTINGS";
 const DEV_TAB_GROUP = "DEV_TAB_GROUP";
 const DEV_SCREENSHOT = "DEV_SCREENSHOT";
 
-create();
-
-async function create() {
-  await chrome.contextMenus.removeAll();
+chrome.contextMenus.removeAll(async () => {
   createContextMenu({
     id: UNMUTE,
     title: chrome.i18n.getMessage(UNMUTE_MESSAGE),
@@ -59,7 +56,7 @@ async function create() {
       contexts: ["page"],
     });
   }
-}
+});
 
 chrome.contextMenus.onClicked.addListener(async (info) => {
   const { parentMenuItemId, menuItemId } = info;

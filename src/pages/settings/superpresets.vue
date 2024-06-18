@@ -12,7 +12,7 @@
 import presets, { Preset } from "./presets";
 
 function enable(preset: Preset) {
-  preset.addons
+  preset.addons;
 }
 </script>
 

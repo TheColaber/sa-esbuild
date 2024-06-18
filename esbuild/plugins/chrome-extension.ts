@@ -135,6 +135,7 @@ export default () => ({
             );
           }
         }
+        // TODO: move to a build.onLoad
         promises.push(
           ...(manifest.content_scripts || []).map(async (cs) => {
             if (
@@ -143,8 +144,8 @@ export default () => ({
             ) {
               const contents = await readFile(distFile, "utf-8");
               const wrappedContents = `(() => {${contents}})();`;
-              const fileName = "/copy." + path.basename(distFile);
               if (process.env.MODE === "development") {
+                const fileName = "/copy." + path.basename(distFile);
                 await writeFile(
                   path.dirname(distFile) + fileName,
                   wrappedContents,
@@ -153,10 +154,12 @@ export default () => ({
                 const manifestParsed = JSON.parse(manifestJSON);
                 manifestParsed.web_accessible_resources =
                   manifestParsed.web_accessible_resources || [];
+                const resourceDir = path.dirname(
+                  distFile.replace(build.initialOptions.outdir + "/", ""),
+                );
                 manifestParsed.web_accessible_resources.push({
                   matches: cs.matches,
-                  // TODO: unhardcode
-                  resources: ["content-script" + fileName],
+                  resources: [resourceDir + fileName],
                 });
                 manifestJSON = JSON.stringify(manifestParsed);
               } else {
