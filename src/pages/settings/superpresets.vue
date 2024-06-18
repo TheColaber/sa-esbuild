@@ -3,12 +3,17 @@
     <div :class="$style.preset" v-for="preset of presets">
       <div>{{ preset.name }}</div>
       <div>{{ preset.description }}</div>
+      <button @click="enable(preset)">Enable</button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import presets from "./presets";
+import presets, { Preset } from "./presets";
+
+function enable(preset: Preset) {
+  preset.addons
+}
 </script>
 
 <style lang="scss" module>
