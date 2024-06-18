@@ -3,55 +3,56 @@ import { syncStorage, addonEnabledStates, addonStorage } from "./storage";
 
 const previewTabs = {};
 
-(async () => {
-  let { addonsStates } = await syncStorage.get("addonsStates");
-  chrome.tabs.onUpdated.addListener(async (tabId, { status }, tab) => {
-    if (!tab.url || status !== "loading") return;
+chrome.tabs.onUpdated.addListener(async (tabId, changes, tab) => {
+  console.log(changes);
 
-    const enabledAddons = [];
-    for (const id in addonsStates) {
-      if (
-        addonEnabledStates.some(
-          (enabledState) => enabledState === addonsStates[id],
-        )
-      ) {
-        enabledAddons.push(id);
+  // If worker sleeps when a scratch tab is openning, it will open when the tab is in the loading state
+  // but not when the tab is first "changed" to it's loading state.
+  if (!tab.url || tab.status !== "loading") return;
+
+  const { addonsStates } = await syncStorage.get("addonsStates");
+  const enabledAddons = [];
+  for (const id in addonsStates) {
+    if (
+      addonEnabledStates.some(
+        (enabledState) => enabledState === addonsStates[id],
+      )
+    ) {
+      enabledAddons.push(id);
+    }
+  }
+  const addonSettings = await addonStorage.get(...enabledAddons);
+  const userLangs = await getUserLangs(tab.url);
+
+  const previewAddon = previewTabs[tabId];
+  dispatch(
+    "addonData",
+    {
+      enabledAddons,
+      addonSettings,
+      userLangs,
+      previewAddon,
+    },
+    tabId,
+  );
+});
+
+syncStorage.watch(async ({ addonsStates: { oldValue, newValue } }) => {
+  for (const id in newValue) {
+    if (oldValue[id] !== newValue[id]) {
+      if (addonEnabledStates.some((state) => newValue[id] === state)) {
+        const settings = await addonStorage.get(id);
+        dispatch("dynamicEnable", { id, settings: settings[id] });
+      } else {
+        dispatch("dynamicDisable", { id });
       }
     }
-    const addonSettings = await addonStorage.get(...enabledAddons);
-    const userLangs = await getUserLangs(tab.url);
+  }
+});
 
-    const previewAddon = previewTabs[tabId];
-    dispatch(
-      "addonData",
-      {
-        enabledAddons,
-        addonSettings,
-        userLangs,
-        previewAddon,
-      },
-      tabId,
-    );
-  });
-
-  syncStorage.watch(async ({ addonsStates: newAddonStates }) => {
-    if (!addonsStates) return;
-    for (const id in newAddonStates) {
-      if (addonsStates[id] !== newAddonStates[id]) {
-        if (addonEnabledStates.some((state) => newAddonStates[id] === state)) {
-          const settings = await addonStorage.get(id);
-          dispatch("dynamicEnable", { id, settings: settings[id] });
-        } else {
-          dispatch("dynamicDisable", { id });
-        }
-      }
-    }
-    addonsStates = newAddonStates;
-  });
-})();
 addonStorage.watch((changes) => {
   for (const id in changes) {
-    dispatch("settingChange", { id, settings: changes[id] });
+    dispatch("settingChange", { id, settings: changes[id].newValue });
   }
 });
 

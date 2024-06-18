@@ -116,7 +116,7 @@ watch(tab, () => {
 });
 
 syncStorage.watch(({ addonsStates: newStates }) => {
-  for (const id in newStates) {
-    syncedAddonStorage[id] = newStates[id];
+  for (const id in newStates.newValue) {
+    syncedAddonStorage[id] = newStates.newValue[id];
   }
 });

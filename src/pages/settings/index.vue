@@ -58,7 +58,7 @@ onMounted(() => {
 const lightTheme = ref(pageStorage.get("lightTheme") === true);
 syncStorage.watch((storage) => {
   if ("lightTheme" in storage) {
-    lightTheme.value = storage.lightTheme;
+    lightTheme.value = storage.lightTheme.newValue;
     pageStorage.set("lightTheme", lightTheme.value);
   }
 });

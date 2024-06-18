@@ -17,6 +17,7 @@ let previewAddon: string | null;
 const locales = {
   en: localeEN,
 };
+
 scratchAddons.events.addEventListener(
   "addonData",
   async ({

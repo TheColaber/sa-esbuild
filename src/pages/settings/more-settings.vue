@@ -13,8 +13,8 @@ const theme = "test";
 const storage = await syncStorage.get("lightTheme");
 
 const lightTheme = ref(storage.lightTheme);
-syncStorage.watch(({ lightTheme: newLightTheme }) => {
-  lightTheme.value = newLightTheme;
+syncStorage.watch(({ lightTheme: { newValue } }) => {
+  lightTheme.value = newValue;
 });
 function changeTheme() {
   syncStorage.set({ lightTheme: !lightTheme.value });
